@@ -1,0 +1,168 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: 'AWS::Serverless-2016-10-31'
+Description: >
+  AWS Cloudformation Script to deploy a AWS Certificate Manager issued SSL/TLS Certificate for the API Domain Name. Validated against Route 53 DNS.
+
+Parameters:
+
+  Environment:
+    Default: staging
+    Description: The environment this CloudFormation stack is intended to be deployed to
+    Type: String
+    AllowedPattern: (staging|prod)
+
+  AppName:
+    Description: The name of the application being deployed.
+    Type: String
+
+  AppCodeBucket:
+    Description: The name of the bucket where the application code is stored
+    Type: String
+
+  AppCodeBucketKey:
+    Description: The name of the archive containing the applications code.
+    Type: String
+
+Mappings:
+  EnvironmentMap:
+    staging:
+      RootDomainName: oktademo.engineering
+      HostedZoneId: Z0757737136MRPQRRUQY4 # This is the Hosted Zone for oktademo.engineering. As this was put in place before CF we don't want to bring it under CF just yet.
+    prod:
+      RootDomainName: demo.okta.com
+      HostedZoneId: Z026866622P59E7NMX8EO # This is the Hosted Zone for demo.okta.com. As this was put in place before CF we don't want to bring it under CF just yet.
+
+Resources:
+
+  AppBeanstalkApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties: 
+        Description: !Sub "Elastic Beanstalk Application for ${AppName}"
+
+  AppBeanstalkApplicationVersion: 
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties: 
+      ApplicationName: !Ref AppBeanstalkApplication
+      SourceBundle: 
+        S3Bucket: !Ref AppCodeBucket
+        S3Key: !Ref AppCodeBucketKey
+
+  AppBeanstalkEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties: 
+      ApplicationName: !Ref AppBeanstalkApplication
+      Description: !Sub 'AWS Elastic Beanstalk ${Environment} Environment running ${AppName}'
+      TemplateName: !Ref AppConfigurationTemplate
+      VersionLabel: !Ref AppBeanstalkApplicationVersion
+      Tier:
+        Name: WebServer
+        Type: Standard
+      CNAMEPrefix: !Sub ${AppName}-${Environment}
+
+  AppConfigurationTemplate:
+    Type: 'AWS::ElasticBeanstalk::ConfigurationTemplate'
+    Properties:
+      SolutionStackName: "64bit Amazon Linux 2 v5.6.0 running Node.js 16"
+      ApplicationName: !Ref AppBeanstalkApplication
+      Description: !Sub 'AWS Elastic Beanstalk ${Environment} Configuration Template for ${AppName}'
+      # OptionSettings:
+      #     # Environment Options
+      #     - Namespace: aws:elasticbeanstalk:environment
+      #       OptionName: EnvironmentType
+      #       Value: LoadBalanced
+
+      #     - Namespace: aws:elasticbeanstalk:environment
+      #       OptionName: LoadBalancerType
+      #       Value: application
+
+      #     # Load Balancer Listener Options
+      #     - Namespace: aws:elbv2:listenerrule:default
+      #       OptionName: PathPatterns
+      #       Value: "/*"
+
+      #     - Namespace: aws:elbv2:listener:443
+      #       OptionName: Protocol
+      #       Value: HTTPS
+
+      #     - Namespace: aws:elbv2:listener:443
+      #       OptionName: Rules
+      #       Value: default
+
+      #     - Namespace: aws:elbv2:listener:443
+      #       OptionName: SSLCertificateArns
+      #       Value: 
+      #         Fn::ImportValue: 
+      #          Fn::Sub: '${AppName}-${Environment}-certificate-arn'
+
+      #     # Application environment variables
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: BASE_URI
+      #       Value: 
+      #         Fn::Sub: 
+      #         - 'https//${AppName}.${RootDomain}'
+      #         - RootDomain: !FindInMap [EnvironmentMap, !Ref Environment, RootDomainName]
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: PORT
+      #       Value: 3000
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: LOG_LEVEL
+      #       Value: debug
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: SCOPES
+      #       Value: openid profile
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_TOKEN_ENDPOINT
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_AUDIENCE
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_ENDPOINT
+      #       Value: !Sub 'https://api.demo.okta.com/${Environment}' #This will need to change once we have sepearated our accounts and API
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_TOKEN_ENDPOINT
+      #       Value: 
+      #         Fn::Sub: 
+      #         - 'https://auth.${RootDomain}/oauth/token'
+      #         - RootDomain: !FindInMap [EnvironmentMap, !Ref Environment, RootDomainName]
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_CLIENT_ID
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_CLIENT_SECRET
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEMO_API_APP_ID
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: CACHE_DURATION
+      #       Value: 60
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEFAULT_ISSUER
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEFAULT_CLIENT_ID
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+      #     - Namespace: aws:elasticbeanstalk:application:environment
+      #       OptionName: DEFAULT_CLIENT_SECRET
+      #       Value: fldjkzghfdkljsghdfjfkdsh
+
+Outputs: 
+  AppAcmCertificateArn:
+    Value: !GetAtt AppBeanstalkEnvironment.EndpointURL
+    Export:
+      Name: !Sub '${AppName}-${Environment}-elasticbeanstalk-env-endpointURL'

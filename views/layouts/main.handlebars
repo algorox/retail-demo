@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Okta Demo API Node Quickstart</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <style>
+
+    @font-face {
+      font-family: aeonik;
+      src: url('https://cdn.demo.okta.com/fonts/aeonik-regular.woff2') format('woff2');
+    }
+  body,h1,h2,h3,h4,h5, p {
+    font-family: aeonik, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #191919 !important;
+  }
+  p{
+    font-size: larger;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bgimg {
+    height: unset;
+    min-height: 100vh;
+    background-image: linear-gradient(transparent, white 95%), url('https://cdn.demo.okta.com/images/demo-okta-bg-blue.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  .icon{
+    max-height: 21px;
+    position: relative;
+    top: 0.4em;
+    color: #191919
+  }
+
+  a{
+    color: #191919;
+    text-decoration: underline;
+  }
+
+  .branded{
+    color: white;
+    background-color: #1A31A9;
+    border-radius: 5px;
+  }
+
+  .branded:hover{
+    background-color: black;
+  }
+
+  ul{
+    list-style-type:none;
+  }
+
+  li{
+    font-size: larger;
+    color: #6B6966;
+  }
+
+  </style>
+</head>
+<body class="bgimg">
+  <main>
+    <div class="container">
+      <h3 class="carbon-text">Okta Demo API Node Quickstart</h3>
+      {{{body}}}
+    </div>
+  </main>
+  </body>
+</html>

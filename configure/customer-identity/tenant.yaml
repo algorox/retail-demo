@@ -1,0 +1,154 @@
+hooks: []
+pages: []
+connections:
+  - name: facebook
+    strategy: facebook
+    enabled_clients: []
+    options:
+      email: true
+      scope: email,public_profile
+  - name: google-oauth2
+    strategy: google-oauth2
+    is_domain_connection: false
+    options:
+      email: true
+      gmail: false
+      orkut: false
+      scope:
+        - email
+        - profile
+      sites: false
+      tasks: false
+      blogger: false
+      profile: true
+      youtube: false
+      calendar: false
+      contacts: false
+      analytics: false
+      client_id: ""
+      moderator: false
+      coordinate: false
+      picasa_web: false
+      google_plus: false
+      google_books: false
+      google_drive: false
+      spreadsheets: false
+      document_list: false
+      latitude_best: false
+      latitude_city: false
+      url_shortener: false
+      webmaster_tools: false
+      chrome_web_store: false
+      allowed_audiences: ""
+      adsense_management: false
+      google_drive_files: false
+      coordinate_readonly: false
+      google_cloud_storage: false
+      content_api_for_shopping: false
+      google_affiliate_network: false
+tenant:
+  enabled_locales:
+    - en
+  flags:
+    new_universal_login_experience_enabled: false
+    universal_login: true
+    dashboard_ui_next: true
+    revoke_refresh_token_grant: false
+    disable_clickjack_protection_headers: false
+emailProvider: {}
+emailTemplates: []
+guardianFactors:
+  - name: duo
+    enabled: false
+  - name: email
+    enabled: false
+  - name: otp
+    enabled: true
+  - name: push-notification
+    enabled: true
+  - name: recovery-code
+    enabled: true
+  - name: sms
+    enabled: true
+  - name: webauthn-platform
+    enabled: false
+  - name: webauthn-roaming
+    enabled: false
+guardianFactorTemplates: []
+guardianPolicies:
+  policies: []
+guardianPhoneFactorMessageTypes:
+  message_types:
+    - sms
+roles: []
+prompts:
+  universal_login_experience: new
+  identifier_first: false
+  webauthn_platform_first_factor: false
+migrations: {}
+actions: []
+triggers: {}
+organizations: []
+themes:
+  - borders:
+      button_border_weight: 1
+      buttons_style: rounded
+      button_border_radius: 3
+      input_border_weight: 1
+      inputs_style: rounded
+      input_border_radius: 3
+      widget_corner_radius: 5
+      widget_border_weight: 0
+      show_widget_shadow: true
+    colors:
+      primary_button: '#00297a'
+      primary_button_label: '#ffffff'
+      secondary_button_border: '#c9cace'
+      secondary_button_label: '#1e212a'
+      base_focus_color: '#00297a'
+      base_hover_color: '#000000'
+      links_focused_components: '#00297a'
+      header: '#1e212a'
+      body_text: '#1e212a'
+      widget_background: '#ffffff'
+      widget_border: '#c9cace'
+      input_labels_placeholders: '#65676e'
+      input_filled_text: '#000000'
+      input_border: '#c9cace'
+      input_background: '#ffffff'
+      icons: '#65676e'
+      error: '#d03c38'
+      success: '#13a688'
+    displayName: Unnamed Theme
+    fonts:
+      font_url: ''
+      reference_text_size: 16
+      title:
+        bold: false
+        size: 150
+      subtitle:
+        bold: false
+        size: 87.5
+      body_text:
+        bold: false
+        size: 87.5
+      buttons_text:
+        bold: false
+        size: 100
+      input_labels:
+        bold: false
+        size: 100
+      links:
+        bold: true
+        size: 87.5
+      links_style: normal
+    page_background:
+      page_layout: left
+      background_color: '#FFFFFF'
+      background_image_url: https://cdn.demo.okta.com/images/demo-okta-bg-blue.png
+    widget:
+      logo_position: center
+      logo_url: ''
+      logo_height: 52
+      header_text_alignment: center
+      social_buttons_layout: bottom

@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: 'AWS::Serverless-2016-10-31'
+Description: >
+  AWS Cloudformation Script to deploy a AWS Certificate Manager issued SSL/TLS Certificate for the API Domain Name. Validated against Route 53 DNS.
+
+Parameters:
+
+  Environment:
+    Default: staging
+    Description: The environment this CloudFormation stack is intended to be deployed to
+    Type: String
+    AllowedPattern: (staging|prod)
+    
+  AppName:
+    Description: The name of the application being deployed.
+    Type: String
+
+Mappings:
+  EnvironmentMap:
+    staging:
+      RootDomainName: oktademo.engineering
+      HostedZoneId: Z0757737136MRPQRRUQY4 # This is the Hosted Zone for oktademo.engineering. As this was put in place before CF we don't want to bring it under CF just yet.
+    prod:
+      RootDomainName: demo.okta.com
+      HostedZoneId: Z026866622P59E7NMX8EO # This is the Hosted Zone for demo.okta.com. As this was put in place before CF we don't want to bring it under CF just yet.
+
+Resources:
+
+  # Note that this relies on the domain name being in place.
+  AppAcmCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: 
+        Fn::Sub: 
+          - '*.${AppName}.${RootDomain}'
+          - RootDomain: !FindInMap [EnvironmentMap, !Ref Environment, RootDomainName]
+      SubjectAlternativeNames:
+        - Fn::Sub: 
+          - '${AppName}.${RootDomain}'
+          - RootDomain: !FindInMap [EnvironmentMap, !Ref Environment, RootDomainName]
+      DomainValidationOptions:
+        - DomainName: 
+            Fn::Sub: 
+              - '${AppName}.${RootDomain}'
+              - RootDomain: !FindInMap [EnvironmentMap, !Ref Environment, RootDomainName]
+          HostedZoneId: !FindInMap [EnvironmentMap, !Ref Environment, HostedZoneId]
+      ValidationMethod: 'DNS'
+
+Outputs: 
+  AppAcmCertificateArn:
+    Value: !Ref AppAcmCertificate
+    Export:
+      Name: !Sub '${AppName}-${Environment}-certificate-arn'

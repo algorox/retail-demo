@@ -1,0 +1,33 @@
+branches:
+  - main
+  - name: dev
+    prerelease: true
+ci: true
+dryRun: false
+plugins:
+  - '@semantic-release/commit-analyzer':
+      preset: conventionalcommits
+      parserOpts: 
+        noteKeywords: 
+         - BREAKING CHANGE
+         - BREAKING CHANGES
+         - BREAKING
+  - '@semantic-release/release-notes-generator':
+      preset: conventionalcommits
+      parserOpts: 
+        noteKeywords: 
+         - BREAKING CHANGE
+         - BREAKING CHANGES
+         - BREAKING
+      writerOpts:
+       commitsSort: 
+        - subject
+        - scope
+  - '@semantic-release/npm'
+  - '@semantic-release/git'
+  - '@semantic-release/github'
+
+# GitHub specific
+successComment: false # Don't comment on PRs after release
+releasedLabels: false # Don't label PRs after release
+
