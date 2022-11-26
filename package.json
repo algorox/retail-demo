@@ -1,5 +1,5 @@
 {
-  "name": "quickstart-node",
+  "name": "retail-demo",
   "version": "1.1.0",
   "description": "A quickstart application for a token demonstration using the Okta Demo API.",
   "main": "index.js",
