@@ -222,6 +222,17 @@ router.get("/migration", ensureAuthenticated(), async (req, res, next) => {
     });
 });
 
+router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/ requested")
+    var accessToken
+    if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
+        accessToken = parseJWT(req.userContext.tokens.access_token)
+    }
+    res.render("config_migrated",{
+        accessToken: accessToken
+    });
+});
+
 router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => {
     console.log("Migrate Config request received.")
     console.log(JSON.stringify(req.body))
@@ -233,6 +244,14 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
     //     AUTH0_CLIENT_ID: req.body.from_client,
     //     AUTH0_ALLOW_DELETE: false
     // }
+
+    // from_config ={
+    //     AUTH0_DOMAIN: req.body.to_domain,
+    //     AUTH0_CLIENT_SECRET: req.body.to_secret,
+    //     AUTH0_CLIENT_ID: req.body.to_client,
+    //     AUTH0_ALLOW_DELETE: false
+    // }
+
 
     from_config ={
         AUTH0_DOMAIN: process.env.FROM_DOMAIN,
@@ -252,8 +271,6 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
     fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
         if (err) throw err;
 
-        console.log(folder)
-
         deployCLI.dump({
             output_folder: folder,   // temp store for tenant_config.json
             config_file: 'tenant_config.json', //name of output file
@@ -266,25 +283,12 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
             config: to_config,   // Option to sent in json as object
           })
             .then(() => res.redirect('/config_migrated')))
-            .catch(err => console.log(`Oh no, something went wrong. <%= "Error: ${err}" %>`, res.redirect('/config_migrated?' + err)))
-        
+            //.catch(err => console.log(err), res.redirect('/error?' + 'something_went_wrong_with_import')))
+            //.catch(err => console.log(`Oh no, something went wrong with export. <%= "Error: ${err}" %>`, res.redirect('/error?' + 'something_went_wrong_with_export')))
 
-        .catch(err => console.log(err), res.redirect('/config_migrated?' + err))
-
-      });
+      });    
 
 })
-
-router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/ requested")
-    var accessToken
-    if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
-        accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    res.render("config_migrated",{
-        accessToken: accessToken
-    });
-});
 
 app.use(router)  
 
