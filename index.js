@@ -260,22 +260,16 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
             config: from_config   // Set-up (as above)   
         }).then(() => 
         
-
         deployCLI.deploy({
             input_file: folder,  // Input file for directory, change to .yaml for YAML
             config_file: 'tenant_config.json', // Option to a config json
             config: to_config,   // Option to sent in json as object
           })
             .then(() => res.redirect('/config_migrated')))
-            .catch(err => console.log(`Oh no, something went wrong. <%= "Error: ${err}" %>`))
+            .catch(err => console.log(`Oh no, something went wrong. <%= "Error: ${err}" %>`, res.redirect('/config_migrated?' + err)))
         
 
-        .catch(err => console.log(err))
-
-
-
-
-
+        .catch(err => console.log(err), res.redirect('/config_migrated?' + err))
 
       });
 
