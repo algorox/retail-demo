@@ -1,3 +1,7 @@
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>    
+    
     <body>
         <form action="/migrate_config" method="POST">
             <p>From</p>
@@ -15,15 +19,6 @@
         </form>
     </body>
 
-<div>
-    <h4>Your Access Token</h4>
-    <ul>
-        {{#each accessToken}}
-            <li><b>{{@key}}</b>: {{this}}</li>
-        {{/each}}
-    </ul>
-</div>
+    <br>
+    <hr>
 
-<div>
-    <a class="btn-small branded" href="/logout">Logout</a>
-</div>

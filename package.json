@@ -17,7 +17,7 @@
   "dependencies": {
     "@okta/okta-sdk-nodejs": "^6.5.0",
     "atob": "^2.1.2",
-    "auth0-deploy-cli": "^7.14.3",
+    "auth0-deploy-cli": "^7.15.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",

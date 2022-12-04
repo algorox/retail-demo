@@ -236,15 +236,15 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
 
     from_config ={
         AUTH0_DOMAIN: process.env.FROM_DOMAIN,
-        AUTH0_CLIENT_SECRET: process.env.FROM_CLIENT_ID,
-        AUTH0_CLIENT_ID:process.env.FROM_CLIENT_SECRET,
+        AUTH0_CLIENT_SECRET: process.env.FROM_CLIENT_SECRET,
+        AUTH0_CLIENT_ID:process.env.FROM_CLIENT_ID,
         AUTH0_ALLOW_DELETE: false
     }
 
     to_config ={
-        AUTH0_DOMAIN: req.body.to_domain,
-        AUTH0_CLIENT_SECRET: req.body.to_secret,
-        AUTH0_CLIENT_ID: req.body.to_client,
+        AUTH0_DOMAIN: process.env.TO_DOMAIN,
+        AUTH0_CLIENT_SECRET: process.env.TO_CLIENT_SECRET,
+        AUTH0_CLIENT_ID: process.env.TO_CLIENT_ID,
         AUTH0_ALLOW_DELETE: false
     }
 
@@ -255,10 +255,21 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
         console.log(folder)
 
         deployCLI.dump({
-            output_folder: folder,   // Input file for directory, change to .yaml for YAML
-            config_file: 'conig.json',
-            config: from_config   // Option to a config json    
-        }).then(() => res.redirect('/config_migrated'))
+            output_folder: folder,   // temp store for tenant_config.json
+            config_file: 'tenant_config.json', //name of output file
+            config: from_config   // Set-up (as above)   
+        }).then(() => 
+        
+
+        deployCLI.deploy({
+            input_file: folder,  // Input file for directory, change to .yaml for YAML
+            config_file: 'tenant_config.json', // Option to a config json
+            config: to_config,   // Option to sent in json as object
+          })
+            .then(() => res.redirect('/config_migrated')))
+            .catch(err => console.log(`Oh no, something went wrong. <%= "Error: ${err}" %>`))
+        
+
         .catch(err => console.log(err))
 
 
