@@ -75,12 +75,9 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
 
 router.get("/migration", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
-    var accessToken, profile
+    var accessToken
     if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
         accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    if(req.userContext && req.userContext.tokens && req.userContext.tokens.id_token){
-        profile = parseJWT(req.userContext.tokens.id_token)
     }
     res.render("migration",{
         accessToken: accessToken
@@ -212,6 +209,12 @@ router.post("/hooks/destroy",async (req, res, next) => {
         //this removes the demo from the cache so if it is re-added the new configuration is used
         tr.removeTenant(req.body.demonstration.name)
     }
+    res.sendStatus(202)
+})
+
+router.post("/migrate_config",async (req, res, next) => {
+    console.log("Migrate Config request received.")
+    console.log(JSON.stringify(req.body))
     res.sendStatus(202)
 })
 
