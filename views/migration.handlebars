@@ -1,0 +1,12 @@
+<div>
+    <h4>Your Access Token</h4>
+    <ul>
+        {{#each accessToken}}
+            <li><b>{{@key}}</b>: {{this}}</li>
+        {{/each}}
+    </ul>
+</div>
+
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>
