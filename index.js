@@ -7,6 +7,10 @@ const tenantResolver = require('./tenantResolver')
 var logger = require('./logger');
 const auth0 = require('auth0-deploy-cli')
 const okta = require('@okta/okta-sdk-nodejs');
+const deployCLI = require('auth0-deploy-cli');
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -69,17 +73,6 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
     }
     res.render("protected",{
         profile: profile,
-        accessToken: accessToken
-    });
-});
-
-router.get("/migration", ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/ requested")
-    var accessToken
-    if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
-        accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    res.render("migration",{
         accessToken: accessToken
     });
 });
@@ -212,11 +205,81 @@ router.post("/hooks/destroy",async (req, res, next) => {
     res.sendStatus(202)
 })
 
-router.post("/migrate_config",async (req, res, next) => {
+//////////////////////
+//MIGRATION SERVICES//
+//////////////////////
+
+app.use(express.urlencoded({ extended: true }));
+
+router.get("/migration", ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/ requested")
+    var accessToken
+    if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
+        accessToken = parseJWT(req.userContext.tokens.access_token)
+    }
+    res.render("migration",{
+        accessToken: accessToken
+    });
+});
+
+router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => {
     console.log("Migrate Config request received.")
     console.log(JSON.stringify(req.body))
-    res.sendStatus(202)
+    var from_config;
+    var to_config;
+    // from_config ={
+    //     AUTH0_DOMAIN: req.body.from_domain,
+    //     AUTH0_CLIENT_SECRET: req.body.from_secret,
+    //     AUTH0_CLIENT_ID: req.body.from_client,
+    //     AUTH0_ALLOW_DELETE: false
+    // }
+
+    from_config ={
+        AUTH0_DOMAIN: process.env.FROM_DOMAIN,
+        AUTH0_CLIENT_SECRET: process.env.FROM_CLIENT_ID,
+        AUTH0_CLIENT_ID:process.env.FROM_CLIENT_SECRET,
+        AUTH0_ALLOW_DELETE: false
+    }
+
+    to_config ={
+        AUTH0_DOMAIN: req.body.to_domain,
+        AUTH0_CLIENT_SECRET: req.body.to_secret,
+        AUTH0_CLIENT_ID: req.body.to_client,
+        AUTH0_ALLOW_DELETE: false
+    }
+
+
+    fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
+        if (err) throw err;
+
+        console.log(folder)
+
+        deployCLI.dump({
+            output_folder: folder,   // Input file for directory, change to .yaml for YAML
+            config_file: 'conig.json',
+            config: from_config   // Option to a config json    
+        }).then(() => res.redirect('/config_migrated'))
+        .catch(err => console.log(err))
+
+
+
+
+
+
+      });
+
 })
+
+router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/ requested")
+    var accessToken
+    if(req.userContext && req.userContext.tokens && req.userContext.tokens.access_token){
+        accessToken = parseJWT(req.userContext.tokens.access_token)
+    }
+    res.render("config_migrated",{
+        accessToken: accessToken
+    });
+});
 
 app.use(router)  
 
