@@ -1,24 +1,53 @@
 <div>
     <a class="btn-small branded" href="/logout">Logout</a>
-</div>    
-    <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
-    <body>
-        <form action="/migrate_config" method="POST">
-            <p>From</p>
-            <input type="text" name="from_domain" placeholder="Add the domain of the the tenant you want to migrate FROM" />
-            <input type="text" name="from_client" placeholder="Add the client_id of the the tenant you want to migrate FROM" />
-            <input type="text" name="from_secret" placeholder="Add the client_secret of the the tenant you want to migrate FROM" />
-            <br>
-            <p>To</p>
-            <input type="text" name="to_domain" placeholder="Add the domain of the the tenant you want to migrate TO" />
-            <input type="text" name="to_client" placeholder="Add the client_id of the the tenant you want to migrate TO" />
-            <input type="text" name="to_secret" placeholder="Add the client_secret of the the tenant you want to migrate TO" />
-            <br>
-            <br>
-            <input type="submit" value="Migrate!" />
-        </form>
-    </body>
+</div>
 
-    <br>
+<body>
+    <form action="/migrate_config" id="migrate_form" method="POST">
+        <p>From</p>
+        <input type="text" name="from_domain"
+            placeholder="Add the domain of the the tenant you want to migrate FROM. Example: tenantname.demo-platform.auth0app.com" />
+        <input type="text" name="from_client"
+            placeholder="Add the client_id of the the tenant you want to migrate FROM" />
+        <input type="text" name="from_secret"
+            placeholder="Add the client_secret of the the tenant you want to migrate FROM" />
+        <br>
+        <p>To</p>
+        <input type="text" name="to_domain"
+            placeholder="Add the domain of the the tenant you want to migrate TO. Example: tenantname.cic-demo-platform.auth0app.com" />
+        <input type="text" name="to_client" placeholder="Add the client_id of the the tenant you want to migrate TO" />
+        <input type="text" name="to_secret"
+            placeholder="Add the client_secret of the the tenant you want to migrate TO" />
+        <br>
+        <br>
+        <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
+        <input type="submit" value="Migrate!"
+            onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed');" />
+    </form>
     <hr>
+    <pre id="migration_logs"> > Migration Logs...</pre>
+</body>
 
+<br>
+<hr>
+
+<script>
+
+$(function () {
+
+    $('#migrate_form').submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/migrate_config',
+            type: 'post',
+            success: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            },
+            error: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            }
+        });
+    });
+          })
+    
+</script>
