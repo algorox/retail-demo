@@ -79,6 +79,8 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
 
 router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
+
+
     var accessToken, profile
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
         accessToken = parseJWT(req.userContext.tokens.access_token)
@@ -86,9 +88,16 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.id_token) {
         profile = parseJWT(req.userContext.tokens.id_token)
     }
+
+console.log(profile)
+
     res.render("profile", {
-        profile: profile,
-        accessToken: accessToken
+        pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
+        first_name: profile.given_name || 'record not found',
+        surname: profile.family_name || 'record not found',
+        last_updated: profile.updated_at || 'record not found',
+        user_meta: profile.user_metadata || 'looks like you need to add your favorite color',
+        accessToken: req.userContext.tokens.access_token || 'no access token returned'
     });
 });
 
