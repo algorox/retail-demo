@@ -73,6 +73,9 @@
 
     $(document).ready(function () {
 
+        var y = document.getElementById("favorite_color");
+        y.value = '{{user_meta}}'
+
         if('{{sub}}'.includes("google")) {
         var x = document.getElementById("link_account_button");
         x.style.display = "block";

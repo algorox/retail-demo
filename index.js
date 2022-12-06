@@ -95,7 +95,7 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
         first_name: profile.given_name || 'record not found',
         surname: profile.family_name || 'record not found',
         last_updated: profile.updated_at || 'record not found',
-        user_meta: profile.user_metadata || 'looks like you need to add your favorite color',
+        user_meta: JSON.stringify(profile.user_metadata) || 'looks like you need to add your favorite color',
         accessToken: req.userContext.tokens.access_token || 'no access token returned',
         domain: accessToken.iss,
         baseUrl: 'http://storytime-stepup-121122.localhost:3000',
@@ -178,7 +178,6 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
         }
     }
 
-
     handlePATCHRequests(user_update_url, user_data, req.userContext.tokens.access_token)
         .then((output) => {
                     res.status(200)
@@ -200,13 +199,13 @@ router.get('/link_accounts', async (req, res, next) => {
     
     accessToken = parseJWT(req.userContext.tokens.access_token)
 
-    var url = accessToken.iss + 'api/v2/users/' + accessToken.sub + '/identities'
-
-    console.log(url)
+    var identity_url = accessToken.iss + 'api/v2/users/' + accessToken.sub + '/identities'
+    var meta_data_url = accessToken.iss + 'api/v2/users/' + accessToken.sub
     
     res.render("link_accounts", {
         accessToken: req.userContext.tokens.access_token || 'no access token returned',
-        url: url
+        identity_url: identity_url,
+        meta_data_url: meta_data_url
     });
 
     })
