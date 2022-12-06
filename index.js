@@ -146,6 +146,17 @@ const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 422, 429];
 
 router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => {
 
+
+    //make sure you have the following added as an Action in your CIC tenant:
+
+    // exports.onExecutePostLogin = async (event, api) => {
+    //     const namespace = 'user_metadata';
+    //     if (event.user.user_metadata.favorite_color)
+    //     {
+    //       api.idToken.setCustomClaim(namespace, event.user.user_metadata.favorite_color);
+    //     }
+    //   };
+
     var accessToken;
 
     accessToken = parseJWT(req.body.access_token)
@@ -159,8 +170,6 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
     var user_data;
 
     user_data = {
-        //given_name: req.body.first_name,
-        //family_name: req.body.surname,
         user_metadata: {
             favorite_color: req.body.favorite_color
         }
@@ -171,8 +180,6 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
         .then((output) => {
                     res.status(200)
                     res.send({
-                        //"First name Set to: ": req.body.first_name,
-                        //"Surname Set to: ": req.body.surname,
                         "Favorite Color Set to: ": req.body.favorite_color,
                         "Message": ' Logout and re-login to see the update'
                     });
