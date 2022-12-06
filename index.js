@@ -11,6 +11,7 @@ const deployCLI = require('auth0-deploy-cli');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const request = require('request')
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -80,6 +81,7 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
 router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
 
+    console.log()
 
     var accessToken, profile
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
@@ -88,8 +90,6 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.id_token) {
         profile = parseJWT(req.userContext.tokens.id_token)
     }
-
-console.log(profile)
 
     res.render("profile", {
         pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
@@ -100,6 +100,90 @@ console.log(profile)
         accessToken: req.userContext.tokens.access_token || 'no access token returned'
     });
 });
+
+const handleRequests = (url, body, accessToken) => {
+
+    return new Promise((resolve, reject) => {
+
+        const options = {
+            url: url,
+            json: true,
+            method: 'PATCH',
+            body: body,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        };
+        request(options, function (error, response, body) {
+
+            if (error) {
+                customError = {
+                    error: 500,
+                    error_description: error
+                }
+                reject(customError);
+            }
+
+            if (response) {
+
+                if (arrayOfHTTPErrors.includes(response.statusCode)) {
+
+                    customError = {
+                        error: response.statusCode || 500,
+                        error_description: response.body || 'No Description Provided'
+                    }
+
+                    reject(customError)
+                }
+                resolve(body);
+            }
+
+        })
+    });
+}
+
+const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 422, 429];
+
+router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => {
+
+    var accessToken;
+
+    accessToken = parseJWT(req.body.access_token)
+
+    var user_update_url;
+
+    user_update_url = accessToken.iss + 'api/v2/users/' + accessToken.sub
+
+    console.log(user_update_url)
+
+    var user_data;
+
+    user_data = {
+        //given_name: req.body.first_name,
+        //family_name: req.body.surname,
+        user_metadata: {
+            favorite_color: req.body.favorite_color
+        }
+    }
+
+
+    handleRequests(user_update_url, user_data, req.body.access_token)
+        .then((output) => {
+            console.log(output)
+                    res.status(200)
+                    res.send({
+                        //"First name Set to: ": req.body.first_name,
+                        //"Surname Set to: ": req.body.surname,
+                        "Favorite Color Set to: ": req.body.favorite_color
+                    });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(err.error)
+                    res.send('/error?' + err.error + '&error_description=' + err.error_description);
+                });
+        })
+
 
 router.get("/download", function (req, res, next) {
     //this allows the direct download of the src as a zip removing the need to make the repo public
@@ -263,14 +347,14 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
     var from_config;
     var to_config;
 
-    from_config ={
+    from_config = {
         AUTH0_DOMAIN: req.body.from_domain,
         AUTH0_CLIENT_SECRET: req.body.from_secret,
         AUTH0_CLIENT_ID: req.body.from_client,
         AUTH0_ALLOW_DELETE: false
     }
 
-    to_config ={
+    to_config = {
         AUTH0_DOMAIN: req.body.to_domain,
         AUTH0_CLIENT_SECRET: req.body.to_secret,
         AUTH0_CLIENT_ID: req.body.to_client,

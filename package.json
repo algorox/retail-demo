@@ -17,6 +17,7 @@
   "dependencies": {
     "@okta/okta-sdk-nodejs": "^6.5.0",
     "atob": "^2.1.2",
+    "auth0": "^2.44.0",
     "auth0-deploy-cli": "^7.15.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.2",
@@ -25,6 +26,7 @@
     "express-session": "^1.17.3",
     "passport": "^0.6.0",
     "passport-openidconnect": "^0.1.1",
+    "request": "^2.88.2",
     "winston": "^3.8.2"
   },
   "devDependencies": {
