@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const request = require('request')
+const queryString = require('query-string')
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -81,8 +82,6 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
 router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
 
-    console.log()
-
     var accessToken, profile
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
         accessToken = parseJWT(req.userContext.tokens.access_token)
@@ -91,17 +90,22 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
         profile = parseJWT(req.userContext.tokens.id_token)
     }
 
+    console.log(accessToken)
+
     res.render("profile", {
         pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
         first_name: profile.given_name || 'record not found',
         surname: profile.family_name || 'record not found',
         last_updated: profile.updated_at || 'record not found',
         user_meta: profile.user_metadata || 'looks like you need to add your favorite color',
-        accessToken: req.userContext.tokens.access_token || 'no access token returned'
+        accessToken: req.userContext.tokens.access_token || 'no access token returned',
+        domain: accessToken.iss,
+        baseUrl: 'http://storytime-stepup-121122.localhost:3000',
+        client: accessToken.azp
     });
 });
 
-const handleRequests = (url, body, accessToken) => {
+const handlePATCHRequests = (url, body, accessToken) => {
 
     return new Promise((resolve, reject) => {
 
@@ -176,7 +180,7 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
     }
 
 
-    handleRequests(user_update_url, user_data, req.body.access_token)
+    handlePATCHRequests(user_update_url, user_data, req.userContext.tokens.access_token)
         .then((output) => {
                     res.status(200)
                     res.send({
@@ -191,6 +195,22 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
                 });
         })
 
+router.get('/link_accounts', async (req, res, next) => {
+
+    var accessToken;
+    
+    accessToken = parseJWT(req.userContext.tokens.access_token)
+
+    var url = accessToken.iss + 'api/v2/users/' + accessToken.sub + '/identities'
+
+    console.log(url)
+    
+    res.render("link_accounts", {
+        accessToken: req.userContext.tokens.access_token || 'no access token returned',
+        url: url
+    });
+
+    })
 
 router.get("/download", function (req, res, next) {
     //this allows the direct download of the src as a zip removing the need to make the repo public

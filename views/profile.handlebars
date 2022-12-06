@@ -35,6 +35,10 @@
         <br>
         <input type="submit" value="Update Favorite Color" />
         <br>
+        <br>
+        <input type="button" onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=google-oauth2&prompt=login'" value="Link Accounts"/>
+        <br>
+        <br>
         <pre id="updated_note"></pre>
         <br>
 

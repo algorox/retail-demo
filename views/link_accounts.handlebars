@@ -1,0 +1,79 @@
+<style>
+    #updated_note {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: rgba(232, 232, 232, 0.489);
+        margin-top: 20px;
+        display: block;
+    }
+</style>
+
+
+<hr>
+<br>
+
+<body>
+
+    <br>
+
+    <form action="/update_profile" id="profile_form" method="POST">
+        <p><b>Account Linking</b></p>
+        <br>
+        <pre id="updated_note"></pre>
+        <br>
+
+        <br>
+    </form>
+    <hr>
+
+</body>
+
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>
+
+<script>
+
+    function show_update() {
+        var x = document.getElementById("updated_note");
+        x.style.display = "block";
+    }
+
+    $(function () {
+
+        const parsedHash = new URLSearchParams(
+            window.location.hash.substring(1) // skip the first char (#)
+        );
+
+        $(document).ready(function () {
+
+
+            var body_data;  
+
+            body_data = JSON.stringify({"link_with": parsedHash.get("id_token")})
+
+            $.ajax({
+
+                type: "POST",
+                url: '{{ url }}',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer {{ accessToken }}",
+                },
+                data: body_data,
+                success: function (data) {
+
+                    $('#updated_note').text(JSON.stringify(data, null, 2));
+
+                },
+                error: function (data) {
+                    $('#updated_note').text(JSON.stringify(data, null, 2));
+                }
+            });
+
+        });
+
+    })
+
+</script>
