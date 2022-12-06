@@ -5,7 +5,7 @@
         text-align: center;
         background-color: rgba(232, 232, 232, 0.489);
         margin-top: 20px;
-        display: block;
+        display: none;
     }
 </style>
 
@@ -21,34 +21,33 @@
 
     <form action="/update_profile" id="profile_form" method="POST">
         <p><b>Your Profile</b></p>
-
-        <input type="text" name="first_name" id="first_name" value="{{first_name}}" readonly />
         <label for="first_name">First Name</label>
+        <input type="text" name="first_name" id="first_name" value="{{first_name}}" readonly />
+        <label for="surname">Surname</label>
 
         <input type="text" name="surname" id="surname" value="{{surname}}" readonly />
-        <label for="surname">Surname</label>
+
         <br>
-
-
-        <input type="text" name="favorite_color" id="favorite_color" value="{{user_meta}}" readonly />
         <label for="favorite_color">Favourite Color</label>
+
+        <input type="text" name="favorite_color" id="favorite_color" value="{{user_meta}}" selected />
+
+        <br>
+        <input type="submit" value="Update Favorite Color" />
+        <br>
+        <pre id="updated_note"></pre>
         <br>
 
-        <input type="text" name="last_updated" id="last_updated" value="{{last_updated}}" readonly />
         <label for="last_updated">Last Updated</label>
+        <input type="text" name="last_updated" id="last_updated" value="{{last_updated}}" readonly />
 
-        <input type="text" name="access_token" id="access_token" value="{{accessToken}}" readonly />
-        <label for="access_token">Your Access Token</label>
+        <input type="text" name="access_token" id="access_token" value="{{accessToken}}" hidden />
+
 
         <br>
-        <br>
-
-        <input type="button" value="Click to Update Favourite Colour" id="Edit" onclick="make_editable();" />
-
-        <input type="submit" value="Submit"/>
     </form>
     <hr>
-    <pre id="updated_note"> Profile Updated!..</pre>
+
 </body>
 
 <div>
@@ -57,11 +56,10 @@
 
 <script>
 
-    function make_editable() {
-
-            document.getElementById('favorite_color').removeAttribute('readonly');
-};
-
+    function show_update() {
+        var x = document.getElementById("updated_note");
+        x.style.display = "block";
+    }
 
     $("#profile_form").submit(function (e) {
 
@@ -76,6 +74,7 @@
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
                 $('#updated_note').text(JSON.stringify(data, null, 2));
+                show_update();
             },
             error: function (data) {
                 $('#updated_note').text(JSON.stringify(data, null, 2));

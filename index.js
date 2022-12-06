@@ -169,12 +169,12 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
 
     handleRequests(user_update_url, user_data, req.body.access_token)
         .then((output) => {
-            console.log(output)
                     res.status(200)
                     res.send({
                         //"First name Set to: ": req.body.first_name,
                         //"Surname Set to: ": req.body.surname,
-                        "Favorite Color Set to: ": req.body.favorite_color
+                        "Favorite Color Set to: ": req.body.favorite_color,
+                        "Message": ' Logout and re-login to see the update'
                     });
                 })
                 .catch((err) => {
