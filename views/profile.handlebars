@@ -1,0 +1,72 @@
+<style>
+    #updated_note {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: rgba(232, 232, 232, 0.489);
+        margin-top: 20px;
+        display: none;
+    }
+</style>
+
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>
+<hr>
+
+<body>
+
+    <br>
+
+    <img src="https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png" alt="okta_aura" id="profile_pic" width="200" height="200">
+
+    <br>
+
+    <form action="/update_profile" id="profile_form" method="POST">
+        <p><b>Your Profile</b></p>
+
+        <input type="text" name="from_client" id="from_client" readonly/>
+        <label for="from_client">First Name</label>
+
+        <input type="text" name="from_secret" id="from_secret" readonly/>
+        <label for="from_secret">Surname</label>
+        <br>
+
+        <input type="text" name="to_domain" id="to_domain" readonly/>
+        <label for="to_domain">Last Updated</label>
+        
+        <br>
+        <br>
+
+        <input type="submit" value="Edit"
+            onclick="make_editable();" />   
+        
+        <input type="submit" value="Submit"
+            onclick="update(); " />
+    </form>
+    <hr>
+    <pre id="updated_note"> Profile Updated!..</pre>
+</body>
+
+
+<div>
+    <h4>Your ID Token</h4>
+    <ul>
+        {{#each profile}}
+            <li><b>{{@key}}</b>: {{this}}</li>
+        {{/each}}
+    </ul>
+</div>
+
+<div>
+    <h4>Your Access Token</h4>
+    <ul>
+        {{#each accessToken}}
+            <li><b>{{@key}}</b>: {{this}}</li>
+        {{/each}}
+    </ul>
+</div>
+
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>

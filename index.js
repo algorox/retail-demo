@@ -75,6 +75,21 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
         profile: profile,
         accessToken: accessToken
     });
+})
+
+router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
+    logger.verbose("/ requested")
+    var accessToken, profile
+    if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
+        accessToken = parseJWT(req.userContext.tokens.access_token)
+    }
+    if (req.userContext && req.userContext.tokens && req.userContext.tokens.id_token) {
+        profile = parseJWT(req.userContext.tokens.id_token)
+    }
+    res.render("profile", {
+        profile: profile,
+        accessToken: accessToken
+    });
 });
 
 router.get("/download", function (req, res, next) {
@@ -90,7 +105,7 @@ router.get('/login', tr.resolveTenant(), function (req, res, next) {
 router.get('/callback', function (req, res, next) {
     passport.authenticate(
         tr.getTenant(req.headers.host),
-        { successRedirect: '/migration', failureRedirect: '/error' })
+        { successRedirect: '/profile', failureRedirect: '/error' })
         (req, res, next)
 })
 router.get("/logout", ensureAuthenticated(), (req, res) => {
