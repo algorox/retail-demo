@@ -90,8 +90,6 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
         profile = parseJWT(req.userContext.tokens.id_token)
     }
 
-    console.log(accessToken)
-
     res.render("profile", {
         pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
         first_name: profile.given_name || 'record not found',
@@ -101,7 +99,8 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
         accessToken: req.userContext.tokens.access_token || 'no access token returned',
         domain: accessToken.iss,
         baseUrl: 'http://storytime-stepup-121122.localhost:3000',
-        client: accessToken.azp
+        client: accessToken.azp,
+        sub: accessToken.sub
     });
 });
 

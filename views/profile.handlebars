@@ -7,6 +7,10 @@
         margin-top: 20px;
         display: none;
     }
+
+     #link_account_button {
+        display: none;
+    }
 </style>
 
 
@@ -38,7 +42,7 @@
         <input type="submit" value="Update Favorite Color" />
         <br>
         <br>
-        <input type="button" onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=google-oauth2&prompt=login'" value="Link Accounts"/>
+        <input type="button" id="link_account_button" onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=Username-Password-Authentication&prompt=login'" value="Link Your U/P Account"/>
         <br>
         <br>
         <pre id="updated_note"></pre>
@@ -66,6 +70,15 @@
         var x = document.getElementById("updated_note");
         x.style.display = "block";
     }
+
+    $(document).ready(function () {
+
+        if('{{sub}}'.includes("google")) {
+        var x = document.getElementById("link_account_button");
+        x.style.display = "block";
+        }
+
+    })
 
     $("#profile_form").submit(function (e) {
 
