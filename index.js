@@ -155,9 +155,9 @@ router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => 
 
     // exports.onExecutePostLogin = async (event, api) => {
     //     const namespace = 'user_metadata';
-    //     if (event.user.user_metadata.favorite_color)
+    //     if (event.user.user_metadata)
     //     {
-    //       api.idToken.setCustomClaim(namespace, event.user.user_metadata.favorite_color);
+    //       api.idToken.setCustomClaim(namespace, event.user.user_metadata);
     //     }
     //   };
 
