@@ -8,7 +8,7 @@
         display: none;
     }
 
-     #link_account_button {
+    #link_account_button {
         display: none;
     }
 </style>
@@ -42,7 +42,11 @@
         <input type="submit" value="Update Favorite Color" />
         <br>
         <br>
-        <input type="button" id="link_account_button" onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=Username-Password-Authentication&prompt=login'" value="Link Your U/P Account"/>
+        <input type="button" id="link_account_button"
+            onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=Username-Password-Authentication&prompt=login'"
+            value="Link Your U/P Account" />
+        <br>
+        <input type="button" id="call_api" value="Call API" />
         <br>
         <br>
         <pre id="updated_note"></pre>
@@ -76,12 +80,48 @@
         var y = document.getElementById("favorite_color");
         y.value = '{{user_meta}}'
 
-        if('{{sub}}'.includes("google")) {
-        var x = document.getElementById("link_account_button");
-        x.style.display = "block";
+        if ('{{sub}}'.includes("google")) {
+            var x = document.getElementById("link_account_button");
+            x.style.display = "block";
         }
 
     })
+
+    function getPostPromise(url, type, data) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: url,
+                type: type,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer {{accessToken}}',
+                },
+                data: data,
+                success: resolve,
+                error: reject
+            });
+        });
+    }
+
+    $("#call_api").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/api/private'
+        api_type = 'POST'
+        api_data = JSON.stringify({test: 'test'})
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#updated_note').text(JSON.stringify(output, null, 2));
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#updated_note').text(JSON.stringify(err, null, 2));
+            })
+
+    });
 
     $("#profile_form").submit(function (e) {
 

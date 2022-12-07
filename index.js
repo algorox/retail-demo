@@ -13,6 +13,7 @@ const path = require('path');
 const os = require('os');
 const request = require('request')
 const queryString = require('query-string')
+const apiTokenVerfier = require('express-oauth2-jwt-bearer')
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -210,6 +211,31 @@ router.get('/link_accounts', async (req, res, next) => {
 
     })
 
+///////////////////////////
+//Quickstart API Services//
+///////////////////////////
+//THIS IS JUST A DEMO//////
+//DO NOT USE THIS METHOD FOR PRODUCTION SOLUTIONS//
+///////////////////////////
+
+const checkJwt = apiTokenVerfier.auth({
+        audience: process.env.API_AUDIENCE,
+        issuerBaseURL: process.env.API_ISSUER,
+      });
+      
+router.post('/api/private', checkJwt, function(req, res) {
+
+    res.status(200)
+    res.send({
+        "Status": "Access Granted",
+        "Access Token Used": req.headers.authorization,
+        "Audience": process.env.API_AUDIENCE,
+        "Issuer": process.env.API_ISSUER,
+        "Received Payload": req.body.test
+    });
+    
+  });
+
 router.get("/download", function (req, res, next) {
     //this allows the direct download of the src as a zip removing the need to make the repo public
     //the file at this location should be updated before deploy but never checked into git
@@ -218,7 +244,7 @@ router.get("/download", function (req, res, next) {
 })
 
 router.get('/login', tr.resolveTenant(), function (req, res, next) {
-    passport.authenticate(tr.getTenant(req.headers.host), { audience: 'urn:my-api', scope: process.env.SCOPES })(req, res, next)
+    passport.authenticate(tr.getTenant(req.headers.host), { audience: process.env.API_AUDIENCE, scope: process.env.SCOPES })(req, res, next)
 })
 router.get('/callback', function (req, res, next) {
     passport.authenticate(

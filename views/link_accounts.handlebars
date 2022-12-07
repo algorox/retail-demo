@@ -104,6 +104,9 @@
                     $('#updated_note').text(JSON.stringify(output, null, 2));
 
                 })
+                    .catch((err) => {
+                        $('#updated_note').text(JSON.stringify(err, null, 2));
+                    })
 
             })
                 .catch((err) => {
