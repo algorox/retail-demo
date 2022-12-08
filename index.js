@@ -52,7 +52,7 @@ const strategy = new Auth0Strategy(
 );
 
 passport.use(strategy);
-app.use(passport.initialize({userProperty: 'userContext'}));
+app.use(passport.initialize({ userProperty: 'userContext' }));
 app.use(passport.session());
 passport.serializeUser((user, next) => {
     next(null, user);
@@ -64,11 +64,10 @@ passport.deserializeUser((obj, next) => {
 
 function ensureAuthenticated() {
     return async (req, res, next) => {
-        console.log(req.userContext)
-         if (req.userContext) {
+        if (req.userContext) {
             return next()
         }
-        else{
+        else {
             res.redirect("/login")
         }
     }
@@ -101,10 +100,10 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
     });
 })
 
-router.get('/test', )
-
-router.get("/portal",ensureAuthenticated(), async (req, res, next) => {
+router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
+
+    console.log(tr.getSettings(tr.getTenant(req.headers.host)))
 
     var accessToken, profile
     if (req.userContext.at) {
@@ -129,7 +128,8 @@ const handleRequests = (url, body, type, accessToken) => {
             method: type,
             body: body,
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
             }
         };
         request(options, function (error, response, body) {
@@ -160,31 +160,134 @@ const handleRequests = (url, body, type, accessToken) => {
     });
 }
 
-const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 422, 429];
+const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 409, 422, 429];
 
 router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
-    var url, data, type, accessToken;
+    //     fetch("https://portal.staging.auth0.cloud/api/tenants", {
+    //   "headers": {
+    //     "accept": "*/*",
+    //     "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+    //     "authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg",
+    //     "b3": "5d246b9e982bfe2380ab0b7d3ce08363-ce4869925d26a958-1",
+    //     "content-type": "application/json",
+    //     "sec-ch-ua": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\"",
+    //     "sec-ch-ua-mobile": "?0",
+    //     "sec-ch-ua-platform": "\"macOS\"",
+    //     "sec-fetch-dest": "empty",
+    //     "sec-fetch-mode": "cors",
+    //     "sec-fetch-site": "same-origin",
+    //     "cookie": "_legacy_auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true; auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true",
+    //     "Referer": "https://portal.staging.auth0.cloud/demos/create/tenant",
+    //     "Referrer-Policy": "strict-origin-when-cross-origin"
+    //   },
+    //   "body": "{\"domain\":\"storytime-stepup-121122.cic-demo-platform.auth0app.com\",\"clientId\":\"snibKmP5hjAA0Ah5tjSYr3XnSTEN2Bfa\",\"clientSecret\":\"yreNSrqR3mO8fXo6tkVhU04YF5tcZqJxKNVMBIW0fEUtgihlg3GUG-jKFTzQYqvc\"}",
+    //   "method": "POST"
+    // });
 
-    data = {
-        user_metadata: {
-            favorite_color: req.body.favorite_color
-        }
+
+    // curl 'https://portal.staging.auth0.cloud/api/demos' \
+    //   -H 'authority: portal.staging.auth0.cloud' \
+    //   -H 'accept: */*' \
+    //   -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
+    //   -H 'authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg' \
+    //   -H 'b3: 06937c49c3a7b1536d7e4672b445018a-227395df8b5baf22-1' \
+    //   -H 'content-type: application/json' \
+    //   -H 'cookie: _legacy_auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true; auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true' \
+    //   -H 'origin: https://portal.staging.auth0.cloud' \
+    //   -H 'referer: https://portal.staging.auth0.cloud/demos/create/deploy' \
+    //   -H 'sec-ch-ua: "Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"' \
+    //   -H 'sec-ch-ua-mobile: ?0' \
+    //   -H 'sec-ch-ua-platform: "macOS"' \
+    //   -H 'sec-fetch-dest: empty' \
+    //   -H 'sec-fetch-mode: cors' \
+    //   -H 'sec-fetch-site: same-origin' \
+    //   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36' \
+    //   --data-raw '{"demoName":"p0-demo-test","tenantId":"6391ebcc0a00827a8215a948","demoTemplate":{"id":"624de7350e19472ca1f3cd9d","title":"PropertyZero"},"demoMetadata":{},"deploy":true}' \
+    //   --compressed
+
+
+    var check_url, check_data, tenant_url, tenant_data, demo_url, demo_data, get_type, post_type, accessToken, tenantSettings;
+    var domain, domain_trailing_slash
+
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    get_type = 'GET'
+    post_type = 'POST'
+    accessToken = req.userContext.at
+
+    //check_url = 'https://portal.staging.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid'
+    check_url = 'https://portal.staging.auth0.cloud/api/demos/' + 'test' + '/is-valid'
+    tenant_url = 'https://portal.staging.auth0.cloud/api/tenants';
+    demo_url = 'https://portal.staging.auth0.cloud/api/demos';
+
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+
+    tenant_data = {
+        "domain": domain_trailing_slash,
+        "clientId": tenantSettings.clientID,
+        "clientSecret": tenantSettings.clientSecret,
     }
 
-    handleRequests(url, data, type, accessToken)
+
+    handleRequests(check_url, check_data, get_type, req.userContext.at)
         .then((output) => {
-            res.status(200)
-            res.send({
-                "Favorite Color Set to: ": req.body.favorite_color,
-                "Message": ' Logout and re-login to see the update'
-            });
-        })
-        .catch((err) => {
+            handleRequests(tenant_url, tenant_data, post_type, req.userContext.at)
+                .then((output) => {
+
+                    var demo_template_id, demo_template_name
+
+                    if (req.body.demo._type = "Property0") {
+                        demo_template_id = "624de7350e19472ca1f3cd9d",
+                            demo_template_name = "PropertyZero"
+                    }
+
+
+                    if (req.body.demo._type = "Travel0") {
+                        demo_template_id = "tbd",
+                            demo_template_name = "TravelZero"
+                    }
+
+                    demo_data = {
+                        "demoName": req.body.demo_name || "test-demo-legacy",
+                        "tenantId": output.id,
+                        "demoTemplate": { "id": demo_template_id, "title": demo_template_name },
+                        "demoMetadata": {},
+                        "deploy": true
+                    }
+                    handleRequests(demo_url, demo_data, post_type, req.userContext.at)
+                        .then((output) => {
+
+                            res.status(200)
+                            res.send({
+                                "Demo Creation: ": output
+                            });
+
+                        }).catch((err) => {
+                            console.log(err);
+                            res.status(err.error)
+                            res.send({
+                                "Demo Creation ": err
+                            });
+                        })
+
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(err.error)
+                    res.send({
+                        "Demo Creation ": err
+                    });
+                })
+
+        }).catch((err) => {
             console.log(err);
             res.status(err.error)
-            res.send('/error?' + err.error + '&error_description=' + err.error_description);
-        });
+            res.send({
+                "Demo Creation ": err
+            });
+        })
+
 })
 
 router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
@@ -211,33 +314,26 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
         });
 })
 
-router.get("/download", function (req, res, next) {
-    //this allows the direct download of the src as a zip removing the need to make the repo public
-    //the file at this location should be updated before deploy but never checked into git
-    const file = `./demoapi-node-quickstart.zip`;
-    res.download(file);
-})
-
-router.get('/login', passport.authenticate('auth0',{audience: process.env.AUDIENCE, scope: process.env.SCOPES}),function(req,res){res.redirect('/portal')})
+router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })
 
 
 router.get("/callback", (req, res, next) => {
     passport.authenticate("auth0", (err, user, info) => {
-      if (err) {
-        return next(err);
-      }
-      if (!user) {
-        return res.redirect("/login");
-      }
-      req.logIn(user, (err) => {
         if (err) {
-          return next(err);
+            return next(err);
         }
-        res.redirect("/portal");
-      });
+        if (!user) {
+            return res.redirect("/login");
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            res.redirect("/portal");
+        });
     })(req, res, next);
-  });
-      
+});
+
 
 router.get("/logout", ensureAuthenticated(), (req, res) => {
     logger.verbose("/logout requested")
