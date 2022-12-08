@@ -26,7 +26,7 @@ app.use(session({
     cookie: { httpOnly: true },
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    resave: true
+    resave: false
 }));
 
 const strategy = new Auth0Strategy(
@@ -37,20 +37,22 @@ const strategy = new Auth0Strategy(
         callbackURL: process.env.CALLBACK_URL
     },
     function (accessToken, refreshToken, extraParams, profile, done) {
-        
+
         var user = {
-            'profile': profile._json,
-            'tokens': {
-                'access_token': accessToken,
-                'refresh_token': refreshToken
-            }
+            at: accessToken,
+            profile: profile
         }
+        //req.session.access_token = accessToken;
+        //req.session.profile = profile;
+        //req.session.refresh_token = refreshToken;
+        // req.session.expires_in = extraParams.expires_in;
+        // req.session.id_token = extraParams.id_token;
         return done(null, user);
     }
 );
 
 passport.use(strategy);
-app.use(passport.initialize());
+app.use(passport.initialize({userProperty: 'userContext'}));
 app.use(passport.session());
 passport.serializeUser((user, next) => {
     next(null, user);
@@ -62,10 +64,13 @@ passport.deserializeUser((obj, next) => {
 
 function ensureAuthenticated() {
     return async (req, res, next) => {
-        if (req.isAuthenticated() && req.userContext != null) {
-            return next();
+        console.log(req.userContext)
+         if (req.userContext) {
+            return next()
         }
-        res.redirect("/login")
+        else{
+            res.redirect("/login")
+        }
     }
 }
 
@@ -96,27 +101,20 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
     });
 })
 
-router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
+router.get('/test', )
+
+router.get("/portal",ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
 
     var accessToken, profile
-    if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
-        accessToken = parseJWT(req.userContext.tokens.access_token)
+    if (req.userContext.at) {
+        accessToken = parseJWT(req.userContext.at)
     }
-    if (req.userContext && req.userContext.tokens && req.userContext.tokens.id_token) {
-        profile = parseJWT(req.userContext.tokens.id_token)
+    if (req.userContext.profile) {
+        profile = req.userContext.profile
     }
 
     res.render("portal", {
-        pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
-        first_name: profile.given_name || 'record not found',
-        surname: profile.family_name || 'record not found',
-        last_updated: profile.updated_at || 'record not found',
-        user_meta: JSON.stringify(profile.user_metadata) || 'looks like you need to add your favorite color',
-        accessToken: req.userContext.tokens.access_token || 'no access token returned',
-        domain: accessToken.iss,
-        baseUrl: 'http://storytime-stepup-121122.localhost:3000',
-        client: accessToken.azp,
         sub: accessToken.sub
     });
 });
@@ -195,7 +193,7 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
 
     url = 'https://portal.staging.auth0.cloud/api/tenants'
     type = 'GET'
-    accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg'
+    accessToken = req.userContext.at
 
     handleRequests(url, data, type, accessToken)
         .then((output) => {
@@ -220,32 +218,26 @@ router.get("/download", function (req, res, next) {
     res.download(file);
 })
 
-router.get('/login', tr.resolveTenant(), function (req, res, next) {
-    passport.authenticate('auth0', { scope: process.env.SCOPES })(req, res, next)
-})
-router.get('/callback', function (req, res, next) {
+router.get('/login', passport.authenticate('auth0',{audience: process.env.AUDIENCE, scope: process.env.SCOPES}),function(req,res){res.redirect('/portal')})
 
-    passport.authenticate('auth0', (err, req, user, info) => {
 
-        console.log(req.session.access_token)
+router.get("/callback", (req, res, next) => {
+    passport.authenticate("auth0", (err, user, info) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.redirect("/login");
+      }
+      req.logIn(user, (err) => {
         if (err) {
-            console.log(err)
           return next(err);
         }
-        if (!user) {
-          return res.redirect("/login");
-        }
-        req.logIn(user, (err) => {
-          if (err) {
-            console.log('req - login')
-            return next(err);
-          }
-          const returnTo = "/portal";
-          res.redirect(returnTo || "/portal");
-        });
-      })(req, res, next);
+        res.redirect("/portal");
+      });
+    })(req, res, next);
+  });
       
-})
 
 router.get("/logout", ensureAuthenticated(), (req, res) => {
     logger.verbose("/logout requested")
