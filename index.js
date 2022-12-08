@@ -216,6 +216,8 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     post_type = 'POST'
     accessToken = req.userContext.at
 
+    console.log(req.body)
+
     demo_name = req.body.demo_name || 'test'
 
     //check_url = 'https://portal.staging.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid'
