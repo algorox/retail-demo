@@ -13,65 +13,42 @@
     }
 </style>
 
-
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>
 <hr>
 <br>
 
-<ul>Make sure you have added an Action in order to set the User Meta for Favorite Color in the ID Token</ul>
-
-<img src="{{pic}}" width="200" height="200">
+<ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0</ul>
+<ul>It is supported by the Demo Community at Okta</ul>
 
 <body>
 
     <br>
 
-    <form action="/update_profile" id="profile_form" method="POST">
-        <p><b>Your Profile</b></p>
-        <label for="first_name">First Name</label>
-        <input type="text" name="first_name" id="first_name" value="{{first_name}}" readonly />
-        <label for="surname">Surname</label>
+    <form action="/create_legacy_demo" id="create_demo" method="POST">
+        <p><b>Create Legacy Demo</b></p>
+        <label for="demo_name">Demo Name</label>
+        <input type="text" name="first_name" id="first_name" value="Enter Your Demo Name" />
 
-        <input type="text" name="surname" id="surname" value="{{surname}}" readonly />
+        <input type="submit" value="Get Tenants"/>
 
-        <br>
-        <label for="favorite_color">Favourite Color</label>
-
-        <input type="text" name="favorite_color" id="favorite_color" value="{{user_meta}}" selected />
-
-        <br>
-        <input type="submit" value="Update Favorite Color" />
-        <br>
-        <br>
-        <input type="button" id="link_account_button"
-            onclick="document.location='{{domain}}authorize?client_id={{client}}&response_type=id_token&redirect_uri={{baseUrl}}/link_accounts&nonce=123&scope=openid%20openid%20profile&connection=Username-Password-Authentication&prompt=login'"
-            value="Link Your U/P Account" />
-        <br>
-        <input type="button" id="call_api" value="Call API" />
-        <br>
-        <br>
-        <pre id="updated_note"></pre>
-        <br>
-
-        <label for="last_updated">Last Updated</label>
-        <input type="text" name="last_updated" id="last_updated" value="{{last_updated}}" readonly />
-
-        <input type="text" name="access_token" id="access_token" value="{{accessToken}}" hidden />
+        <input type="submit" value="Create Legacy Demo" />
+        
+        
 
 
-        <br>
     </form>
     <hr>
-
+        <pre id="notifications"></pre>
 </body>
 
-<div>
-    <a class="btn-small branded" href="/logout">Logout</a>
-</div>
+
 
 <script>
 
     function show_update() {
-        var x = document.getElementById("updated_note");
+        var x = document.getElementById("notifications");
         x.style.display = "block";
     }
 
@@ -123,7 +100,7 @@
 
     });
 
-    $("#profile_form").submit(function (e) {
+    $("#create_demo").submit(function (e) {
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
 
@@ -135,11 +112,11 @@
             url: actionUrl,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
-                $('#updated_note').text(JSON.stringify(data, null, 2));
+                $('#notifications').text(JSON.stringify(data, null, 2));
                 show_update();
             },
             error: function (data) {
-                $('#updated_note').text(JSON.stringify(data, null, 2));
+                $('#notifications').text(JSON.stringify(data, null, 2));
             }
         });
 

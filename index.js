@@ -80,7 +80,7 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
     });
 })
 
-router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
+router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
 
     var accessToken, profile
@@ -91,7 +91,7 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
         profile = parseJWT(req.userContext.tokens.id_token)
     }
 
-    res.render("profile", {
+    res.render("portal", {
         pic: profile.picture || 'https://demo-eng-public-static-resources.s3.amazonaws.com/okta-icon.png',
         first_name: profile.given_name || 'record not found',
         surname: profile.family_name || 'record not found',
@@ -105,14 +105,14 @@ router.get("/profile", ensureAuthenticated(), async (req, res, next) => {
     });
 });
 
-const handlePATCHRequests = (url, body, accessToken) => {
+const handleRequests = (url, body, type, accessToken) => {
 
     return new Promise((resolve, reject) => {
 
         const options = {
             url: url,
             json: true,
-            method: 'PATCH',
+            method: type,
             body: body,
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -148,93 +148,55 @@ const handlePATCHRequests = (url, body, accessToken) => {
 
 const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 422, 429];
 
-router.post("/update_profile", ensureAuthenticated(), async (req, res, next) => {
+router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
+    var url, data, type, accessToken;
 
-    //make sure you have the following added as an Action in your CIC tenant:
-
-    // exports.onExecutePostLogin = async (event, api) => {
-    //     const namespace = 'user_metadata';
-    //     if (event.user.user_metadata)
-    //     {
-    //       api.idToken.setCustomClaim(namespace, event.user.user_metadata);
-    //     }
-    //   };
-
-    var accessToken;
-
-    accessToken = parseJWT(req.body.access_token)
-
-    var user_update_url;
-
-    user_update_url = accessToken.iss + 'api/v2/users/' + accessToken.sub
-
-    console.log(user_update_url)
-
-    var user_data;
-
-    user_data = {
+    data = {
         user_metadata: {
             favorite_color: req.body.favorite_color
         }
     }
 
-    handlePATCHRequests(user_update_url, user_data, req.userContext.tokens.access_token)
+    handleRequests(url, data, type, accessToken)
         .then((output) => {
-                    res.status(200)
-                    res.send({
-                        "Favorite Color Set to: ": req.body.favorite_color,
-                        "Message": ' Logout and re-login to see the update'
-                    });
-                })
-                .catch((err) => {
-                    console.log(err);
-                    res.status(err.error)
-                    res.send('/error?' + err.error + '&error_description=' + err.error_description);
-                });
+            res.status(200)
+            res.send({
+                "Favorite Color Set to: ": req.body.favorite_color,
+                "Message": ' Logout and re-login to see the update'
+            });
         })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send('/error?' + err.error + '&error_description=' + err.error_description);
+        });
+})
 
-router.get('/link_accounts', async (req, res, next) => {
+router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
-    var accessToken;
-    
-    accessToken = parseJWT(req.userContext.tokens.access_token)
+    var url, data, type, accessToken;
 
-    var identity_url = accessToken.iss + 'api/v2/users/' + accessToken.sub + '/identities'
-    var meta_data_url = accessToken.iss + 'api/v2/users/' + accessToken.sub
-    
-    res.render("link_accounts", {
-        accessToken: req.userContext.tokens.access_token || 'no access token returned',
-        identity_url: identity_url,
-        meta_data_url: meta_data_url
-    });
+    url = 'https://portal.staging.auth0.cloud/api/tenants'
+    data = {};
+    type = 'GET'
+    accessToken = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg'
 
-    })
-
-///////////////////////////
-//Quickstart API Services//
-///////////////////////////
-//THIS IS JUST A DEMO//////
-//DO NOT USE THIS METHOD FOR PRODUCTION SOLUTIONS//
-///////////////////////////
-
-const checkJwt = apiTokenVerfier.auth({
-        audience: process.env.API_AUDIENCE,
-        issuerBaseURL: process.env.API_ISSUER,
-      });
-      
-router.post('/api/private', checkJwt, function(req, res) {
-
-    res.status(200)
-    res.send({
-        "Status": "Access Granted",
-        "Access Token Used": req.headers.authorization,
-        "Audience": process.env.API_AUDIENCE,
-        "Issuer": process.env.API_ISSUER,
-        "Received Payload": req.body.test
-    });
-    
-  });
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+            res.status(200)
+            res.send({
+                "Tenants ": output
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Tenants ": err
+            });;
+        });
+})
 
 router.get("/download", function (req, res, next) {
     //this allows the direct download of the src as a zip removing the need to make the repo public
@@ -249,7 +211,7 @@ router.get('/login', tr.resolveTenant(), function (req, res, next) {
 router.get('/callback', function (req, res, next) {
     passport.authenticate(
         tr.getTenant(req.headers.host),
-        { successRedirect: '/profile', failureRedirect: '/error' })
+        { successRedirect: '/portal', failureRedirect: '/error' })
         (req, res, next)
 })
 router.get("/logout", ensureAuthenticated(), (req, res) => {
@@ -362,111 +324,6 @@ router.post("/hooks/destroy", async (req, res, next) => {
         tr.removeTenant(req.body.demonstration.name)
     }
     res.sendStatus(202)
-})
-
-//////////////////////
-//MIGRATION SERVICES//
-//////////////////////
-
-app.use(express.urlencoded({ extended: true }));
-
-router.get("/migration", ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/ requested")
-    var accessToken
-    if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
-        accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    res.render("migration", {
-        accessToken: accessToken
-    });
-});
-
-router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => {
-    logger.verbose("/ requested")
-    var accessToken
-    if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
-        accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    res.render("config_migrated", {
-        accessToken: accessToken
-    });
-});
-
-router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => {
-    //console.log("Migrate Config request received.")
-    console.log(JSON.stringify(req.body))
-    var from_config;
-    var to_config;
-
-    from_config = {
-        AUTH0_DOMAIN: req.body.from_domain,
-        AUTH0_CLIENT_SECRET: req.body.from_secret,
-        AUTH0_CLIENT_ID: req.body.from_client,
-        AUTH0_ALLOW_DELETE: false
-    }
-
-    to_config = {
-        AUTH0_DOMAIN: req.body.to_domain,
-        AUTH0_CLIENT_SECRET: req.body.to_secret,
-        AUTH0_CLIENT_ID: req.body.to_client,
-        AUTH0_ALLOW_DELETE: false,
-        AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
-        AUTH0_EXCLUDED: ['tenant'],
-    }
-
-
-    // from_config = {
-    //     AUTH0_DOMAIN: process.env.FROM_DOMAIN,
-    //     AUTH0_CLIENT_SECRET: process.env.FROM_CLIENT_SECRET,
-    //     AUTH0_CLIENT_ID: process.env.FROM_CLIENT_ID,
-    //     AUTH0_ALLOW_DELETE: false
-    // }
-
-    // to_config = {
-    //     AUTH0_DOMAIN: process.env.TO_DOMAIN,
-    //     AUTH0_CLIENT_SECRET: process.env.TO_CLIENT_SECRET,
-    //     AUTH0_CLIENT_ID: process.env.TO_CLIENT_ID,
-    //     AUTH0_ALLOW_DELETE: false,
-    //     AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
-    //     AUTH0_EXCLUDED: ['tenant'],
-    // }
-
-    // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
-
-    fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
-        if (err) throw err;
-
-        deployCLI.dump({
-            output_folder: folder,   // temp store for tenant_config.json
-            config_file: 'tenant_config.json', //name of output file
-            config: from_config   // Set-up (as above)   
-        })
-            .then((output) => {
-
-                deployCLI.deploy({
-                    input_file: folder,  // Input file for directory, change to .yaml for YAML
-                    config_file: 'tenant_config.json', // Option to a config json
-                    config: to_config,   // Option to sent in json as object
-                })
-            })
-            .then((output) => {
-                res.status(200)
-                res.send(
-                    {
-                        'output': output,
-                        'tenant_migrated_from': from_config.AUTH0_DOMAIN,
-                        'tenant_migrated_to': to_config.AUTH0_DOMAIN
-                    })
-            })
-            .catch((error) => {
-                res.status(400)
-                res.send({ error: error })
-            })
-            .catch((error) => {
-                res.status(400)
-                res.send({ error: error })
-            })
-    });
 })
 
 app.use(router)
