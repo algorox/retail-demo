@@ -87,7 +87,7 @@
 
         api_url = '/get_legacy_demo'
         api_type = 'POST'
-        api_data = JSON.stringify({ test: 'test' })
+        api_data = JSON.stringify({ demo_name: 'test' })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 

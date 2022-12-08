@@ -207,7 +207,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     //   --compressed
 
 
-    var check_url, check_data, tenant_url, tenant_data, demo_url, demo_data, get_type, post_type, accessToken, tenantSettings;
+    var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
     tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
@@ -216,8 +216,10 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     post_type = 'POST'
     accessToken = req.userContext.at
 
+    demo_name = req.body.demo_name || 'test'
+
     //check_url = 'https://portal.staging.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid'
-    check_url = 'https://portal.staging.auth0.cloud/api/demos/' + 'test' + '/is-valid'
+    check_url = 'https://portal.staging.auth0.cloud/api/demos/' +  demo_name + '/is-valid'
     tenant_url = 'https://portal.staging.auth0.cloud/api/tenants';
     demo_url = 'https://portal.staging.auth0.cloud/api/demos';
 
@@ -250,7 +252,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                     }
 
                     demo_data = {
-                        "demoName": req.body.demo_name || "test-demo-legacy",
+                        "demoName": req.body.demo_name,
                         "tenantId": output.id,
                         "demoTemplate": { "id": demo_template_id, "title": demo_template_name },
                         "demoMetadata": {},
