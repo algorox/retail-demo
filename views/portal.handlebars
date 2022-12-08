@@ -29,13 +29,15 @@
     <form action="/create_legacy_demo" id="create_demo" method="POST">
         <p><b>Create Legacy Demo</b></p>
         <label for="demo_name">Demo Name</label>
-        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name"/>
-
-        <input type="submit" value="Create Legacy Demo" />
+        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" value=""/>
 
         <br>
         <br>
-        <input type="button" id="get_tenants" value="Get Tenants" />
+        <input class="btn-small branded" type="submit" value="Create Legacy Demo" />
+
+        <br>
+        <br>
+        <input class="btn-small branded" type="button" id="get_tenants" value="Get Tenants" />
 
     </form>
 
@@ -52,18 +54,6 @@
         var x = document.getElementById("notifications");
         x.style.display = "block";
     }
-
-    $(document).ready(function () {
-
-        var y = document.getElementById("favorite_color");
-        y.value = '{{user_meta}}'
-
-        if ('{{sub}}'.includes("google")) {
-            var x = document.getElementById("link_account_button");
-            x.style.display = "block";
-        }
-
-    })
 
     function getPostPromise(url, type, data) {
         return new Promise(function (resolve, reject) {

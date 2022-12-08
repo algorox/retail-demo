@@ -118,6 +118,8 @@ router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
     });
 });
 
+const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 409, 422, 429];
+
 const handleRequests = (url, body, type, accessToken) => {
 
     return new Promise((resolve, reject) => {
@@ -159,8 +161,6 @@ const handleRequests = (url, body, type, accessToken) => {
         })
     });
 }
-
-const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 409, 422, 429];
 
 router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
@@ -206,7 +206,6 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     //   --data-raw '{"demoName":"p0-demo-test","tenantId":"6391ebcc0a00827a8215a948","demoTemplate":{"id":"624de7350e19472ca1f3cd9d","title":"PropertyZero"},"demoMetadata":{},"deploy":true}' \
     //   --compressed
 
-
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
@@ -216,7 +215,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     post_type = 'POST'
     accessToken = req.userContext.at
 
-    console.log(req.body)
+    console.log(req)
 
     demo_name = req.body.demo_name || 'test'
 
@@ -234,10 +233,9 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
         "clientSecret": tenantSettings.clientSecret,
     }
 
-
-    handleRequests(check_url, check_data, get_type, req.userContext.at)
+    handleRequests(check_url, check_data, get_type, accessToken)
         .then((output) => {
-            handleRequests(tenant_url, tenant_data, post_type, req.userContext.at)
+            handleRequests(tenant_url, tenant_data, post_type, accessToken)
                 .then((output) => {
 
                     var demo_template_id, demo_template_name
@@ -260,7 +258,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                         "demoMetadata": {},
                         "deploy": true
                     }
-                    handleRequests(demo_url, demo_data, post_type, req.userContext.at)
+                    handleRequests(demo_url, demo_data, post_type, accessToken)
                         .then((output) => {
 
                             res.status(200)
