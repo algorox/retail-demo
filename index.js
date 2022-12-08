@@ -215,7 +215,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     post_type = 'POST'
     accessToken = req.userContext.at
 
-    console.log(req)
+    console.log(req.body)
 
     demo_name = req.body.demo_name || 'test'
 
@@ -238,16 +238,16 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
             handleRequests(tenant_url, tenant_data, post_type, accessToken)
                 .then((output) => {
 
-                    var demo_template_id, demo_template_name
+                    var demo_template_id, demo_template_name;
 
-                    if (req.body.demo._type = "Property0") {
+                    if (req.body.demo_type = "Property0") {
                         demo_template_id = "624de7350e19472ca1f3cd9d",
                             demo_template_name = "PropertyZero"
                     }
 
 
-                    if (req.body.demo._type = "Travel0") {
-                        demo_template_id = "tbd",
+                    if (req.body.demo_type = "Travel0") {
+                        demo_template_id = "61e25b7c4fe1c30777a019c0",
                             demo_template_name = "TravelZero"
                     }
 

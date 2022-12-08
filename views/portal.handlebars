@@ -1,14 +1,10 @@
 <style>
-    #updated_note {
+    #notifications {
         width: 100%;
         padding: 50px 0;
         text-align: center;
         background-color: rgba(232, 232, 232, 0.489);
         margin-top: 20px;
-        display: none;
-    }
-
-    #link_account_button {
         display: none;
     }
 </style>
@@ -28,8 +24,15 @@
 
     <form action="/create_legacy_demo" id="create_demo" method="POST">
         <p><b>Create Legacy Demo</b></p>
-        <label for="demo_name">Demo Name</label>
-        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" value=""/>
+        <label for="demo_type">Please select your demo app:</label>
+        <select style="display: block;" name="demo_type" id="demo_type">
+            <option value="Travel0">Travel0</option>
+            <option value="Property0">Property0</option>
+        </select>
+
+        <br>
+        <label for="demo">Demo Name</label>
+        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" />
 
         <br>
         <br>
@@ -98,41 +101,22 @@
 
         var form = $(this);
         var actionUrl = form.attr('action');
+        var api_type = 'POST';
+        var api_data = JSON.stringify({ 
+            demo_name: document.getElementById("demo_name").value,
+            demo_type: document.getElementById("demo_type").value,
+         })
 
-        $.ajax({
-            type: "POST",
-            url: actionUrl,
-            data: form.serialize(), // serializes the form's elements.
-            success: function (data) {
-                $('#notifications').text(JSON.stringify(data, null, 2));
-                show_update();
-            },
-            error: function (data) {
-                $('#notifications').text(JSON.stringify(data, null, 2));
-            }
-        });
+        getPostPromise(actionUrl, api_type, api_data).then((output) => {
 
-    });
+            $('#notifications').text(JSON.stringify(output, null, 2));
+            show_update()
 
-        $("#profile_form").submit(function (e) {
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-
-        var form = $(this);
-        var actionUrl = form.attr('action');
-
-        $.ajax({
-            type: "POST",
-            url: actionUrl,
-            data: form.serialize(), // serializes the form's elements.
-            success: function (data) {
-                $('#updated_note').text(JSON.stringify(data, null, 2));
-                show_update();
-            },
-            error: function (data) {
-                $('#updated_note').text(JSON.stringify(data, null, 2));
-            }
-        });
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
 
     });
 
