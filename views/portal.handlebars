@@ -29,7 +29,7 @@
     <form action="/create_legacy_demo" id="create_demo" method="POST">
         <p><b>Create Legacy Demo</b></p>
         <label for="demo_name">Demo Name</label>
-        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" />
+        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name"/>
 
         <input type="submit" value="Create Legacy Demo" />
 
@@ -119,6 +119,28 @@
             },
             error: function (data) {
                 $('#notifications').text(JSON.stringify(data, null, 2));
+            }
+        });
+
+    });
+
+        $("#profile_form").submit(function (e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var actionUrl = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: form.serialize(), // serializes the form's elements.
+            success: function (data) {
+                $('#updated_note').text(JSON.stringify(data, null, 2));
+                show_update();
+            },
+            error: function (data) {
+                $('#updated_note').text(JSON.stringify(data, null, 2));
             }
         });
 
