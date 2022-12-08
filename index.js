@@ -7,13 +7,8 @@ const tenantResolver = require('./tenantResolver')
 var logger = require('./logger');
 const auth0 = require('auth0-deploy-cli')
 const okta = require('@okta/okta-sdk-nodejs');
-const deployCLI = require('auth0-deploy-cli');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
 const request = require('request')
-const queryString = require('query-string')
-const apiTokenVerfier = require('express-oauth2-jwt-bearer')
+const Auth0Strategy = require('passport-auth0');
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -34,7 +29,28 @@ app.use(session({
     resave: true
 }));
 
-app.use(passport.initialize({ userProperty: 'userContext' }));
+const strategy = new Auth0Strategy(
+    {
+        domain: process.env.DOMAIN,
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        callbackURL: process.env.CALLBACK_URL
+    },
+    function (accessToken, refreshToken, extraParams, profile, done) {
+        
+        var user = {
+            'profile': profile._json,
+            'tokens': {
+                'access_token': accessToken,
+                'refresh_token': refreshToken
+            }
+        }
+        return done(null, user);
+    }
+);
+
+passport.use(strategy);
+app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user, next) => {
     next(null, user);
@@ -178,9 +194,8 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
     var url, data, type, accessToken;
 
     url = 'https://portal.staging.auth0.cloud/api/tenants'
-    data = {};
     type = 'GET'
-    accessToken = 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg'
+    accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg'
 
     handleRequests(url, data, type, accessToken)
         .then((output) => {
@@ -206,14 +221,32 @@ router.get("/download", function (req, res, next) {
 })
 
 router.get('/login', tr.resolveTenant(), function (req, res, next) {
-    passport.authenticate(tr.getTenant(req.headers.host), { audience: process.env.API_AUDIENCE, scope: process.env.SCOPES })(req, res, next)
+    passport.authenticate('auth0', { scope: process.env.SCOPES })(req, res, next)
 })
 router.get('/callback', function (req, res, next) {
-    passport.authenticate(
-        tr.getTenant(req.headers.host),
-        { successRedirect: '/portal', failureRedirect: '/error' })
-        (req, res, next)
+
+    passport.authenticate('auth0', (err, req, user, info) => {
+
+        console.log(req.session.access_token)
+        if (err) {
+            console.log(err)
+          return next(err);
+        }
+        if (!user) {
+          return res.redirect("/login");
+        }
+        req.logIn(user, (err) => {
+          if (err) {
+            console.log('req - login')
+            return next(err);
+          }
+          const returnTo = "/portal";
+          res.redirect(returnTo || "/portal");
+        });
+      })(req, res, next);
+      
 })
+
 router.get("/logout", ensureAuthenticated(), (req, res) => {
     logger.verbose("/logout requested")
     const tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))

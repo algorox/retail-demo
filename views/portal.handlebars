@@ -31,16 +31,17 @@
         <label for="demo_name">Demo Name</label>
         <input type="text" name="first_name" id="first_name" value="Enter Your Demo Name" />
 
-        <input type="submit" value="Get Tenants"/>
-
         <input type="submit" value="Create Legacy Demo" />
-        
-        
 
+        <br>
+        <br>
+        <input type="button" id="get_tenants" value="Get Tenants" />
 
     </form>
+
+
     <hr>
-        <pre id="notifications"></pre>
+    <pre id="notifications"></pre>
 </body>
 
 
@@ -80,22 +81,23 @@
         });
     }
 
-    $("#call_api").click(function () {
+    $("#get_tenants").click(function () {
 
         var api_url, api_type, api_data
 
-        api_url = '/api/private'
+        api_url = '/get_legacy_demo'
         api_type = 'POST'
-        api_data = JSON.stringify({test: 'test'})
+        api_data = JSON.stringify({ test: 'test' })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
-            $('#updated_note').text(JSON.stringify(output, null, 2));
+            $('#notifications').text(JSON.stringify(output, null, 2));
             show_update()
 
         })
             .catch((err) => {
-                $('#updated_note').text(JSON.stringify(err, null, 2));
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
             })
 
     });
