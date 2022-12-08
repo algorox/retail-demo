@@ -40,7 +40,15 @@
 
         <br>
         <br>
+        <input class="btn-small branded" type="button" id="get_demos" value="Get Demos" />
+
+        <br>
+        <br>
         <input class="btn-small branded" type="button" id="get_tenants" value="Get Tenants" />
+
+        <br>
+        <br>
+        <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo" />
 
     </form>
 
@@ -74,7 +82,7 @@
         });
     }
 
-    $("#get_tenants").click(function () {
+    $("#get_demos").click(function () {
 
         var api_url, api_type, api_data
 
@@ -95,6 +103,52 @@
 
     });
 
+    $("#get_tenants").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/get_legacy_tenants'
+        api_type = 'POST'
+        api_data = JSON.stringify({ demo_name: 'test' })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+            
+            $('#notifications').text(JSON.stringify(output, null, 2));
+
+
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+        $("#clear_demo").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/get_legacy_tenants'
+        api_type = 'POST'
+        api_data = JSON.stringify({ clear: "true" })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+            
+            $('#notifications').text(JSON.stringify(output, null, 2));
+
+
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
     $("#create_demo").submit(function (e) {
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -102,10 +156,10 @@
         var form = $(this);
         var actionUrl = form.attr('action');
         var api_type = 'POST';
-        var api_data = JSON.stringify({ 
+        var api_data = JSON.stringify({
             demo_name: document.getElementById("demo_name").value,
             demo_type: document.getElementById("demo_type").value,
-         })
+        })
 
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 

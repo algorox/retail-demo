@@ -164,48 +164,6 @@ const handleRequests = (url, body, type, accessToken) => {
 
 router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
-    //     fetch("https://portal.staging.auth0.cloud/api/tenants", {
-    //   "headers": {
-    //     "accept": "*/*",
-    //     "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-    //     "authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg",
-    //     "b3": "5d246b9e982bfe2380ab0b7d3ce08363-ce4869925d26a958-1",
-    //     "content-type": "application/json",
-    //     "sec-ch-ua": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\"",
-    //     "sec-ch-ua-mobile": "?0",
-    //     "sec-ch-ua-platform": "\"macOS\"",
-    //     "sec-fetch-dest": "empty",
-    //     "sec-fetch-mode": "cors",
-    //     "sec-fetch-site": "same-origin",
-    //     "cookie": "_legacy_auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true; auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true",
-    //     "Referer": "https://portal.staging.auth0.cloud/demos/create/tenant",
-    //     "Referrer-Policy": "strict-origin-when-cross-origin"
-    //   },
-    //   "body": "{\"domain\":\"storytime-stepup-121122.cic-demo-platform.auth0app.com\",\"clientId\":\"snibKmP5hjAA0Ah5tjSYr3XnSTEN2Bfa\",\"clientSecret\":\"yreNSrqR3mO8fXo6tkVhU04YF5tcZqJxKNVMBIW0fEUtgihlg3GUG-jKFTzQYqvc\"}",
-    //   "method": "POST"
-    // });
-
-
-    // curl 'https://portal.staging.auth0.cloud/api/demos' \
-    //   -H 'authority: portal.staging.auth0.cloud' \
-    //   -H 'accept: */*' \
-    //   -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
-    //   -H 'authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InBtTkJ1TWRBcVhQMUZNSERfamhyWiJ9.eyJodHRwczovL3N0YWdpbmcuYXV0aDAuY2xvdWQvZW1haWwiOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwibG9naW4iOiJqdWxpYW4ubHl3b29kQG9rdGEuY29tIiwiaHR0cHM6Ly9hdXRoLm9rdGFkZW1vLmVuZ2luZWVyaW5nL2Nvbm5lY3Rpb24vIjoiZW1wbG95ZWUiLCJpc3MiOiJodHRwczovL3ZhbmRlbGF5LWluZHVzdHJpZXMudXMuYXV0aDAuY29tLyIsInN1YiI6Im9pZGN8T2t0YXwwMHUxamJnNWdwZDltbmpiOTFkOCIsImF1ZCI6WyJodHRwczovL3BvcnRhbC5zdGFnaW5nLmF1dGgwLmNsb3VkL2FwaSIsImh0dHBzOi8vdmFuZGVsYXktaW5kdXN0cmllcy51cy5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNjcwNDg1MDA5LCJleHAiOjE2NzA1NzE0MDksImF6cCI6InY3dHh0aFBGUVJ6NDJNWU1wVFd2VGZpNHIxaThSRTJQIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCJ9.D-ZHJuvUz0-icQo9f9C3w6dLiv2QFc2ex_rSeKIJaBcimnlheEfhC7oTCpKApUuemHZ-APtqPmZ_VHJ5eCrrSxMFNGaOxAKErUcdt_Y8uiHMkgFeoPFZXeXUDYw2U1U7lPrQr-LRQ3vRo2BZd-VAuSBkHwoDPpBl1Q03VwB3R7AW2tiL9A_QBMKKpprF_3Y-BmpJ9cFU_WP7Qk6S8_PYIpbza-rBwTogFqoS07tyYyAB8X7Z0ql6jsW_XwN-qI5nt_Y8zaVnbap6bnGqg_VZGXhyoLNf5qGc5l--Vwuvr4v1HaGIvQBVOmDhqjBxse4PPbLo1DgQBZ9i1gjos2y5gg' \
-    //   -H 'b3: 06937c49c3a7b1536d7e4672b445018a-227395df8b5baf22-1' \
-    //   -H 'content-type: application/json' \
-    //   -H 'cookie: _legacy_auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true; auth0.v7txthPFQRz42MYMpTWvTfi4r1i8RE2P.is.authenticated=true' \
-    //   -H 'origin: https://portal.staging.auth0.cloud' \
-    //   -H 'referer: https://portal.staging.auth0.cloud/demos/create/deploy' \
-    //   -H 'sec-ch-ua: "Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"' \
-    //   -H 'sec-ch-ua-mobile: ?0' \
-    //   -H 'sec-ch-ua-platform: "macOS"' \
-    //   -H 'sec-fetch-dest: empty' \
-    //   -H 'sec-fetch-mode: cors' \
-    //   -H 'sec-fetch-site: same-origin' \
-    //   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36' \
-    //   --data-raw '{"demoName":"p0-demo-test","tenantId":"6391ebcc0a00827a8215a948","demoTemplate":{"id":"624de7350e19472ca1f3cd9d","title":"PropertyZero"},"demoMetadata":{},"deploy":true}' \
-    //   --compressed
-
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
@@ -215,14 +173,11 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
     post_type = 'POST'
     accessToken = req.userContext.at
 
-    console.log(req.body)
-
     demo_name = req.body.demo_name || 'test'
 
-    //check_url = 'https://portal.staging.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid'
-    check_url = 'https://portal.staging.auth0.cloud/api/demos/' +  demo_name + '/is-valid'
-    tenant_url = 'https://portal.staging.auth0.cloud/api/tenants';
-    demo_url = 'https://portal.staging.auth0.cloud/api/demos';
+    check_url = 'https://portal.auth0.cloud/api/demos/' + demo_name + '/is-valid'
+    tenant_url = 'https://portal.auth0.cloud/api/tenants';
+    demo_url = 'https://portal.auth0.cloud/api/demos';
 
     domain = tenantSettings.issuer.replace('https://', '');
     domain_trailing_slash = domain.replace('/', '');
@@ -241,13 +196,13 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                     var demo_template_id, demo_template_name;
 
                     if (req.body.demo_type = "Property0") {
-                        demo_template_id = "624de7350e19472ca1f3cd9d",
+                        demo_template_id = "6258876198054a2a27ab56ba",
                             demo_template_name = "PropertyZero"
                     }
 
 
                     if (req.body.demo_type = "Travel0") {
-                        demo_template_id = "61e25b7c4fe1c30777a019c0",
+                        demo_template_id = "61e3d56571224f67caf205e1",
                             demo_template_name = "TravelZero"
                     }
 
@@ -258,6 +213,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                         "demoMetadata": {},
                         "deploy": true
                     }
+
                     handleRequests(demo_url, demo_data, post_type, accessToken)
                         .then((output) => {
 
@@ -274,12 +230,109 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                             });
                         })
 
+
                 }).catch((err) => {
-                    console.log(err);
-                    res.status(err.error)
-                    res.send({
-                        "Demo Creation ": err
-                    });
+
+                    if (err.error_description.error.message === "A tenant with the same name already exists") {
+
+
+                        var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response;;
+
+                        tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+                        url = 'https://portal.auth0.cloud/api/tenants'
+                        type = 'GET'
+                        accessToken = req.userContext.at
+
+                        domain = tenantSettings.issuer.replace('https://', '');
+                        domain_trailing_slash = domain.replace('/', '');
+
+                        handleRequests(url, data, type, accessToken)
+                            .then((output) => {
+
+
+
+                                for (let i = 0; i < output.results.length; i++) {
+                                    let obj = output.results[i];
+
+                                    if (obj.domain === domain_trailing_slash) {
+
+                                        tenant_response = {
+                                            "Tenant_Link": output.results[i].dashboardLink,
+                                            "Tenant_Name": output.results[i].domain,
+                                            "Tenant_ID": output.results[i].id,
+                                            "Linked_Demo_Name": output.results[i].demoName,
+                                        }
+
+                                    }
+                                }
+
+                                if (tenant_response) {
+
+
+                                    var demo_template_id, demo_template_name;
+
+                                    if (req.body.demo_type = "Property0") {
+                                        demo_template_id = "6258876198054a2a27ab56ba",
+                                            demo_template_name = "PropertyZero"
+                                    }
+
+
+                                    if (req.body.demo_type = "Travel0") {
+                                        demo_template_id = "61e3d56571224f67caf205e1",
+                                            demo_template_name = "TravelZero"
+                                    }
+
+                                    demo_data = {
+                                        "demoName": req.body.demo_name,
+                                        "tenantId": tenant_response.Tenant_ID,
+                                        "demoTemplate": { "id": demo_template_id, "title": demo_template_name },
+                                        "demoMetadata": {},
+                                        "deploy": true
+                                    }
+
+                                    handleRequests(demo_url, demo_data, post_type, accessToken)
+                                        .then((output) => {
+
+                                            res.status(200)
+                                            res.send({
+                                                "Demo Creation: ": output
+                                            });
+
+                                        }).catch((err) => {
+                                            console.log(err);
+                                            res.status(err.error)
+                                            res.send({
+                                                "Demo Creation ": err
+                                            });
+                                        })
+
+
+
+
+                                }
+
+                                else {
+                                    res.status(200)
+                                    res.send({
+                                        "Tenants": "Not Found"
+                                    });
+
+                                }
+
+                            })
+
+
+                            .catch((err) => {
+                                console.log(err);
+                                res.status(err.error)
+                                res.send({
+                                    "Tenants": err
+                                });;
+                            });
+
+                    }
+
                 })
 
         }).catch((err) => {
@@ -294,26 +347,284 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
 
 router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
 
-    var url, data, type, accessToken;
+    // var url, data, type, accessToken;
 
-    url = 'https://portal.staging.auth0.cloud/api/tenants'
+    // url = 'https://portal.auth0.cloud/api/demos'
+    // type = 'GET'
+    // accessToken = req.userContext.at
+
+    // handleRequests(url, data, type, accessToken)
+    //     .then((output) => {
+
+    //         res.status(200)
+    //         res.send({
+    //             "Demos": output
+    //         });
+    //     })
+    //     .catch((err) => {
+    //         console.log(err);
+    //         res.status(err.error)
+    //         res.send({
+    //             "Demos": err
+    //         });;
+    //     });
+
+    var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
+
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    url = 'https://portal.auth0.cloud/api/tenants'
+    demo_url = 'https://portal.auth0.cloud/api/demos'
     type = 'GET'
     accessToken = req.userContext.at
 
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+
     handleRequests(url, data, type, accessToken)
         .then((output) => {
-            res.status(200)
+
+
+
+            for (let i = 0; i < output.results.length; i++) {
+                let obj = output.results[i];
+
+                if (obj.domain === domain_trailing_slash) {
+
+                    tenant_response = {
+                        "Tenant_Link": output.results[i].dashboardLink,
+                        "Tenant_Name": output.results[i].domain,
+                        "Tenant_ID": output.results[i].id,
+                        "Linked_Demo_Name": output.results[i].demoName,
+                    }
+
+                }
+            }
+
+            if (tenant_response) {
+
+
+                console.log(tenant_response)
+
+                handleRequests(demo_url, data, type, accessToken)
+                    .then((output) => {
+
+
+                        for (let i = 0; i < output.results.length; i++) {
+                            let obj = output.results[i];
+
+                            if (obj.tenantId === tenant_response.Tenant_ID) {
+
+                                demo_response = output.results[i];
+
+                            }
+                        }
+
+                        if(!demo_response){
+
+                            res.status(200)
+                            res.send({
+                                "Demo": "No demo added yet"
+                            });
+                        }
+
+                        else {
+
+                            var applications = [];
+
+                            for (let i = 0; i < demo_response.applications.length; i++) {
+                                let obj = demo_response.applications[i];
+    
+                                if (obj.url) {
+
+                                    applications.push(obj.url);
+    
+                                }
+                            }
+
+                            res.status(200)
+                            res.send({
+                                "Demo": applications
+                            });
+                        }
+
+                    }).catch((err) => {
+                        console.log(err);
+                        res.status(err.error)
+                        res.send({
+                            "Demo": err
+                        });
+                    })
+
+
+
+
+            }
+
+            else {
+                res.status(200)
+                res.send({
+                    "Demo": "Not Found"
+                });
+
+            }
+
+        })
+
+
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
             res.send({
-                "Tenants ": output
-            });
+                "Demo": err
+            });;
+        });
+
+})
+
+router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next) => {
+
+    var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
+
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    url = 'https://portal.auth0.cloud/api/tenants'
+    type = 'GET'
+    accessToken = req.userContext.at
+
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            var response;
+
+            for (let i = 0; i < output.results.length; i++) {
+                let obj = output.results[i];
+
+                if (obj.domain === domain_trailing_slash) {
+
+                    response = {
+                        "Tenant_Link": output.results[i].dashboardLink,
+                        "Tenant_Name": output.results[i].domain,
+                        "Tenant_ID": output.results[i].id,
+                        "Linked_Demo_Name": output.results[i].demoName,
+                    }
+
+                }
+
+                else {
+
+                    response = {
+                        "Tenants": "Not Found"
+                    }
+                }
+
+            }
+
+            if (req.body.clear) {
+                req.body.tenant_id = response.Tenant_ID
+                req.body.linked_demo_name = response.Linked_Demo_Name
+                next()
+            }
+
+            else {
+                res.status(200)
+                res.send({
+                    "Tenants": response
+                });
+
+            }
+
         })
         .catch((err) => {
             console.log(err);
             res.status(err.error)
             res.send({
-                "Tenants ": err
+                "Tenants": err
             });;
         });
+})
+
+router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next) => {
+
+    var url, data, type, accessToken;
+
+    url = 'https://portal.auth0.cloud/api/demos'
+    type = 'GET'
+    clear_type = 'DELETE'
+    accessToken = req.userContext.at
+    var clear_demo_url, clear_tenant_url;
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            for (let i = 0; i < output.results.length; i++) {
+                let obj = output.results[i];
+
+                if (obj.tenantId === req.body.tenant_id) {
+
+                    clear_demo_url = 'https://portal.auth0.cloud/api/demos/' + output.results[i].id
+                    clear_tenant_url = 'https://portal.auth0.cloud/api/tenants/' + req.body.tenant_id
+
+                }
+
+            }
+
+            if (clear_demo_url) {
+
+                handleRequests(clear_demo_url, data, clear_type, accessToken)
+                    .then((output) => {
+
+                        res.status(200)
+                        res.send({
+                            "Demo": "Cleared"
+                        });
+
+                        // handleRequests(clear_tenant_url, data, clear_type, accessToken)
+                        //     .then((output) => {
+
+                        //         res.status(200)
+                        //         res.send({
+                        //             "Demo": "Deleted"
+                        //         });
+
+                        //     }).catch((err) => {
+                        //         console.log(err);
+                        //         res.status(err.error)
+                        //         res.send({
+                        //             "Demo": err
+                        //         });
+                        //     });
+
+                    }).catch((err) => {
+                        console.log(err);
+                        res.status(err.error)
+                        res.send({
+                            "Demo": err
+                        });
+                    });
+
+            }
+
+            else {
+
+                res.status(200)
+                res.send({
+                    "Demo": "Demo Not Found"
+                });
+            }
+
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Demo": err
+            });
+        });
+
 })
 
 router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })
