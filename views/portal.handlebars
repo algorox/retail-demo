@@ -126,9 +126,7 @@
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
-            console.log(output)
-
-            if (output.Demo.applications.constructor === Array) {
+            if (output.Demo != "No demo added yet") {
 
                 for (let i = 0; i < output.Demo.applications.length; i++) {
                     list = document.createElement("LI");
@@ -138,10 +136,14 @@
 
                 }
 
+                window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
+                window.localStorage.setItem('demo_id', output.Demo.demo_id);
+
             }
 
             else {
-
+                
+                window.localStorage.clear()
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
                 list.innerHTML = output.Demo;
@@ -215,6 +217,7 @@
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
+            window.localStorage.clear()
             $('#notifications').text(JSON.stringify(output, null, 2));
 
 
@@ -242,7 +245,11 @@
 
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 
-            $('#notifications').text(JSON.stringify(output, null, 2));
+            window.localStorage.clear()
+            window.localStorage.setItem('tenant_id', output.demo_creation.results[0].tenantId);
+            window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
+
+            $('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
             show_update()
 
         })
