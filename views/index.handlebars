@@ -1,26 +1,29 @@
 <span>
-    <p>This project is an example of an implementation of the Okta Demo API in Node.js. This application supports dynamic configuration and lifecycle webhooks.</p>
+    <a class="btn-small branded" href="/portal">Login</a>
+
+
+    <p><b>Welcome</b></p>
+    <ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0
+    </ul>
+    <ul>It provides a 1:1 mapping between the connected tenant and either an instance of Travel0 or Property0: your
+        choice!</ul>
+    <ul>It is supported by the Demo Community at Okta under a Best Efforts model</ul>
+    <br>
+    <p>This project is an example of an implementation of the Okta Demo API in Node.js. This application supports
+        dynamic configuration and lifecycle webhooks.</p>
+    <br>
     {{#if tenantSettings}}
-        <div>
+    <div>
         <h5>{{demoName}} demo settings</h5>
-            {{#each tenantSettings}}
-                <b>{{@key}}</b> = {{this}}
-            {{/each}}
-        </div>
-        <a class="btn-small branded" href="/portal">Login</a>
-        {{else}}
-        <div>
-            <h5>Use this demo</h5>
-            <p>
-                You can use this demo instance directly in the demo builder by 
-                adding the "Node Quickstart" managed application to your demo.
-                You will then visit this site with 
-                "your-demo-name".nodequickstart.oktademo.engineering this will 
-                load the settings for your IDP and demo automatically from the API.
-            </p>
-            <p>
-                If you are running locally visit "your-demo-name".localhost:3000
-            </p>
-        </div>
-    {{/if}}    
+        {{#each tenantSettings}}
+        <b>{{@key}}</b> = {{this}}
+        {{/each}}
+    </div>
+
+    {{else}}
+
+    <div>
+
+    </div>
+    {{/if}}
 </span>
