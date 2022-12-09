@@ -654,6 +654,59 @@ router.post("/get_legacy_db_users", ensureAuthenticated(), async (req, res, next
 
 })
 
+router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) => {
+
+    console.log(req.body)
+
+    var url, data, type, accessToken;
+
+    url = 'https://portal.auth0.cloud/api/demos/' + req.body.demo_id
+    type = 'PATCH'
+    accessToken = req.userContext.at
+
+    if (req.body.flag_cic_value != null)
+    {
+        data = {
+            "flags":[{
+                "name": "USE_AUTH0_UNIVERSAL_LOGIN",
+                "enabled": req.body.flag_cic_value
+            }]
+        }
+    
+    }
+
+    if (req.body.flag_azure_ad_value != null)
+    {
+        data = {
+            "flags":[{
+                "name": "USE_AZURE_AD_CONNECTION",
+                "enabled": req.body.flag_azure_ad_value
+            }]
+        }
+    
+    }
+
+    console.log(data)
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            res.status(200)
+            res.send({
+                "Flag": output
+            });
+
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Flag": err
+            });
+        });
+
+})
+
 router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })
 
 

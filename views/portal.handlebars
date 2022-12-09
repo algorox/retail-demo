@@ -22,85 +22,55 @@
         clear: both;
     }
 
-    .onoffswitch {
+    .switch {
         position: relative;
-        width: 90px;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
     }
 
-    .onoffswitch-checkbox {
-        position: absolute;
+    .switch input {
         opacity: 0;
-        pointer-events: none;
+        width: 0;
+        height: 0;
     }
 
-    .onoffswitch-label {
-        display: block;
-        overflow: hidden;
-        cursor: pointer;
-        border: 2px solid #999999;
-        border-radius: 20px;
-    }
-
-    .onoffswitch-inner {
-        display: block;
-        width: 200%;
-        margin-left: -100%;
-        transition: margin 0.3s ease-in 0s;
-    }
-
-    .onoffswitch-inner:before,
-    .onoffswitch-inner:after {
-        display: block;
-        float: left;
-        width: 50%;
-        height: 30px;
-        padding: 0;
-        line-height: 30px;
-        font-size: 14px;
-        color: white;
-        font-family: Trebuchet, Arial, sans-serif;
-        font-weight: bold;
-        box-sizing: border-box;
-    }
-
-    .onoffswitch-inner:before {
-        content: "ON";
-        padding-left: 10px;
-        background-color: #343bc1;
-        color: #FFFFFF;
-    }
-
-    .onoffswitch-inner:after {
-        content: "OFF";
-        padding-right: 10px;
-        background-color: #EEEEEE;
-        color: #999999;
-        text-align: right;
-    }
-
-    .onoffswitch-switch {
-        display: block;
-        width: 18px;
-        margin: 6px;
-        background: #FFFFFF;
+    .slider {
         position: absolute;
+        cursor: pointer;
         top: 0;
+        left: 0;
+        right: 0;
         bottom: 0;
-        right: 56px;
-        border: 2px solid #999999;
-        border-radius: 20px;
-        transition: all 0.3s ease-in 0s;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
     }
 
-    .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-inner {
-        margin-left: 0;
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
     }
 
-    .onoffswitch-checkbox:checked+.onoffswitch-label .onoffswitch-switch {
-        right: 0px;
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
     }
 </style>
 
@@ -118,7 +88,8 @@
             <p><b>Welcome</b></p>
             <ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0
             </ul>
-            <ul>It provides a 1:1 mapping between the connected tenant and either an instance of Travel0 or Property0: your choice!</ul>
+            <ul>It provides a 1:1 mapping between the connected tenant and either an instance of Travel0 or Property0:
+                your choice!</ul>
             <ul>It is supported by the Demo Community at Okta under a Best Efforts model</ul>
 
             <p><b>Your Demos</b></p>
@@ -137,25 +108,23 @@
             <br>
 
             <label for="demo_type">CIC Login Enabled</label>
-            <div class="onoffswitch">
+            <br>
 
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="cic_login" tabindex="0">
-                <label class="onoffswitch-label" for="myonoffswitch">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
-            </div>
+            <label class="switch">
+                <input type="checkbox" id="cic_login">
+                <span ></span>
+
+            </label>
 
             <br>
             <label for="demo_type">Azure AD SSO</label>
+            <br>
 
-            <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="azure_ad" tabindex="0">
-                <label class="onoffswitch-label" for="myonoffswitch">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
-            </div>
+            <label class="switch" >
+                <input type="checkbox" id="azure_ad">
+                <span></span>
+
+            </label>
 
         </div>
 
@@ -448,6 +417,55 @@
         api_type = 'POST'
         api_data = JSON.stringify({
             demo_name: window.localStorage.getItem('demo_name')
+        })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#notifications').text(JSON.stringify(output, null, 2));
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+    $("#azure_ad").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/update_demo_flags'
+        api_type = 'POST'
+
+        api_data = JSON.stringify({
+            demo_id: window.localStorage.getItem('demo_id'),
+            flag_azure_ad_value: document.getElementById("azure_ad").checked
+        })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#notifications').text(JSON.stringify(output, null, 2));
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+    $("#cic_login").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/update_demo_flags'
+        api_type = 'POST'
+        api_data = JSON.stringify({
+            demo_id: window.localStorage.getItem('demo_id'),
+            flag_cic_value: document.getElementById("cic_login").checked
         })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
