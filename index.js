@@ -312,9 +312,6 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                                             });
                                         })
 
-
-
-
                                 }
 
                                 else {
@@ -351,28 +348,6 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
 })
 
 router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
-
-    // var url, data, type, accessToken;
-
-    // url = 'https://portal.auth0.cloud/api/demos'
-    // type = 'GET'
-    // accessToken = req.userContext.at
-
-    // handleRequests(url, data, type, accessToken)
-    //     .then((output) => {
-
-    //         res.status(200)
-    //         res.send({
-    //             "Demos": output
-    //         });
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //         res.status(err.error)
-    //         res.send({
-    //             "Demos": err
-    //         });;
-    //     });
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
@@ -432,7 +407,15 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
 
                         else {
 
+                            var demo_info;
+
                             var applications = [];
+
+                            demo_info = {
+                                "demo_id": demo_response.id,
+                                "tenant_id": demo_response.tenantId,
+                                applications
+                            }
 
                             for (let i = 0; i < demo_response.applications.length; i++) {
                                 let obj = demo_response.applications[i];
@@ -443,10 +426,9 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
     
                                 }
                             }
-
                             res.status(200)
                             res.send({
-                                "Demo": applications
+                                "Demo": demo_info
                             });
                         }
 

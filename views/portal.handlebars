@@ -7,67 +7,88 @@
         margin-top: 20px;
         display: none;
     }
+
+    .column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+        height: 300px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
 </style>
 
 <div>
     <a class="btn-small branded" href="/logout">Logout</a>
 </div>
-<hr>
-<br>
 
-<ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0</ul>
-<ul>It is supported by the Demo Community at Okta</ul>
+
 
 <body>
 
     <br>
 
-    <p><b>Your Demos</b></p>
-
-    <ul id="list-container"></ul>
-
-    <p><b>Your Tenant</b></p>
-
-    <ul>
-        <li>{{tenant}}</li>
-    </ul>
-    <br>
 
 
+    <div class="row">
+        <div class="column">
+            <p><b>Welcome</b></p>
+            <ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0
+            </ul>
+            <ul>It is supported by the Demo Community at Okta under a Best Efforts model</ul>
 
-    <form action="/create_legacy_demo" id="create_demo" method="POST">
-        <p><b>Create Legacy Demo</b></p>
-        <label for="demo_type">Please select your demo app:</label>
-        <select style="display: block;" name="demo_type" id="demo_type">
-            <option value="Travel0">Travel0</option>
-            <option value="Property0">Property0</option>
-        </select>
+            <p><b>Your Demos</b></p>
 
-        <br>
-        <label for="demo">Demo Name</label>
-        <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" />
+            <ul id="list-container"></ul>
 
-        <br>
-        <br>
-        <input class="btn-small branded" type="submit" value="Create Legacy Demo" onclick="return confirm('Are you sure? By clicking Create, you understand that your CIC tenant will be completely overwritten with a new demo configuration'); "/>
+            <p><b>Your Tenant</b></p>
 
-        <br>
-        <br>
-        <input class="btn-small branded" type="button" id="get_demos" value="Get Demos" />
+            <ul>
+                <li>{{tenant}}</li>
+            </ul>
+            <br>
 
-        <br>
-        <br>
-        <input class="btn-small branded" type="button" id="get_tenants" value="Get Tenants" />
+        </div>
 
-        <br>
-        <br>
-        <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo" onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
+        <div class="column">
+            <form action="/create_legacy_demo" id="create_demo" method="POST">
+                <p><b>Create Legacy Demo</b></p>
+                <label for="demo_type">Please select your demo app:</label>
+                <select style="display: block;" name="demo_type" id="demo_type">
+                    <option value="Travel0">Travel0</option>
+                    <option value="Property0">Property0</option>
+                </select>
 
-    </form>
+                <br>
+                <label for="demo">Demo Name</label>
+                <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" />
 
+                <br>
+                <br>
+                <input class="btn-small branded" type="submit" value="Create Legacy Demo"
+                    onclick="return confirm('Are you sure? By clicking Create, you understand that your CIC tenant will be completely overwritten with a new demo configuration'); " />
 
-    <hr>
-    <pre id="notifications"></pre>
+                <br>
+                <br>
+                <input class="btn-small branded" type="button" id="get_demos" value="Get Demos" />
+
+                <br>
+                <br>
+                <input class="btn-small branded" type="button" id="get_tenants" value="Get Tenants" />
+
+                <br>
+                <br>
+                <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo"
+                    onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
+
+            </form>
+            <pre id="notifications"></pre>
+        </div>
+    </div>
 </body>
 
 
@@ -105,12 +126,14 @@
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
-            if (output.Demo.constructor === Array) {
+            console.log(output)
 
-                for (let i = 0; i < output.Demo.length; i++) {
+            if (output.Demo.applications.constructor === Array) {
+
+                for (let i = 0; i < output.Demo.applications.length; i++) {
                     list = document.createElement("LI");
                     list.setAttribute("href", "#");
-                    list.innerHTML = output.Demo[i];
+                    list.innerHTML = output.Demo.applications[i];
                     document.getElementById('list-container').appendChild(list);
 
                 }
