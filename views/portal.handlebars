@@ -112,7 +112,7 @@
 
             <label class="switch">
                 <input type="checkbox" id="cic_login">
-                <span ></span>
+                <span></span>
 
             </label>
 
@@ -120,11 +120,24 @@
             <label for="demo_type">Azure AD SSO</label>
             <br>
 
-            <label class="switch" >
+            <label class="switch">
                 <input type="checkbox" id="azure_ad">
                 <span></span>
 
             </label>
+            <br>
+            <form action="/mailtrap" id="mailtrap_form" method="POST">
+                <p><b>Mailtrap API Key</b></p>
+                <label for="mailtrap">Must be Mailtrap API v1</label>
+
+                <br>
+                <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
+
+                <br>
+
+                <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
+
+            </form>
 
         </div>
 
@@ -524,6 +537,33 @@
             window.localStorage.setItem('demo_name', output.demo_creation.results[0].name);
 
             $('#notifications').text("Demo Creation requested successfully!\nPlease wait a few moments before continuing as it can take a while for creation to complete");
+            //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+    $("#mailtrap_form").submit(function (e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var actionUrl = form.attr('action');
+        var api_type = 'POST';
+        var api_data = JSON.stringify({
+            key: document.getElementById("mailtrap_input").value
+        })
+
+        console.log('hit')
+
+        getPostPromise(actionUrl, api_type, api_data).then((output) => {
+
+            $('#notifications').text("Mailtrap API Set");
             //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
             show_update()
 

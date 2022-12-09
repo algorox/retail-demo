@@ -654,9 +654,40 @@ router.post("/get_legacy_db_users", ensureAuthenticated(), async (req, res, next
 
 })
 
-router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) => {
+router.post("/mailtrap", ensureAuthenticated(), async (req, res, next) => {
 
-    console.log(req.body)
+    var url, data, type, accessToken;
+
+    var key = req.body.key || 'empty'
+
+    url = 'https://portal.auth0.cloud/api/settings'
+    type = 'PATCH'
+    accessToken = req.userContext.at
+
+    data = {
+        "mailtrap_api_key": req.body.key 
+    }
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            res.status(200)
+            res.send({
+                "Mailtrap": output
+            });
+
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Mailtrap": err
+            });
+        });
+
+})
+
+router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -685,8 +716,6 @@ router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) 
         }
     
     }
-
-    console.log(data)
 
     handleRequests(url, data, type, accessToken)
         .then((output) => {
