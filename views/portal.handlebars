@@ -1,11 +1,12 @@
 <style>
     #notifications {
         width: 100%;
+        height: 300px;
         padding: 50px 0;
-        text-align: center;
-        background-color: rgba(232, 232, 232, 0.489);
+        text-align: left;
+        background-color: rgba(232, 232, 232, 0.785);
         margin-top: 20px;
-        display: none;
+        overflow: scroll;
     }
 
     .column {
@@ -198,6 +199,8 @@
                     onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
 
             </form>
+            <br>
+            <p><b>Events</b></p>
             <pre id="notifications"></pre>
         </div>
     </div>
@@ -237,6 +240,20 @@
         api_data = JSON.stringify({ demo_name: 'test' })
 
         getPostPromise(demo_url, api_type, api_data).then((output) => {
+
+            if (output.Demo === "No demo added yet") {
+                list = document.createElement("LI");
+                list.setAttribute("href", "#");
+                list.innerHTML = output.Demo;
+                list2 = document.createElement("LI");
+                list2.setAttribute("href", "#");
+                list2.innerHTML = output.Demo;
+                document.getElementById('list-container').appendChild(list);
+                document.getElementById('user-container').appendChild(list2);
+                return;
+            }
+
+
             for (let i = 0; i < output.Demo.applications.length; i++) {
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
@@ -456,7 +473,7 @@
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
             window.localStorage.clear()
-            $('#notifications').text("Demo Clear requested successfully! Please wait a few moments before continuing as it can take a while for deletion to complete");
+            $('#notifications').text("Demo Clear requested successfully!\nPlease wait a few moments before continuing as it can take a while for deletion to complete");
             //$('#notifications').text(JSON.stringify(output, null, 2));
             show_update()
 
@@ -487,7 +504,7 @@
             window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
             window.localStorage.setItem('demo_name', output.demo_creation.results[0].name);
 
-            $('#notifications').text("Demo Creation requested successfully! Please wait a few moments before continuing as it can take a while for creation to complete");
+            $('#notifications').text("Demo Creation requested successfully!\nPlease wait a few moments before continuing as it can take a while for creation to complete");
             //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
             show_update()
 
