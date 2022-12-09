@@ -619,7 +619,36 @@ router.post("/get_legacy_logs", ensureAuthenticated(), async (req, res, next) =>
             console.log(err);
             res.status(err.error)
             res.send({
-                "Demo": err
+                "Logs": err
+            });
+        });
+
+})
+
+router.post("/get_legacy_db_users", ensureAuthenticated(), async (req, res, next) => {
+
+    var url, data, type, accessToken;
+
+    var demo_name = req.body.demo_name || 'empty'
+
+    url = 'https://portal.auth0.cloud/api/legacy/users/' + demo_name
+    type = 'GET'
+    accessToken = req.userContext.at
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            res.status(200)
+            res.send({
+                "Legacy_Users": output
+            });
+
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Legacy_Users": err
             });
         });
 

@@ -133,8 +133,7 @@
             <label for="demo_type">CIC Login Enabled</label>
             <div class="onoffswitch">
 
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0"
-                    checked>
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0">
                 <label class="onoffswitch-label" for="myonoffswitch">
                     <span class="onoffswitch-inner"></span>
                     <span class="onoffswitch-switch"></span>
@@ -179,6 +178,11 @@
                 <br>
                 <br>
                 <input class="btn-small branded" type="button" id="get_tenants" value="Get Tenants" />
+
+                <br>
+                <br>
+                <input class="btn-small branded" type="button" id="get_legacy_db_users" value="Legacy DB Users" />
+
 
                 <br>
                 <br>
@@ -276,12 +280,25 @@
         api_type = 'POST'
         api_data = JSON.stringify({ demo_name: 'test' })
 
+
+
         getPostPromise(api_url, api_type, api_data).then((output) => {
             for (let i = 0; i < output.Demo.applications.length; i++) {
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
                 list.innerHTML = output.Demo.applications[i];
                 document.getElementById('list-container').appendChild(list);
+
+            }
+
+
+            var azureADflag = output.Demo.raw.flags[0].enabled;
+            var auth0Loginflag = output.Demo.raw.flags[1].enabled
+
+
+
+            if(auth0Loginflag) {
+                            console.log(auth0Loginflag)
 
             }
 
@@ -328,6 +345,29 @@
         var api_url, api_type, api_data
 
         api_url = '/get_legacy_logs'
+        api_type = 'POST'
+        api_data = JSON.stringify({
+            demo_name: window.localStorage.getItem('demo_name')
+        })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#notifications').text(JSON.stringify(output, null, 2));
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+    $("#get_legacy_db_users").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/get_legacy_db_users'
         api_type = 'POST'
         api_data = JSON.stringify({
             demo_name: window.localStorage.getItem('demo_name')
