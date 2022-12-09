@@ -49,7 +49,7 @@
 
         <br>
         <br>
-        <input class="btn-small branded" type="submit" value="Create Legacy Demo" />
+        <input class="btn-small branded" type="submit" value="Create Legacy Demo" onclick="return confirm('Are you sure? By clicking Create, you understand that your CIC tenant will be completely overwritten with a new demo configuration'); "/>
 
         <br>
         <br>
@@ -61,7 +61,7 @@
 
         <br>
         <br>
-        <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo" />
+        <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo" onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
 
     </form>
 
