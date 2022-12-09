@@ -133,7 +133,7 @@
             <label for="demo_type">CIC Login Enabled</label>
             <div class="onoffswitch">
 
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="cic_login" tabindex="0">
                 <label class="onoffswitch-label" for="myonoffswitch">
                     <span class="onoffswitch-inner"></span>
                     <span class="onoffswitch-switch"></span>
@@ -144,7 +144,7 @@
             <label for="demo_type">Azure AD SSO</label>
 
             <div class="onoffswitch">
-                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" tabindex="0">
+                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="azure_ad" tabindex="0">
                 <label class="onoffswitch-label" for="myonoffswitch">
                     <span class="onoffswitch-inner"></span>
                     <span class="onoffswitch-switch"></span>
@@ -244,6 +244,28 @@
 
                 }
 
+                var azureADflag = output.Demo.raw.flags[0].enabled;
+                var auth0Loginflag = output.Demo.raw.flags[1].enabled
+
+
+                if (auth0Loginflag) {
+                    document.getElementById("cic_login").checked = true;
+
+                }
+
+                else {
+                    document.getElementById("cic_login").checked = false;
+                }
+
+                if (azureADflag) {
+                    document.getElementById("azure_ad").checked = true;
+
+                }
+
+                else {
+                    azureADflag.getElementById("azure_ad").checked = false;
+                }
+
                 window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
                 window.localStorage.setItem('demo_id', output.Demo.demo_id);
                 window.localStorage.setItem('demo_name', output.Demo.raw.name);
@@ -291,16 +313,28 @@
 
             }
 
-
             var azureADflag = output.Demo.raw.flags[0].enabled;
             var auth0Loginflag = output.Demo.raw.flags[1].enabled
 
 
-
-            if(auth0Loginflag) {
-                            console.log(auth0Loginflag)
+            if (auth0Loginflag) {
+                document.getElementById("cic_login").checked = true;
 
             }
+
+            else {
+                document.getElementById("cic_login").checked = false;
+            }
+
+            if (azureADflag) {
+                document.getElementById("azure_ad").checked = true;
+
+            }
+
+            else {
+                azureADflag.getElementById("azure_ad").checked = false;
+            }
+
 
             window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
             window.localStorage.setItem('demo_id', output.Demo.demo_id);
