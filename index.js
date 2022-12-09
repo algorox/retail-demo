@@ -299,43 +299,6 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
                                     handleRequests(demo_url, demo_data, post_type, accessToken)
                                         .then((output) => {
 
-
-                                            // {
-                                            //     "Demo Creation: ": {
-                                            //       "results": [
-                                            //         {
-                                            //           "templateData": {
-                                            //             "id": "61e3d56571224f67caf205e1",
-                                            //             "title": "TravelZero",
-                                            //             "type": "travel0"
-                                            //           },
-                                            //           "_id": "6392f2a18a114877b60bab7d",
-                                            //           "name": "asdsadasdsadasdasd",
-                                            //           "flags": [
-                                            //             {
-                                            //               "name": "USE_AZURE_AD_CONNECTION",
-                                            //               "label": "Azure AD SSO",
-                                            //               "description": "If enabled, users will be redirected to Azure AD directly without being presented with Auth0 login prompt",
-                                            //               "enabled": false
-                                            //             },
-                                            //             {
-                                            //               "name": "USE_AUTH0_UNIVERSAL_LOGIN",
-                                            //               "label": "Auth0 Login",
-                                            //               "description": "If enabled, users will be redirected to Auth0 Universal Login for authentication",
-                                            //               "enabled": true
-                                            //             }
-                                            //           ],
-                                            //           "tenantId": "639254de786f677fcd69abbb",
-                                            //           "userId": "oidc|Okta|00u1jbg5gpd9mnjb91d8",
-                                            //           "userEmail": "julian.lywood@okta.com",
-                                            //           "createdAt": "2022-12-09T08:32:33.758Z",
-                                            //           "updatedAt": "2022-12-09T08:32:33.851Z",
-                                            //           "__v": 0,
-                                            //           "deploymentId": "6392f2a1786f6712ea69bab5"
-                                            //         }
-                                            //       ]
-                                            //     }
-                                            //   }
                                             res.status(200)
                                             res.send({
                                                 "demo_creation": output
@@ -449,6 +412,7 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
                             var applications = [];
 
                             demo_info = {
+                                "raw": demo_response,
                                 "demo_id": demo_response.id,
                                 "tenant_id": demo_response.tenantId,
                                 applications
@@ -603,22 +567,6 @@ router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next)
                             "Demo": "Cleared"
                         });
 
-                        // handleRequests(clear_tenant_url, data, clear_type, accessToken)
-                        //     .then((output) => {
-
-                        //         res.status(200)
-                        //         res.send({
-                        //             "Demo": "Deleted"
-                        //         });
-
-                        //     }).catch((err) => {
-                        //         console.log(err);
-                        //         res.status(err.error)
-                        //         res.send({
-                        //             "Demo": err
-                        //         });
-                        //     });
-
                     }).catch((err) => {
                         console.log(err);
                         res.status(err.error)
@@ -636,6 +584,35 @@ router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next)
                     "Demo": "Demo Not Found"
                 });
             }
+
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(err.error)
+            res.send({
+                "Demo": err
+            });
+        });
+
+})
+
+router.post("/get_legacy_logs", ensureAuthenticated(), async (req, res, next) => {
+
+    var url, data, type, accessToken;
+
+    var demo_name = req.body.demo_name || 'empty'
+
+    url = 'https://portal.auth0.cloud/api/logs/' + demo_name
+    type = 'GET'
+    accessToken = req.userContext.at
+
+    handleRequests(url, data, type, accessToken)
+        .then((output) => {
+
+            res.status(200)
+            res.send({
+                "Logs": output
+            });
 
         })
         .catch((err) => {

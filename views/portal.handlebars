@@ -82,6 +82,10 @@
 
                 <br>
                 <br>
+                <input class="btn-small branded" type="button" id="get_logs" value="Logs" />
+
+                <br>
+                <br>
                 <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo"
                     onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
 
@@ -138,11 +142,12 @@
 
                 window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
                 window.localStorage.setItem('demo_id', output.Demo.demo_id);
+                window.localStorage.setItem('demo_name', output.Demo.raw.name);
 
             }
 
             else {
-                
+
                 window.localStorage.clear()
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
@@ -172,6 +177,17 @@
         api_data = JSON.stringify({ demo_name: 'test' })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
+            for (let i = 0; i < output.Demo.applications.length; i++) {
+                list = document.createElement("LI");
+                list.setAttribute("href", "#");
+                list.innerHTML = output.Demo.applications[i];
+                document.getElementById('list-container').appendChild(list);
+
+            }
+
+            window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
+            window.localStorage.setItem('demo_id', output.Demo.demo_id);
+            window.localStorage.setItem('demo_name', output.Demo.raw.name);
 
             $('#notifications').text(JSON.stringify(output, null, 2));
             show_update()
@@ -197,6 +213,29 @@
             $('#notifications').text(JSON.stringify(output, null, 2));
 
 
+            show_update()
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+                show_update()
+            })
+
+    });
+
+    $("#get_logs").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/get_legacy_logs'
+        api_type = 'POST'
+        api_data = JSON.stringify({
+            demo_name: window.localStorage.getItem('demo_name')
+        })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#notifications').text(JSON.stringify(output, null, 2));
             show_update()
 
         })
@@ -248,6 +287,7 @@
             window.localStorage.clear()
             window.localStorage.setItem('tenant_id', output.demo_creation.results[0].tenantId);
             window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
+            window.localStorage.setItem('demo_name', output.demo_creation.results[0].name);
 
             $('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
             show_update()
