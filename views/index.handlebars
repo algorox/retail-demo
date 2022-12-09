@@ -9,12 +9,12 @@
         choice!</ul>
     <ul>It is supported by the Demo Community at Okta under a Best Efforts model</ul>
     <br>
-    <p>This project is an example of an implementation of the Okta Demo API in Node.js. This application supports
-        dynamic configuration and lifecycle webhooks.</p>
+    <ul>This project is an example of an implementation of the Okta Demo API in Node.js. This application supports
+        dynamic configuration and lifecycle webhooks.</ul>
     <br>
     {{#if tenantSettings}}
     <div>
-        <h5>{{demoName}} demo settings</h5>
+        <ul><b>{{demoName}} demo settings</b></ul>
         {{#each tenantSettings}}
         <b>{{@key}}</b> = {{this}}
         {{/each}}
