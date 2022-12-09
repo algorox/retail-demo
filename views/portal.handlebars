@@ -22,6 +22,19 @@
 
     <br>
 
+    <p><b>Your Demos</b></p>
+
+    <ul id="list-container"></ul>
+
+    <p><b>Your Tenant</b></p>
+
+    <ul>
+        <li>{{tenant}}</li>
+    </ul>
+    <br>
+
+
+
     <form action="/create_legacy_demo" id="create_demo" method="POST">
         <p><b>Create Legacy Demo</b></p>
         <label for="demo_type">Please select your demo app:</label>
@@ -82,6 +95,49 @@
         });
     }
 
+    $(document).ready(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/get_legacy_demo'
+        api_type = 'POST'
+        api_data = JSON.stringify({ demo_name: 'test' })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            if (output.Demo.constructor === Array) {
+
+                for (let i = 0; i < output.Demo.length; i++) {
+                    list = document.createElement("LI");
+                    list.setAttribute("href", "#");
+                    list.innerHTML = output.Demo[i];
+                    document.getElementById('list-container').appendChild(list);
+
+                }
+
+            }
+
+            else {
+
+                list = document.createElement("LI");
+                list.setAttribute("href", "#");
+                list.innerHTML = output.Demo;
+                document.getElementById('list-container').appendChild(list);
+
+            }
+
+        })
+            .catch((err) => {
+
+                list = document.createElement("LI");
+                list.setAttribute("href", "#");
+                list.innerHTML = err
+                document.getElementById('list-container').appendChild(list);
+
+            })
+
+    });
+
     $("#get_demos").click(function () {
 
         var api_url, api_type, api_data
@@ -112,7 +168,7 @@
         api_data = JSON.stringify({ demo_name: 'test' })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
-            
+
             $('#notifications').text(JSON.stringify(output, null, 2));
 
 
@@ -126,7 +182,7 @@
 
     });
 
-        $("#clear_demo").click(function () {
+    $("#clear_demo").click(function () {
 
         var api_url, api_type, api_data
 
@@ -135,7 +191,7 @@
         api_data = JSON.stringify({ clear: "true" })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
-            
+
             $('#notifications').text(JSON.stringify(output, null, 2));
 
 

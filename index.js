@@ -103,8 +103,6 @@ router.get("/protected", ensureAuthenticated(), async (req, res, next) => {
 router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
     logger.verbose("/ requested")
 
-    console.log(tr.getSettings(tr.getTenant(req.headers.host)))
-
     var accessToken, profile
     if (req.userContext.at) {
         accessToken = parseJWT(req.userContext.at)
@@ -113,8 +111,15 @@ router.get("/portal", ensureAuthenticated(), async (req, res, next) => {
         profile = req.userContext.profile
     }
 
+    var domain, domain_trailing_slash, tenantSettings
+
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+    domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
+
     res.render("portal", {
-        sub: accessToken.sub
+        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
     });
 });
 
@@ -195,13 +200,13 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
 
                     var demo_template_id, demo_template_name;
 
-                    if (req.body.demo_type = "Property0") {
+                    if (req.body.demo_type === "Property0") {
                         demo_template_id = "6258876198054a2a27ab56ba",
                             demo_template_name = "PropertyZero"
                     }
 
 
-                    if (req.body.demo_type = "Travel0") {
+                    if (req.body.demo_type === "Travel0") {
                         demo_template_id = "61e3d56571224f67caf205e1",
                             demo_template_name = "TravelZero"
                     }
@@ -272,13 +277,13 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
 
                                     var demo_template_id, demo_template_name;
 
-                                    if (req.body.demo_type = "Property0") {
+                                    if (req.body.demo_type === "Property0") {
                                         demo_template_id = "6258876198054a2a27ab56ba",
                                             demo_template_name = "PropertyZero"
                                     }
 
 
-                                    if (req.body.demo_type = "Travel0") {
+                                    if (req.body.demo_type === "Travel0") {
                                         demo_template_id = "61e3d56571224f67caf205e1",
                                             demo_template_name = "TravelZero"
                                     }
@@ -402,9 +407,6 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
             }
 
             if (tenant_response) {
-
-
-                console.log(tenant_response)
 
                 handleRequests(demo_url, data, type, accessToken)
                     .then((output) => {
