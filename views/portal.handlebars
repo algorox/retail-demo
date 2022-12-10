@@ -232,6 +232,8 @@
 
         getPostPromise(demo_url, api_type, api_data).then((output) => {
 
+        console.log(output.Demo.raw)
+        
             if (output.Demo === "No demo added yet") {
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
