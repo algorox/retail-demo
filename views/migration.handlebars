@@ -2,23 +2,30 @@
     #migration_logs {
         width: 100%;
         padding: 50px 0;
-        text-align: center;
+        text-align: left;
         background-color: rgba(232, 232, 232, 0.489);
         margin-top: 20px;
         display: none;
+        overflow: scroll;
+        white-space: pre-wrap;
     }
 </style>
 
 <div>
-    <a class="btn-small branded" href="/logout">Logout</a> 
+    <a class="btn-small branded" href="/logout">Logout</a>
     <a class="btn-small branded" href="/portal">Portal</a>
 </div>
 <hr>
 
-<ul>Before you begin, you need to create an M2M application in the tenant you migrating from <b>AND</b> the tenant you are migrating to.</ul>
-<ul>Use <a href="https://auth0.com/docs/deploy-monitor/deploy-cli-tool/create-and-configure-the-deploy-cli-application" target="_blank">this</a> doc to guide you through the process. Make a note of the client ids and secrets as you will need them below!</ul>
-<ul>The intent of this solution is to accelerate migration of demos to PoCs, PoCs to development environments and the use of unsupported legacy demo applications</ul>
+<ul>Before you begin, you need to create an M2M application in the tenant you migrating from <b>AND</b> the tenant you
+    are migrating to.</ul>
+<ul>Use <a href="https://auth0.com/docs/deploy-monitor/deploy-cli-tool/create-and-configure-the-deploy-cli-application"
+        target="_blank">this</a> doc to guide you through the process. Make a note of the client ids and secrets as you
+    will need them below!</ul>
+<ul>The intent of this solution is to accelerate migration of demos to PoCs, PoCs to development environments and the
+    use of unsupported legacy demo applications</ul>
 <hr>
+
 <body>
     <form action="/migration/migrate_config" id="migrate_form" method="POST">
         <p><b>From</b></p>
@@ -51,7 +58,7 @@
         <br>
         <br> --}}
         <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
-        <input type="submit" value="Migrate!"
+        <input type="submit" class="btn-small branded" value="Migrate!"
             onclick="show_logs(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed'); " />
     </form>
     <hr>
