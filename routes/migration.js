@@ -47,7 +47,11 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
         AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
         AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
-        AUTH0_ALLOW_DELETE: false
+        AUTH0_ALLOW_DELETE: false,
+        AUTH0_EXPORT_IDENTIFIERS: true,
+        INCLUDED_PROPS: {
+            "clients": [ "client_secret", "client_id" ]
+          }
     }
 
     to_config = {
@@ -57,6 +61,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         AUTH0_ALLOW_DELETE: true,
         AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
         AUTH0_EXCLUDED: ['tenant', 'clientGrants', 'actions', 'customDomains', 'migrations'],
+        INCLUDED_PROPS: {
+            "clients": [ "client_secret", "client_id" ]
+          }
     }
 
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
@@ -65,14 +72,14 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         if (err) throw err;
 
         deployCLI.dump({
-            output_folder: folder,   // temp store for tenant_config.json
+            output_folder: folder, // temp store for tenant_config.json
             config_file: 'tenant_config.json', //name of output file
             config: from_config   // Set-up (as above)   
         })
             .then((output) => {
 
                 deployCLI.deploy({
-                    input_file: folder,  // Input file for directory, change to .yaml for YAML
+                    input_file: folder,  // temp store for tenant_config.json
                     config_file: 'tenant_config.json', // Option to a config json
                     config: to_config,   // Option to sent in json as object
                 })
