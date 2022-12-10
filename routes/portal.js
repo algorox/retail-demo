@@ -53,7 +53,7 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
-    tenantSettings = req.session.tenant_settings;
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
 
     get_type = 'GET'
     post_type = 'POST'
@@ -507,6 +507,8 @@ router.post("/get_legacy_logs", async (req, res, next) => {
 })
 
 router.post("/get_legacy_db_users", async (req, res, next) => {
+
+    console.log('hit')
 
     var url, data, type, accessToken;
 
