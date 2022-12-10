@@ -56,7 +56,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         AUTH0_CLIENT_ID: tenantSettings.clientID,
         AUTH0_ALLOW_DELETE: true,
         AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
-        AUTH0_EXCLUDED: ['tenant'],
+        AUTH0_EXCLUDED: ['tenant', 'clientGrants', 'actions', 'customDomains', 'migrations'],
     }
 
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
@@ -87,10 +87,12 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                     })
             })
             .catch((error) => {
+                console.log(err)
                 res.status(400)
                 res.send({ error: error })
             })
             .catch((error) => {
+                console.log(err)
                 res.status(400)
                 res.send({ error: error })
             })
