@@ -1,135 +1,36 @@
 require('dotenv').config()
 const express = require('express')
-const exphbs = require('express-handlebars');
-const session = require('express-session')
-const passport = require('passport');
-const tenantResolver = require('./tenantResolver')
-var logger = require('./logger');
-const auth0 = require('auth0-deploy-cli')
-const okta = require('@okta/okta-sdk-nodejs');
-const request = require('request')
-const Auth0Strategy = require('passport-auth0');
-
-//routes
-const auth = require('./routes/auth');
-const protected = require('./routes/protected');
-const portal = require('./routes/portal');
-
-const PORT = process.env.PORT || 3000;
-app = express();
-app.use(express.json());
-
-var hbs = exphbs.create();
-
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-
-app.use('/static', express.static('static'));
-app.use('/scripts', express.static(__dirname + '/node_modules/clipboard/dist/'));
-
-app.use(session({
-    cookie: { httpOnly: true },
-    secret: process.env.SESSION_SECRET,
-    saveUninitialized: false,
-    resave: false
-}));
-
-const strategy = new Auth0Strategy(
-    {
-        domain: process.env.DOMAIN,
-        clientID: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: process.env.CALLBACK_URL
-    },
-    function (accessToken, refreshToken, extraParams, profile, done) {
-
-        var user = {
-            at: accessToken,
-            profile: profile
-        }
-        //req.session.access_token = accessToken;
-        //req.session.profile = profile;
-        //req.session.refresh_token = refreshToken;
-        // req.session.expires_in = extraParams.expires_in;
-        // req.session.id_token = extraParams.id_token;
-        return done(null, user);
-    }
-);
-
-passport.use(strategy);
-app.use(passport.initialize({ userProperty: 'userContext' }));
-app.use(passport.session());
-passport.serializeUser((user, next) => {
-    next(null, user);
-});
-
-passport.deserializeUser((obj, next) => {
-    next(null, obj);
-});
-
-function ensureAuthenticated() {
-    return async (req, res, next) => {
-        if (req.userContext) {
-            return next()
-        }
-        else {
-            res.redirect("/login")
-        }
-    }
-}
+const router = express.Router();
+const tenantResolver = require('../tenantResolver')
+var logger = require('../logger');
 
 const tr = new tenantResolver();
-const router = express.Router();
 
-app.use("/", auth)
-app.use("/protected", ensureAuthenticated(), protected)
-app.use("/portal", ensureAuthenticated(), portal)
+router.get("/", async (req, res, next) => {
 
-const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 409, 422, 429];
+    logger.verbose("/ requested")
 
-const handleRequests = (url, body, type, accessToken) => {
+    var accessToken, profile
+    if (req.userContext.at) {
+        accessToken = parseJWT(req.userContext.at)
+    }
+    if (req.userContext.profile) {
+        profile = req.userContext.profile
+    }
 
-    return new Promise((resolve, reject) => {
+    var domain, domain_trailing_slash, tenantSettings
 
-        const options = {
-            url: url,
-            json: true,
-            method: type,
-            body: body,
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            }
-        };
-        request(options, function (error, response, body) {
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+    domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
 
-            if (error) {
-                customError = {
-                    error: 500,
-                    error_description: error
-                }
-                reject(customError);
-            }
-
-            if (response) {
-
-                if (arrayOfHTTPErrors.includes(response.statusCode)) {
-
-                    customError = {
-                        error: response.statusCode || 500,
-                        error_description: response.body || 'No Description Provided'
-                    }
-
-                    reject(customError)
-                }
-                resolve(body);
-            }
-
-        })
+    res.render("portal", {
+        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
     });
-}
+});
 
-router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
+router.post("/create_legacy_demo", async (req, res, next) => {
 
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
@@ -309,7 +210,7 @@ router.post("/create_legacy_demo", ensureAuthenticated(), async (req, res, next)
 
 })
 
-router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) => {
+router.post("/get_legacy_demo", async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
@@ -429,7 +330,7 @@ router.post("/get_legacy_demo", ensureAuthenticated(), async (req, res, next) =>
 
 })
 
-router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next) => {
+router.post("/get_legacy_tenants", async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
 
@@ -494,7 +395,7 @@ router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next)
         });
 })
 
-router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next) => {
+router.post("/get_legacy_tenants", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -558,7 +459,7 @@ router.post("/get_legacy_tenants", ensureAuthenticated(), async (req, res, next)
 
 })
 
-router.post("/get_legacy_logs", ensureAuthenticated(), async (req, res, next) => {
+router.post("/get_legacy_logs", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -587,7 +488,7 @@ router.post("/get_legacy_logs", ensureAuthenticated(), async (req, res, next) =>
 
 })
 
-router.post("/get_legacy_db_users", ensureAuthenticated(), async (req, res, next) => {
+router.post("/get_legacy_db_users", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -616,7 +517,7 @@ router.post("/get_legacy_db_users", ensureAuthenticated(), async (req, res, next
 
 })
 
-router.post("/mailtrap", ensureAuthenticated(), async (req, res, next) => {
+router.post("/mailtrap", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -649,7 +550,7 @@ router.post("/mailtrap", ensureAuthenticated(), async (req, res, next) => {
 
 })
 
-router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) => {
+router.post("/update_demo_flags", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
@@ -698,97 +599,4 @@ router.post("/update_demo_flags", ensureAuthenticated(), async (req, res, next) 
 
 })
 
-
-
-//these webhooks consume events from the demo API
-router.post("/hooks/request", async (req, res, next) => {
-    console.log("Demo API request webhook recieved.")
-    console.log(JSON.stringify(req.body))
-    res.sendStatus(202)
-})
-router.post("/hooks/create", async (req, res, next) => {
-    console.log("Demo API create webhook recieved.")
-    console.log(JSON.stringify(req.body))
-    //deploy takes longer than 3 seconds return 202
-    //roadmap feature to send back status
-    res.sendStatus(202)
-    if (req.body.idp.type === 'customer-identity') {
-        console.log("Applying Auth0 configuration.")
-        try {
-            await auth0.deploy({
-                input_file: './configure/customer-identity/tenant.yaml',
-                config: {
-                    AUTH0_DOMAIN: new URL(req.body.idp.management_credentials.tokenEndpoint).hostname,
-                    AUTH0_CLIENT_ID: req.body.idp.management_credentials.clientId,
-                    AUTH0_CLIENT_SECRET: req.body.idp.management_credentials.clientSecret,
-                }
-            })
-            console.log(("apply complete"))
-        } catch (err) {
-            console.log('apply failed')
-            console.log(err)
-        }
-    }
-    else {
-        console.log("Applying Okta configuration.")
-        var orgUrl = new URL(req.body.idp.management_credentials.tokenEndpoint)
-        orgUrl.pathname = ""
-        try {
-            const client = new okta.Client({
-                orgUrl: orgUrl.toString(),
-                authorizationMode: 'PrivateKey',
-                clientId: req.body.idp.management_credentials.clientId,
-                scopes: ['okta.groups.manage', 'okta.groups.read', 'okta.apps.read', 'okta.apps.manage'],
-                privateKey: req.body.idp.management_credentials.clientJWKS.keys[0],
-                keyId: 'demoplatform'
-            });
-            client.listGroups({ q: "everyone", limit: 1 })
-                .each(group => {
-                    client.createApplicationGroupAssignment(req.body.application.oidc_configuration.client_id, group.id)
-                }
-                )
-            console.log(("apply complete"))
-        } catch (err) {
-            console.log('apply failed')
-            console.log(err)
-        }
-    }
-})
-router.post("/hooks/update", async (req, res, next) => {
-    console.log("Demo API update webhook recieved.")
-    console.log(JSON.stringify(req.body))
-    if (req.body && req.body.demonstration && req.body.demonstration.name) {
-        //this removes the demo from the cache so that the latest settings are pulled on next request
-        //alternatively the tenant could be updated from the application.settings object in this hook
-        tr.removeTenant(req.body.demonstration.name)
-    }
-    res.sendStatus(202)
-})
-router.post("/hooks/destroy", async (req, res, next) => {
-    console.log("Demo API destroy webhook recieved.")
-    console.log(JSON.stringify(req.body))
-    if (req.body && req.body.demonstration && req.body.demonstration.name) {
-        //this removes the demo from the cache so if it is re-added the new configuration is used
-        tr.removeTenant(req.body.demonstration.name)
-    }
-    res.sendStatus(202)
-})
-
-app.use(router)
-
-app.listen(PORT, () => logger.info('Application started'));
-
-function parseJWT(token) {
-    var atob = require('atob');
-    if (token != null) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace('-', '+').replace('_', '/');
-        try {
-            return JSON.parse(atob(base64))
-        } catch (err) {
-            return "Invalid or empty token was parsed"
-        }
-    } else {
-        return "Invalid or empty token was parsed"
-    }
-}
+module.exports = router;
