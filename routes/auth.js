@@ -10,11 +10,16 @@ const tr = new tenantResolver();
 
 router.get("/", tr.resolveTenant(), async (req, res, next) => {
     logger.verbose("/ requested")
+
+    req.session.demo_name = tr.getTenant(req.headers.host);
+    req.session.tenant_settings = tr.getSettings(tr.getTenant(req.headers.host));
+
+    demo_name = req.session.demo_name;
     var settings
     if (req.session.settings) {
         settings = req.session.settings
     }
-    res.render("index", { demoName: tr.getTenant(req.headers.host), tenantSettings: settings });
+    res.render("index", { demoName: demo_name, tenantSettings: settings });
 });
 
 router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })

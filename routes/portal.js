@@ -6,6 +6,8 @@ var logger = require('../logger');
 
 const tr = new tenantResolver();
 
+
+
 router.get("/", async (req, res, next) => {
 
     logger.verbose("/ requested")
@@ -20,7 +22,7 @@ router.get("/", async (req, res, next) => {
 
     var domain, domain_trailing_slash, tenantSettings
 
-    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.session.tenant_settings;
     domain = tenantSettings.issuer.replace('https://', '');
     domain_trailing_slash = domain.replace('/', '');
     domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
@@ -35,7 +37,7 @@ router.post("/create_legacy_demo", async (req, res, next) => {
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
-    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.session.tenant_settings;
 
     get_type = 'GET'
     post_type = 'POST'

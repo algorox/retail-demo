@@ -78,7 +78,7 @@ function ensureAuthenticated() {
     }
 }
 
-const tr = new tenantResolver();
+//const tr = new tenantResolver();
 const router = express.Router();
 
 app.use("/", auth)
@@ -777,18 +777,3 @@ router.post("/hooks/destroy", async (req, res, next) => {
 app.use(router)
 
 app.listen(PORT, () => logger.info('Application started'));
-
-function parseJWT(token) {
-    var atob = require('atob');
-    if (token != null) {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace('-', '+').replace('_', '/');
-        try {
-            return JSON.parse(atob(base64))
-        } catch (err) {
-            return "Invalid or empty token was parsed"
-        }
-    } else {
-        return "Invalid or empty token was parsed"
-    }
-}
