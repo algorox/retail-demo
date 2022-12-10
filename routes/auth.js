@@ -10,8 +10,6 @@ const tr = new tenantResolver();
 router.get("/", tr.resolveTenant(), async (req, res, next) => {
     logger.verbose("/ requested")
 
-    console.log(req.session)
-
     var settings
     if (req.session.settings) {
         settings = req.session.settings

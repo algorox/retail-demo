@@ -1,9 +1,9 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router();
-const passport = require('passport');
 const tenantResolver = require('../tenantResolver')
 var logger = require('../logger');
+const handleRequests = require('../utils/requests').handleRequests;
 
 const tr = new tenantResolver();
 
@@ -37,7 +37,7 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
 
     var domain, domain_trailing_slash, tenantSettings
 
-    tenantSettings = tr.getTenant(req.headers.host)
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
     console.log(tenantSettings)
     domain = tenantSettings.issuer.replace('https://', '');
     domain_trailing_slash = domain.replace('/', '');
@@ -48,7 +48,7 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
     });
 });
 
-router.post("/create_legacy_demo", async (req, res, next) => {
+router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
@@ -228,7 +228,7 @@ router.post("/create_legacy_demo", async (req, res, next) => {
 
 })
 
-router.post("/get_legacy_demo", async (req, res, next) => {
+router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
@@ -348,7 +348,7 @@ router.post("/get_legacy_demo", async (req, res, next) => {
 
 })
 
-router.post("/get_legacy_tenants", async (req, res, next) => {
+router.post("/get_legacy_tenants",tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
 

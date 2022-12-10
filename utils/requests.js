@@ -1,3 +1,5 @@
+const request = require('request')
+
 const arrayOfHTTPErrors = [500, 501, 400, 401, 403, 404, 409, 422, 429];
 
 const handleRequests = (url, body, type, accessToken) => {
@@ -40,4 +42,8 @@ const handleRequests = (url, body, type, accessToken) => {
 
         })
     });
+}
+
+module.exports = {
+    handleRequests
 }

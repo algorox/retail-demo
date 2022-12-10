@@ -7,6 +7,7 @@
         background-color: rgba(232, 232, 232, 0.785);
         margin-top: 20px;
         overflow: scroll;
+        white-space: pre-wrap;
     }
 
     .column {
@@ -126,7 +127,7 @@
 
             </label>
             <br>
-            <form action="/mailtrap" id="mailtrap_form" method="POST">
+            <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
                 <p><b>Mailtrap API Key</b></p>
                 <label for="mailtrap">Must be Mailtrap API v1</label>
 
@@ -142,7 +143,7 @@
         </div>
 
         <div class="column">
-            <form action="/create_legacy_demo" id="create_demo" method="POST">
+            <form action="/portal/create_legacy_demo" id="create_demo" method="POST">
                 <p><b>Create Legacy Demo</b></p>
                 <label for="demo_type">Please select your demo app:</label>
                 <select style="display: block;" name="demo_type" id="demo_type">
@@ -218,7 +219,7 @@
 
         var demo_url, api_type, api_data
 
-        demo_url = '/get_legacy_demo'
+        demo_url = '/portal/get_legacy_demo'
         api_type = 'POST'
         api_data = JSON.stringify({ demo_name: 'test' })
 
@@ -306,7 +307,7 @@
 
         var demo_url, api_type, api_data
 
-        demo_url = '/get_legacy_demo'
+        demo_url = '/portal/get_legacy_demo'
         api_type = 'POST'
         api_data = JSON.stringify({ demo_name: 'test' })
 
@@ -380,7 +381,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/get_legacy_tenants'
+        api_url = '/portal/get_legacy_tenants'
         api_type = 'POST'
         api_data = JSON.stringify({ demo_name: 'test' })
 
@@ -403,7 +404,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/get_legacy_logs'
+        api_url = '/portal/get_legacy_logs'
         api_type = 'POST'
         api_data = JSON.stringify({
             demo_name: window.localStorage.getItem('demo_name')
@@ -426,7 +427,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/get_legacy_db_users'
+        api_url = '/portal/get_legacy_db_users'
         api_type = 'POST'
         api_data = JSON.stringify({
             demo_name: window.localStorage.getItem('demo_name')
@@ -449,7 +450,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/update_demo_flags'
+        api_url = '/portal/update_demo_flags'
         api_type = 'POST'
 
         api_data = JSON.stringify({
@@ -474,7 +475,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/update_demo_flags'
+        api_url = '/portal/update_demo_flags'
         api_type = 'POST'
         api_data = JSON.stringify({
             demo_id: window.localStorage.getItem('demo_id'),
@@ -498,7 +499,7 @@
 
         var api_url, api_type, api_data
 
-        api_url = '/get_legacy_tenants'
+        api_url = '/portal/get_legacy_tenants'
         api_type = 'POST'
         api_data = JSON.stringify({ clear: "true" })
 
