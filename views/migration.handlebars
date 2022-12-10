@@ -1,0 +1,92 @@
+<style>
+    #migration_logs {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: rgba(232, 232, 232, 0.489);
+        margin-top: 20px;
+        display: none;
+    }
+</style>
+
+<div>
+    <a class="btn-small branded" href="/logout">Logout</a>
+</div>
+<hr>
+
+<ul>Before you begin, you need to create an M2M application in the tenant you migrating from <b>AND</b> the tenant you are migrating to.</ul>
+<ul>Use <a href="https://auth0.com/docs/deploy-monitor/deploy-cli-tool/create-and-configure-the-deploy-cli-application" target="_blank">this</a> doc to guide you through the process. Make a note of the client ids and secrets as you will need them below!</ul>
+<ul>The intent of this solution is to accelerate migration of demos to PoCs, PoCs to development environments and the use of unsupported legacy demo applications</ul>
+<hr>
+<body>
+    <form action="/migrate_config" id="migrate_form" method="POST">
+        <p><b>From</b></p>
+
+        <input type="text" name="from_domain" id="from_domain"
+            placeholder="Add the domain of the the tenant you want to migrate FROM. Example: tenantname.demo-platform.auth0app.com" />
+        <label for="from_domain">Domain of the tenant to migrate FROM</label>
+
+        <input type="text" name="from_client" id="from_client"
+            placeholder="Add the client_id of the the tenant you want to migrate FROM" />
+        <label for="from_client">Client of the tenant to migrate FROM</label>
+
+        <input type="text" name="from_secret" id="from_secret"
+            placeholder="Add the client_secret of the the tenant you want to migrate FROM" />
+        <label for="from_secret">Secret of the tenant to migrate FROM</label>
+        <br>
+        <p><b>To</b></p>
+
+        <input type="text" name="to_domain" id="to_domain"
+            placeholder="Add the domain of the the tenant you want to migrate TO. Example: tenantname.cic-demo-platform.auth0app.com" />
+        <label for="to_domain">Domain of the tenant to migrate TO</label>
+
+        <input type="text" name="to_client" id="to_client"
+            placeholder="Add the client_id of the the tenant you want to migrate TO" />
+        <label for="to_client">Client of the tenant to migrate TO</label>
+
+        <input type="text" name="to_secret" id="to_secret"
+            placeholder="Add the client_secret of the the tenant you want to migrate TO" />
+        <label for="to_secret">Secret of the tenant to migrate TO</label>
+        <br>
+        <br>
+        <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
+        <input type="submit" value="Migrate!"
+            onclick="show_logs(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed'); " />
+    </form>
+    <hr>
+    <pre id="migration_logs"> > Migration started!..</pre>
+</body>
+
+<br>
+<hr>
+
+<script>
+
+    function show_logs() {
+        var x = document.getElementById("migration_logs");
+        x.style.display = "block";
+    }
+
+    $("#migrate_form").submit(function (e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var actionUrl = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: form.serialize(), // serializes the form's elements.
+            success: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            },
+            error: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            }
+        });
+
+    });
+
+
+</script>
