@@ -44,9 +44,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     var domain_trailing_slash = domain.replace('/', '');
 
     from_config = {
-        AUTH0_DOMAIN: req.body.from_domain,
-        AUTH0_CLIENT_SECRET: req.body.from_secret,
-        AUTH0_CLIENT_ID: req.body.from_client,
+        AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
+        AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
+        AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
         AUTH0_ALLOW_DELETE: false
     }
 
@@ -54,27 +54,10 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         AUTH0_DOMAIN: domain_trailing_slash,
         AUTH0_CLIENT_SECRET: tenantSettings.clientSecret,
         AUTH0_CLIENT_ID: tenantSettings.clientID,
-        AUTH0_ALLOW_DELETE: false,
+        AUTH0_ALLOW_DELETE: true,
         AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
         AUTH0_EXCLUDED: ['tenant'],
     }
-
-
-    // from_config = {
-    //     AUTH0_DOMAIN: process.env.FROM_DOMAIN,
-    //     AUTH0_CLIENT_SECRET: process.env.FROM_CLIENT_SECRET,
-    //     AUTH0_CLIENT_ID: process.env.FROM_CLIENT_ID,
-    //     AUTH0_ALLOW_DELETE: false
-    // }
-
-    // to_config = {
-    //     AUTH0_DOMAIN: process.env.TO_DOMAIN,
-    //     AUTH0_CLIENT_SECRET: process.env.TO_CLIENT_SECRET,
-    //     AUTH0_CLIENT_ID: process.env.TO_CLIENT_ID,
-    //     AUTH0_ALLOW_DELETE: false,
-    //     AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
-    //     AUTH0_EXCLUDED: ['tenant'],
-    // }
 
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
