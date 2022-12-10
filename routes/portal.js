@@ -27,8 +27,6 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
 
     logger.verbose("/ requested")
 
-    console.log(req.session)
-
     var accessToken, profile
     if (req.userContext.at) {
         accessToken = parseJWT(req.userContext.at)
@@ -39,14 +37,15 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
 
     var domain, domain_trailing_slash, tenantSettings
 
-    // tenantSettings = req.session.tenant_settings
-    // domain = tenantSettings.issuer.replace('https://', '');
-    // domain_trailing_slash = domain.replace('/', '');
-    // domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
+    tenantSettings = tr.getTenant(req.headers.host)
+    console.log(tenantSettings)
+    domain = tenantSettings.issuer.replace('https://', '');
+    domain_trailing_slash = domain.replace('/', '');
+    domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
 
-    // res.render("portal", {
-    //     tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
-    // });
+    res.render("portal", {
+        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
+    });
 });
 
 router.post("/create_legacy_demo", async (req, res, next) => {

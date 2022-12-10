@@ -16,9 +16,7 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
     if (req.session.settings) {
         settings = req.session.settings
     }
-
-    console.log(req.session.demo_name)
-    res.render("index", { demoName: req.session.demo_name, tenantSettings: req.session.tenant_settings });
+    res.render("index", { demoName: tr.getTenant(req.headers.host), tenantSettings: settings});
 });
 
 router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })
@@ -40,7 +38,7 @@ router.get("/callback", (req, res, next) => {
     })(req, res, next);
 });
 
-router.get("/logout", (req, res) => {
+router.get("/logout", tr.resolveTenant(), (req, res) => {
     logger.verbose("/logout requested")
     const tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
 
