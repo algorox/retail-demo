@@ -210,9 +210,21 @@
         });
     }
 
-    $(document).ready(function () {
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-        var demo_url, api_type, api_data
+    async function create() {
+
+
+
+    }
+
+    $(document).ready(function() {
+
+            var demo_url, api_type, api_data
+
+        //await delay(5000)
 
         demo_url = '/portal/get_legacy_demo'
         api_type = 'POST'
@@ -292,100 +304,8 @@
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
-
     });
-
-    $("#get_demos").click(function () {
-
-        var demo_url, api_type, api_data
-
-        demo_url = '/portal/get_legacy_demo'
-        api_type = 'POST'
-        api_data = JSON.stringify({ demo_name: 'test' })
-
-        getPostPromise(demo_url, api_type, api_data).then((output) => {
-            for (let i = 0; i < output.Demo.applications.length; i++) {
-                list = document.createElement("LI");
-                list.setAttribute("href", "#");
-                list.innerHTML = output.Demo.applications[i];
-                document.getElementById('list-container').appendChild(list);
-
-            }
-
-            var azureADflag = output.Demo.raw.flags[0].enabled;
-            var auth0Loginflag = output.Demo.raw.flags[1].enabled
-
-
-            if (auth0Loginflag) {
-                document.getElementById("cic_login").checked = true;
-
-            }
-
-            else {
-                document.getElementById("cic_login").checked = false;
-            }
-
-            if (azureADflag) {
-                document.getElementById("azure_ad").checked = true;
-
-            }
-
-            else {
-                document.getElementById("azure_ad").checked = false;
-            }
-
-
-            window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
-            window.localStorage.setItem('demo_id', output.Demo.demo_id);
-            window.localStorage.setItem('demo_name', output.Demo.raw.name);
-
-            var users_url = '/portal/get_legacy_db_users'
-            var users_data = JSON.stringify({
-                demo_name: output.Demo.raw.name
-            })
-
-
-            getPostPromise(users_url, api_type, users_data).then((output) => {
-
-                for (let i = 0; i < output.Legacy_Users.data.length; i++) {
-                    list = document.createElement("LI");
-                    list.setAttribute("href", "#");
-                    list.innerHTML = output.Legacy_Users.data[i].email;
-                    document.getElementById('user-container').appendChild(list);
-
-                }
-
-            }).catch((err) => {
-                console.log('cat')
-                $('#notifications').text(JSON.stringify(err, null, 2));
-            })
-
-        })
-            .catch((err) => {
-                $('#notifications').text(JSON.stringify(err, null, 2));
-            })
-
-    });
-
-    $("#get_tenants").click(function () {
-
-        var api_url, api_type, api_data
-
-        api_url = '/portal/get_legacy_tenants'
-        api_type = 'POST'
-        api_data = JSON.stringify({ demo_name: 'test' })
-
-        getPostPromise(api_url, api_type, api_data).then((output) => {
-
-            $('#notifications').text(JSON.stringify(output, null, 2));
-
-        })
-            .catch((err) => {
-                $('#notifications').text(JSON.stringify(err, null, 2));
-            })
-
-    });
-
+    
     $("#get_logs").click(function () {
 
         var api_url, api_type, api_data
@@ -517,13 +437,13 @@
 
             logs_url = '/portal/get_legacy_logs'
             api_type = 'POST'
-            api_data = JSON.stringify({
+            log_data = JSON.stringify({
                 demo_name: output.demo_creation.results[0].name
             })
 
             getPostPromise(logs_url, api_type, log_data).then((output) => {
 
-                $('#notifications').text("Demo Creation requested successfully!\nPlease wait a few moments before continuing as it can take a while for creation to complete");
+                $('#notifications').text(output);
 
             })
                 .catch((err) => {
