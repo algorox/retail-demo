@@ -212,7 +212,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         collection: "deployments",
         database: "platform",
         dataSource: "Cluster-Prod",
-        filter: { "demoName": "julian-new" }
+        filter: { "demoName": "legacy-demo-test" }
     }
 
     handleMongoRequests(get_demos_url, get_demos_data, post_type)
@@ -242,7 +242,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                 collection: "deployments",
                 database: "platform",
                 dataSource: "Cluster-Prod",
-                filter: { "demoName": "julian-new" },
+                filter: { "demoName": "legacy-demo-test" },
                 update: {$set: 
                     output.document
                 }
