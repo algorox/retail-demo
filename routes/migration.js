@@ -6,6 +6,8 @@ const deployCLI = require('auth0-deploy-cli');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const tenantResolver = require('../tenantResolver')
+
 const tr = new tenantResolver();
 
 
@@ -31,7 +33,7 @@ router.get("/config_migrated", async (req, res, next) => {
     });
 });
 
-router.post("/migrate_config", tr.tenantResolver(), async (req, res, next) => {
+router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     //console.log("Migrate Config request received.")
     var from_config;
     var to_config;
