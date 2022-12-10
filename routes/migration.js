@@ -8,6 +8,7 @@ const path = require('path');
 const os = require('os');
 const tenantResolver = require('../tenantResolver')
 const handleRequests = require('../utils/requests').handleRequests;
+const handleMongoRequests = require('../utils/requests').handleMongoRequests;
 
 const tr = new tenantResolver();
 
@@ -117,43 +118,133 @@ router.get("/config_migrated", async (req, res, next) => {
 
 
 
+// router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
+//     var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+
+//     var data
+//     var get_type = 'GET'
+//     var accessToken = req.userContext.at
+//     var get_clients_url = tenantSettings.issuer + 'api/v2/clients'
+
+//     console.log(tenantSettings)
+
+//     auth_data = {
+//         grant_type: 'client_credentials',
+//         client_id: tenantSettings.clientID,
+//         client_secret: tenantSettings.clientSecret,
+//         audience: tenantSettings.issuer + 'api/v2/'
+//     }
+
+//     handleRequests(tenantSettings.tokenURL, auth_data, 'POST')
+//         .then((output) => {
+//             handleRequests(get_clients_url, data, get_type, output.access_token)
+//                 .then((output) => {
+//                     var clients = []
+//                     for (let i = 0; i < output.length; i++) {
+//                             clients.push([output[i].name, output[i].client_id]);
+//                     }
+
+//                     req.body.clients = clients;
+
+//                     next()
+//                 })
+//                 .catch((error) => {
+//                     console.log(error)
+//                     res.status(400)
+//                     res.send({ error: error })
+//                 })
+//         })
+//         .catch((error) => {
+//             console.log(error)
+//             res.status(400)
+//             res.send({ error: error })
+//         })
+
+
+// })
+
 router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
-    
 
-    var data
-    var get_type = 'GET'
-    var accessToken = req.userContext.at
-    var get_clients_url = tenantSettings.issuer + 'api/v2/clients'
 
-    console.log(tenantSettings)
+    var client_data = [
+        [
+            "multitenant-app",
+            "eq2CwYaYyZjifoiDhJ1C28xNtBs0eBQM"
+        ],
+        [
+            "Service0",
+            "gRLewtR0iYg9aj0HRhyIlqUm8uAXejlz"
+        ],
+        [
+            "Travel0 Consumer Website",
+            "frEaJH0PKWZLZsyTox3sHjmKMsMaYTjT"
+        ],
+        [
+            "Travel0 Corporate Website",
+            "pyqwlq53tleb5nhoRNeGOPAbuP6CS7it"
+        ],
+        [
+            "Travel0 Cruise Website",
+            "c9fv7eiKUXRaXSzEq6dBezVp1zWLmRwC"
+        ],
+        [
+            "Travel0 M2M Client",
+            "U8boE3ATDmfWYb2O1q8XodW4jvGZsFTB"
+        ],
+        [
+            "demo-platform-deployer",
+            "X4Qi5U3M8K0FzReBKRT92llANvmFNt2H"
+        ],
+        [
+            "All Applications",
+            "ZvU78Ls2774NEUQyrzcAcpd31WFkIBst"
+        ]
+    ]
 
-    auth_data = {
-        grant_type: 'client_credentials',
-        client_id: tenantSettings.clientID,
-        client_secret: tenantSettings.clientSecret,
-        audience: tenantSettings.issuer + 'api/v2/'
+    console.log(client_data[4][0])
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+    var update_demo_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/updateOne'
+
+
+    get_demos_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": "julian-new" }
     }
 
-    handleRequests(tenantSettings.tokenURL, auth_data, 'POST')
+    handleMongoRequests(get_demos_url, get_demos_data, post_type)
         .then((output) => {
-            handleRequests(get_clients_url, data, get_type, output.access_token)
-                .then((output) => {
-                    var clients = []
-                    for (let i = 0; i < output.length; i++) {
-                            clients.push([output[i].name, output[i].client_id]);
+
+            var matching_list = []
+
+            for (let i = 0; i < client_data.length; i++) {
+
+                for (let n = 0; n < output.document.applications.length; n++) {
+
+                    if (output.document.applications[n].name === client_data[i][0]) {
+                        matching_list.push(output.document.applications[n].name)
                     }
-                    res.status(200)
-                    res.send(
-                        {
-                            'output': clients,
-                        })
-                })
-                .catch((error) => {
-                    console.log(error)
-                    res.status(400)
-                    res.send({ error: error })
-                })
+                }
+            }
+
+            update_demos_data =
+            {
+                collection: "deployments",
+                database: "platform",
+                dataSource: "Cluster-Prod",
+                filter: { "demoName": "julian-new" },
+                
+            }
+
+            res.status(200)
+            res.send({ "output": matching_list })
+
         })
         .catch((error) => {
             console.log(error)

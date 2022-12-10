@@ -1,0 +1,117 @@
+{
+  "output": {
+    "document": {
+      "_id": "6218bd51152d23454c077f3a",
+      "legacyAuth": {
+        "secret": "1a595854164582cf8f625fa5afd53cc877580f3cd3b921e5"
+      },
+      "azureClient": {
+        "appId": "f62df22b-98ff-4dea-926c-51e15073e8b7"
+      },
+      "demoName": "julian-new",
+      "tenantId": "6217e308152d2325b9076aa0",
+      "demoConfiguration": {
+        "demoTemplate": {
+          "title": "TravelZero",
+          "type": "travel0"
+        },
+        "templateId": "travel0"
+      },
+      "applications": [
+        {
+          "callbacks": [],
+          "clientId": "sYTbdeLtRhEjA9wwnUWVSRukLsBUh2we",
+          "clientSecret": "wcJprahCM1q24xqqQg3fTW4asDDyhewipt3jbQWLO9Z63awD_smjG6hILgwZ8FOX",
+          "name": "Travel0 M2M Client",
+          "type": "M2M",
+          "domain": "storytime-stepup-121122.cic-demo-platform.auth0app.com",
+          "metadata": {
+            "demoTemplate": "travel0",
+            "name": "default"
+          }
+        },
+        {
+          "callbacks": [
+            "https://julian-new.auth0.cloud",
+            "https://julian-new.auth0.cloud/payment"
+          ],
+          "clientId": "sirQcZ98yUtVBXE7SNe0RaWPVbVTnXwQ",
+          "clientSecret": "QCaZZtBf-2xgz0d4VC2CYMn6VrkUot8o_iVk6RrbSrtHomvTNrZ-W-Ij9n5WMcFH",
+          "name": "Travel0 Consumer Website",
+          "type": "SPA",
+          "domain": "storytime-stepup-121122.cic-demo-platform.auth0app.com",
+          "metadata": {
+            "demoTemplate": "travel0",
+            "name": "default",
+            "userApp": "true"
+          }
+        },
+        {
+          "callbacks": [
+            "https://julian-new-cruise.auth0.cloud"
+          ],
+          "clientId": "SPoF3FzAPEn2jbHXINHzB9XzXb7EAWGM",
+          "clientSecret": "xJwbk4KtpYAjz-Q90f5zKnERvmkGNi0b-4CdAXUULT_Kz3eKFWbq0tFThpoX5MmV",
+          "name": "Travel0 Cruise Website",
+          "type": "SPA",
+          "domain": "storytime-stepup-121122.cic-demo-platform.auth0app.com",
+          "metadata": {
+            "demoTemplate": "travel0",
+            "name": "cruise"
+          }
+        },
+        {
+          "callbacks": [
+            "https://julian-new-corporate.auth0.cloud"
+          ],
+          "clientId": "kc6XMKLROwtoY4xn3lHsh0vFJcJmL9XP",
+          "clientSecret": "nkx9sRVBq_wHzjVfb9XTgR5ysNupYpIO1BZ2eDAq6uA2AxBOZvURYS02emdQ4Gsg",
+          "name": "Travel0 Corporate Website",
+          "type": "SPA",
+          "domain": "storytime-stepup-121122.cic-demo-platform.auth0app.com",
+          "metadata": {
+            "demoTemplate": "travel0",
+            "name": "corporate",
+            "userApp": "true"
+          }
+        },
+        {
+          "callbacks": [],
+          "clientId": "PN0tFlrusrxkdafMESBE4AqrDSP1BFMR",
+          "clientSecret": "Hf7Ah7JRIIyw-Ja8zY2X9XVjCAv9rKCgbUwyOF4ALA_4UXRZN2474RZhye9WUM3g",
+          "name": "Service0",
+          "type": "M2M",
+          "domain": "storytime-stepup-121122.cic-demo-platform.auth0app.com"
+        }
+      ],
+      "resources": [
+        {
+          "identifier": "https://storytime-stepup-121122.cic-demo-platform.auth0app.com/api/v2/",
+          "name": "Auth0 Management API",
+          "resourceId": "6217e30623e278003e3a1020",
+          "isSystem": true
+        },
+        {
+          "identifier": "https://julian-new-travel0.auth0.cloud/api",
+          "name": "Travel0 API",
+          "resourceId": "6218bd5b7002a1003d5b07dd",
+          "isSystem": false
+        }
+      ],
+      "demoId": "6218bd513498e2305c3859ec",
+      "ownerInfo": {
+        "userEmail": "julian.lywood.mulcock@okta.com",
+        "userId": "oidc|Okta|00u1jbg5gpd9mnjb91d8"
+      },
+      "deleted": true,
+      "url": "https://julian-new.auth0.cloud",
+      "status": "DELETED",
+      "healthCheck": "NA",
+      "hash": "",
+      "active": false,
+      "createdAt": "2022-02-25T11:28:17.272Z",
+      "updatedAt": "2022-12-10T12:57:49.62Z",
+      "__v": 0
+    }
+  }
+}
