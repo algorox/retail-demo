@@ -194,11 +194,6 @@
 
 <script>
 
-    function show_update() {
-        var x = document.getElementById("notifications");
-        x.style.display = "block";
-    }
-
     function getPostPromise(url, type, data) {
         return new Promise(function (resolve, reject) {
             $.ajax({
@@ -290,15 +285,12 @@
                 }
 
             }).catch((err) => {
-                console.log('cat')
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -366,13 +358,11 @@
             }).catch((err) => {
                 console.log('cat')
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -389,13 +379,9 @@
 
             $('#notifications').text(JSON.stringify(output, null, 2));
 
-
-            show_update()
-
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -413,12 +399,10 @@
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
             $('#notifications').text(JSON.stringify(output, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -436,12 +420,10 @@
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
             $('#notifications').text(JSON.stringify(output, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -461,12 +443,10 @@
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
             $('#notifications').text(JSON.stringify(output, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -485,12 +465,10 @@
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
             $('#notifications').text(JSON.stringify(output, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -508,12 +486,10 @@
             window.localStorage.clear()
             $('#notifications').text("Demo Clear requested successfully!\nPlease wait a few moments before continuing as it can take a while for deletion to complete");
             //$('#notifications').text(JSON.stringify(output, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -537,14 +513,26 @@
             window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
             window.localStorage.setItem('demo_name', output.demo_creation.results[0].name);
 
-            $('#notifications').text("Demo Creation requested successfully!\nPlease wait a few moments before continuing as it can take a while for creation to complete");
-            //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
-            show_update()
+            var logs_url, api_type, log_data
+
+            logs_url = '/portal/get_legacy_logs'
+            api_type = 'POST'
+            api_data = JSON.stringify({
+                demo_name: output.demo_creation.results[0].name
+            })
+
+            getPostPromise(logs_url, api_type, log_data).then((output) => {
+
+                $('#notifications').text("Demo Creation requested successfully!\nPlease wait a few moments before continuing as it can take a while for creation to complete");
+
+            })
+                .catch((err) => {
+                    $('#notifications').text(JSON.stringify(err, null, 2));
+                })
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });
@@ -566,12 +554,10 @@
 
             $('#notifications').text("Mailtrap API Set");
             //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
-            show_update()
 
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
-                show_update()
             })
 
     });

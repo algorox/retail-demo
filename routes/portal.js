@@ -508,8 +508,6 @@ router.post("/get_legacy_logs", async (req, res, next) => {
 
 router.post("/get_legacy_db_users", async (req, res, next) => {
 
-    console.log('hit')
-
     var url, data, type, accessToken;
 
     var demo_name = req.body.demo_name || 'empty'
