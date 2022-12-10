@@ -11,8 +11,8 @@ const Auth0Strategy = require('passport-auth0');
 
 //routes
 const auth = require('./routes/auth');
-const protected = require('./routes/protected');
 const portal = require('./routes/portal');
+const migration = require('./routes/migration');
 
 const PORT = process.env.PORT || 3000;
 app = express();
@@ -25,6 +25,7 @@ app.set('view engine', 'handlebars');
 
 app.use('/static', express.static('static'));
 app.use('/scripts', express.static(__dirname + '/node_modules/clipboard/dist/'));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
     cookie: { httpOnly: true },
@@ -80,8 +81,8 @@ function ensureAuthenticated() {
 const router = express.Router();
 
 app.use("/", auth)
-app.use("/protected",  ensureAuthenticated(), protected)
 app.use("/portal", ensureAuthenticated(), portal)
+app.use("/migration", ensureAuthenticated(), migration)
 
 //these webhooks consume events from the demo API
 router.post("/hooks/request", async (req, res, next) => {

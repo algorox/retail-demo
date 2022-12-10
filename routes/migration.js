@@ -1,21 +1,15 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router();
-var logger = require('./logger');
+var logger = require('../logger')
 const deployCLI = require('auth0-deploy-cli');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const tr = new tenantResolver();
 
-const apiTokenVerfier = require('express-oauth2-jwt-bearer')
 
-//////////////////////
-//MIGRATION SERVICES//
-//////////////////////
-
-app.use(express.urlencoded({ extended: true }));
-
-router.get("/", ensureAuthenticated(), async (req, res, next) => {
+router.get("/", async (req, res, next) => {
     logger.verbose("/ requested")
     var accessToken
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
@@ -26,7 +20,7 @@ router.get("/", ensureAuthenticated(), async (req, res, next) => {
     });
 });
 
-router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => {
+router.get("/config_migrated", async (req, res, next) => {
     logger.verbose("/ requested")
     var accessToken
     if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
@@ -37,11 +31,15 @@ router.get("/config_migrated", ensureAuthenticated(), async (req, res, next) => 
     });
 });
 
-router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => {
+router.post("/migrate_config", tr.tenantResolver(), async (req, res, next) => {
     //console.log("Migrate Config request received.")
-    console.log(JSON.stringify(req.body))
     var from_config;
     var to_config;
+
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
 
     from_config = {
         AUTH0_DOMAIN: req.body.from_domain,
@@ -51,9 +49,9 @@ router.post("/migrate_config", ensureAuthenticated(), async (req, res, next) => 
     }
 
     to_config = {
-        AUTH0_DOMAIN: req.body.to_domain,
-        AUTH0_CLIENT_SECRET: req.body.to_secret,
-        AUTH0_CLIENT_ID: req.body.to_client,
+        AUTH0_DOMAIN: domain_trailing_slash,
+        AUTH0_CLIENT_SECRET: tenantSettings.clientSecret,
+        AUTH0_CLIENT_ID: tenantSettings.clientID,
         AUTH0_ALLOW_DELETE: false,
         AUTH0_EXCLUDED_CLIENTS: ['Auth0 Dashboard Backend Management Client'],
         AUTH0_EXCLUDED: ['tenant'],

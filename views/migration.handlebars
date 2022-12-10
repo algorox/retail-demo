@@ -33,7 +33,7 @@
         <input type="text" name="from_secret" id="from_secret"
             placeholder="Add the client_secret of the the tenant you want to migrate FROM" />
         <label for="from_secret">Secret of the tenant to migrate FROM</label>
-        <br>
+        {{!-- <br>
         <p><b>To</b></p>
 
         <input type="text" name="to_domain" id="to_domain"
@@ -48,7 +48,7 @@
             placeholder="Add the client_secret of the the tenant you want to migrate TO" />
         <label for="to_secret">Secret of the tenant to migrate TO</label>
         <br>
-        <br>
+        <br> --}}
         <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
         <input type="submit" value="Migrate!"
             onclick="show_logs(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed'); " />

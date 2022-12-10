@@ -38,7 +38,6 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
     var domain, domain_trailing_slash, tenantSettings
 
     tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
-    console.log(tenantSettings)
     domain = tenantSettings.issuer.replace('https://', '');
     domain_trailing_slash = domain.replace('/', '');
     domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
