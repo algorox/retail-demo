@@ -1,16 +1,33 @@
 require('dotenv').config()
 const express = require('express')
 const router = express.Router();
+const passport = require('passport');
 const tenantResolver = require('../tenantResolver')
 var logger = require('../logger');
 
 const tr = new tenantResolver();
 
+function parseJWT(token) {
+    var atob = require('atob');
+    if (token != null) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace('-', '+').replace('_', '/');
+        try {
+            return JSON.parse(atob(base64))
+        } catch (err) {
+            return "Invalid or empty token was parsed"
+        }
+    } else {
+        return "Invalid or empty token was parsed"
+    }
+}
 
-
-router.get("/", async (req, res, next) => {
+router.get("/", tr.resolveTenant(), async (req, res, next) => {
+    
 
     logger.verbose("/ requested")
+
+    console.log(req.session)
 
     var accessToken, profile
     if (req.userContext.at) {
@@ -22,14 +39,14 @@ router.get("/", async (req, res, next) => {
 
     var domain, domain_trailing_slash, tenantSettings
 
-    tenantSettings = req.session.tenant_settings;
-    domain = tenantSettings.issuer.replace('https://', '');
-    domain_trailing_slash = domain.replace('/', '');
-    domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
+    // tenantSettings = req.session.tenant_settings
+    // domain = tenantSettings.issuer.replace('https://', '');
+    // domain_trailing_slash = domain.replace('/', '');
+    // domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
 
-    res.render("portal", {
-        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
-    });
+    // res.render("portal", {
+    //     tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
+    // });
 });
 
 router.post("/create_legacy_demo", async (req, res, next) => {

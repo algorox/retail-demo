@@ -1,4 +1,3 @@
-
 require('dotenv').config()
 const express = require('express')
 const router = express.Router();
@@ -11,15 +10,15 @@ const tr = new tenantResolver();
 router.get("/", tr.resolveTenant(), async (req, res, next) => {
     logger.verbose("/ requested")
 
-    req.session.demo_name = tr.getTenant(req.headers.host);
-    req.session.tenant_settings = tr.getSettings(tr.getTenant(req.headers.host));
+    console.log(req.session)
 
-    demo_name = req.session.demo_name;
     var settings
     if (req.session.settings) {
         settings = req.session.settings
     }
-    res.render("index", { demoName: demo_name, tenantSettings: settings });
+
+    console.log(req.session.demo_name)
+    res.render("index", { demoName: req.session.demo_name, tenantSettings: req.session.tenant_settings });
 });
 
 router.get('/login', passport.authenticate('auth0', { audience: process.env.AUDIENCE, scope: process.env.SCOPES }), function (req, res) { res.redirect('/portal') })

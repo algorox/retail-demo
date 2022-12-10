@@ -31,7 +31,7 @@ app.use(session({
     cookie: { httpOnly: true },
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    resave: false
+    resave: false,
 }));
 
 const strategy = new Auth0Strategy(
@@ -78,7 +78,8 @@ function ensureAuthenticated() {
     }
 }
 
-//const tr = new tenantResolver();
+
+
 const router = express.Router();
 
 app.use("/", auth)
