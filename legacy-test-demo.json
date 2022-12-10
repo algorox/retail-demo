@@ -1,0 +1,118 @@
+{
+    "document": {
+        "_id": "63948264786f67447669d7b0",
+        "legacyAuth": {
+            "secret": ""
+        },
+        "azureClient": {
+            "appId": "ccde9c62-e653-4f0f-b6ad-8ffb68793132"
+        },
+        "demoName": "legacy-demo-test",
+        "tenantId": "6217e308152d2325b9076aa0",
+        "demoConfiguration": {
+            "externalApp": false,
+            "demoTemplate": {
+                "id": "61e3d56571224f67caf205e1",
+                "title": "TravelZero",
+                "type": "travel0"
+            },
+            "templateId": "travel0",
+            "templateType": "travel0"
+        },
+        "applications": [
+            {
+                "callbacks": [],
+                "clientId": "czAxFMVyOvLcvurmzs2khE8bdSa8RQNx",
+                "clientSecret": "tSOFI3QN_IYCRcLy7ELYAynk38XN_CJxOE6OovFOpz75KU9qdiUVnJDy9HjF-v2T",
+                "name": "Travel0 M2M Client",
+                "type": "M2M",
+                "domain": "julian-new.demo-platform.auth0app.com",
+                "metadata": {
+                    "demoTemplate": "travel0",
+                    "name": "default"
+                }
+            },
+            {
+                "callbacks": [
+                    "https://legacy-demo-test.auth0.cloud",
+                    "https://legacy-demo-test.auth0.cloud/payment"
+                ],
+                "clientId": "1KeGDngRikIVqDHjCcJ8VW6A8f2Joomi",
+                "clientSecret": "Lreo-c5o8crZc1BD6sRHDYs8Eubr49nPjtyFHgP3Bsc7gE-jOJwrdX2SUeM81f8-",
+                "name": "Travel0 Consumer Website",
+                "type": "SPA",
+                "domain": "julian-new.demo-platform.auth0app.com",
+                "metadata": {
+                    "demoTemplate": "travel0",
+                    "name": "default",
+                    "userApp": "true"
+                }
+            },
+            {
+                "callbacks": [
+                    "https://legacy-demo-test-cruise.auth0.cloud"
+                ],
+                "clientId": "osc9uui89chGt2ndXqLLbsjTveM9m9Sy",
+                "clientSecret": "EHV_m7MNuTXIAhczX-A6Oyd-eIyfBya0YCFK7cpnCAyAs03VNmtzqb-ZGVbTz9MU",
+                "name": "Travel0 Cruise Website",
+                "type": "SPA",
+                "domain": "julian-new.demo-platform.auth0app.com",
+                "metadata": {
+                    "demoTemplate": "travel0",
+                    "name": "cruise"
+                }
+            },
+            {
+                "callbacks": [
+                    "https://legacy-demo-test-corporate.auth0.cloud"
+                ],
+                "clientId": "rGt4ajGWEXiPqDslV1VDgh3wZSkeJ99u",
+                "clientSecret": "2YihhZRWzps9Yz-16py0C7AFAgvVmDMQldbUPHFj16Ldt4w-eOCfALvpeWaBLGcJ",
+                "name": "Travel0 Corporate Website",
+                "type": "SPA",
+                "domain": "julian-new.demo-platform.auth0app.com",
+                "metadata": {
+                    "demoTemplate": "travel0",
+                    "name": "corporate",
+                    "userApp": "true"
+                }
+            },
+            {
+                "callbacks": [],
+                "clientId": "eZxdf4L3gtwLa0rvIjNuZPPE5gYap3Ht",
+                "clientSecret": "DdhecduvB4GcLp0de69nLGFQIyAtNVis5SGl4-UItu4YduFe0urSxd_17ImHKKIw",
+                "name": "Service0",
+                "type": "M2M",
+                "domain": "julian-new.demo-platform.auth0app.com"
+            }
+        ],
+        "resources": [
+            {
+                "identifier": "https://julian-new.demo-platform.auth0app.com/api/v2/",
+                "name": "Auth0 Management API",
+                "resourceId": "6217e30623e278003e3a1020",
+                "isSystem": true
+            },
+            {
+                "identifier": "https://legacy-demo-test-travel0.auth0.cloud/api",
+                "name": "Travel0 API",
+                "resourceId": "63948285b6e0b07bf9341d9c",
+                "isSystem": false
+            }
+        ],
+        "demoId": "639482648a1148e1170c36c6",
+        "ownerInfo": {
+            "userEmail": "julian.lywood@okta.com",
+            "userId": "oidc|Okta|00u1jbg5gpd9mnjb91d8"
+        },
+        "deleted": false,
+        "url": "https://legacy-demo-test.auth0.cloud",
+        "status": "DEPLOYED",
+        "healthCheck": "NA",
+        "hash": "",
+        "active": true,
+        "createdAt": "2022-12-10T12:58:12.463Z",
+        "updatedAt": "2022-12-10T12:59:27.274Z",
+        "__v": 0
+    }
+}
