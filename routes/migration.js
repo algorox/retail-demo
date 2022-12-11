@@ -9,6 +9,7 @@ const os = require('os');
 const tenantResolver = require('../tenantResolver')
 const handleRequests = require('../utils/requests').handleRequests;
 const handleMongoRequests = require('../utils/requests').handleMongoRequests;
+const zip = require('child_process')
 
 const tr = new tenantResolver();
 
@@ -32,6 +33,7 @@ router.post("/migrate_config", async (req, res, next) => {
 
     handleRequests(check_url, check_data, get_type, accessToken)
         .then((output) => {
+            console.log('no demo found')
             res.status(200)
             res.send({ "Note": "No demo found with the name: " + req.body.migrationDemoName })
         }).catch((error) => {
@@ -67,17 +69,20 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         dataSource: "Cluster-Prod",
         filter: { "domain": domain_trailing_slash }
     }
+
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
 
-        if (output.document.hasOwnProperty('demoOkta')) {
+        if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
 
-            if ((output.document.demoOkta === "creation") || (output.document.demoOkta === "migration")) {
-                res.status(200)
-                res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
-            }
+            res.status(200)
+            res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to back up your config too" })
         }
 
         else {
+
+            //https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
+
+            //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
 
             var from_config;
             from_config = {
@@ -90,27 +95,28 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                 }
             }
 
-            // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
-
-            //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
-
-            fs.mkdir('./tenant_configs', { recursive: true }, (err) => {
+            fs.mkdir('./deploy_yaml', { recursive: true }, (err) => {
                 if (err) throw err;
 
                 deployCLI.dump({
-                    output_folder: './tenant_configs', // temp store for tenant_config.json
+                    output_folder: './deploy_yaml', // temp store for tenant_config.json
                     config_file: 'tenant_config.json', //name of output file
-                    config: from_config   // Set-up (as above)   
+                    config: from_config,
+                    format: "yaml"  // Set-up (as above)   
                 })
                     .then((output) => {
 
-                        if (req.body.download) {
+                        if (req.body.download === 'true') {
 
-                            res.download('./tenant_configs/branding/branding.json')
+                            zip.execSync(`zip -r archive *`, {
+                                cwd: './deploy_yaml'
+                            });
+
+                            res.status(200)
+                            res.send({ url: 'http://storytime-stepup-121122.localhost:3000/deploy_yaml/archive.zip' })
                         }
 
                         else {
-
                             next()
                         }
 
@@ -122,9 +128,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                     })
 
             });
-
         }
-
     })
         .catch((error) => {
             console.log(error)
@@ -157,9 +161,10 @@ router.post("/migrate_config", async (req, res, next) => {
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
     deployCLI.deploy({
-        input_file: './tenant_configs',  // temp store for tenant_config.json
-        config_file: 'tenant_config.json', // Option to a config json
-        config: to_config,   // Option to sent in json as object
+        input_file: './deploy_yaml',
+        config_file: 'tenant_config.json',
+        config: to_config,
+        format: 'yaml'
     })
         .then((output) => {
             next()
@@ -175,11 +180,8 @@ router.post("/migrate_config", async (req, res, next) => {
 
     tenantSettings = req.body.tenant_settings
 
-    var domain = tenantSettings.issuer.replace('https://', '');
-    var domain_trailing_slash = domain.replace('/', '');
     var data
     var get_type = 'GET'
-    var accessToken = req.userContext.at
     var get_clients_url = tenantSettings.issuer + 'api/v2/clients'
 
     auth_data = {
@@ -295,7 +297,7 @@ router.post("/migrate_config", async (req, res, next) => {
             req.body.migration_tenant_id = output.document.tenantId
 
             handleMongoRequests(update_demo_url, update_demo_deployment_data, post_type).then((output) => {
-      
+
                 update_demo_data =
                 {
                     collection: "demos",

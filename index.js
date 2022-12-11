@@ -8,6 +8,7 @@ var logger = require('./logger');
 const auth0 = require('auth0-deploy-cli')
 const okta = require('@okta/okta-sdk-nodejs');
 const Auth0Strategy = require('passport-auth0');
+const path = require('path');
 
 //routes
 const auth = require('./routes/auth');
@@ -157,6 +158,8 @@ router.post("/hooks/destroy", async (req, res, next) => {
     }
     res.sendStatus(202)
 })
+
+app.use("/deploy_yaml", express.static(path.join(__dirname, '/deploy_yaml')));
 
 app.use(router)
 

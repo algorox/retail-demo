@@ -87,7 +87,7 @@
             <ul><b>We STRONGLY recommend backing up your tenant config BEFORE migration. This follows any good migration
                     practice!</b></ul>
 
-            <input type="submit" class="btn-small branded" id="download_config" value="Download Config"
+            <input type="button" class="btn-small branded" id="download_config" value="Download Config"
                 onclick="return confirm('Download started. You file will be availabe shortly. Please store it safely'); " />
             <hr>
             <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
@@ -119,7 +119,8 @@
         var actionUrl = '/migration/migrate_config';
 
         var data = {
-            "download": "true"
+            "download": "true",
+            "migrationDemoName": document.getElementById("migrationDemoName").value
         }
 
         $.ajax({
@@ -127,10 +128,11 @@
             url: actionUrl,
             data: data,
             success: function (data) {
-                $('#migration_logs').text(JSON.stringify(data, null, 2));
+               window.open(data.url, '_blank')
             },
-            error: function (data) {
-                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            error: function (err) {
+                $('#migration_logs').text(JSON.stringify(err, null, 2));
+
             }
         });
 
@@ -156,6 +158,7 @@
         });
 
     });
+
 
 
 </script>
