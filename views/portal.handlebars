@@ -166,8 +166,6 @@
                 <label for="demo">Demo Name</label>
                 <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" value="legacy-demo-test" required/>
 
-                <br>
-                <br>
                 <input class="btn-small branded" type="submit" value="Create Legacy Demo"
                     onclick="return confirm('Are you sure? By clicking Create, you understand that your CIC tenant will be completely overwritten with a new demo configuration'); " />
 
@@ -182,19 +180,15 @@
                 <br>
                 <br>
                 <input class="btn-small branded" type="button" id="get_legacy_db_users" value="Legacy DB Users" /> --}}
-
-
-                <br>
-                <br>
                 <input class="btn-small branded" type="button" id="get_logs" value="Logs" />
 
                 <br>
-                <br>
+                <hr>
                 <input class="btn-small branded" type="button" id="clear_demo" value="Clear Demo"
                     onclick="return confirm('Are you sure? By clicking Clear, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
 
             </form>
-            <br>
+            <hr>
             <p><b>Events</b></p>
             <pre id="notifications"></pre>
         </div>
