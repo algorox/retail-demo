@@ -66,7 +66,7 @@ router.post("/migrate_config", async (req, res, next) => {
 
             if ((output.document.demoOkta === "creation") || (output.document.demoOkta === "migration")) {
                 res.status(200)
-                res.send({ "Note": "This demo.okta CIC tenant has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
+                res.send({ "Note": "This associated demo.okta CIC tenant has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
             }
 
         }
