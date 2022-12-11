@@ -53,8 +53,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
-
     var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    req.body.tenant_settings = tenantSettings
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -133,11 +134,11 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 })
 
 
-router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
+router.post("/migrate_config", async (req, res, next) => {
 
     var to_config;
 
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.body.tenant_settings
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -170,10 +171,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         })
 })
 
-router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
-
-
+router.post("/migrate_config", async (req, res, next) => {
+   
+    var tenantSettings = req.body.tenant_settings
     var data
     var get_type = 'GET'
     var accessToken = req.userContext.at
@@ -214,9 +214,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
 })
 
-router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
+router.post("/migrate_config", async (req, res, next) => {
 
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.body.tenant_settings
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -401,7 +401,5 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         })
 
 })
-
-
 
 module.exports = router;

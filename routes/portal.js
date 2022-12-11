@@ -39,6 +39,7 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
     var domain, domain_trailing_slash, tenantSettings
 
     tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    
     domain = tenantSettings.issuer.replace('https://', '');
     domain_trailing_slash = domain.replace('/', '');
     domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
@@ -49,7 +50,11 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
 });
 
 
-router.post("/create_legacy_demo", async (req, res, next) => {
+router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    req.body.tenant_settings = tenantSettings;
 
     var check_url = 'https://portal.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid';
     var check_data;
@@ -73,12 +78,12 @@ router.post("/create_legacy_demo", async (req, res, next) => {
         })
 })
 
-router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+router.post("/create_legacy_demo", async (req, res, next) => {
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
-
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    
+    tenantSettings = req.body.tenant_settings
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -115,12 +120,13 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
 })
 
 
-router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+router.post("/create_legacy_demo", async (req, res, next) => {
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    tenantSettings = req.body.tenant_settings;
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -156,12 +162,12 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
         })
 })
 
-router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+router.post("/create_legacy_demo", async (req, res, next) => {
 
     var check_url, check_data, tenant_url, tenant_data, demo_url, demo_name, demo_data, get_type, post_type, accessToken, tenantSettings;
     var domain, domain_trailing_slash
 
-    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.body.tenant_settings
 
     get_type = 'GET'
     post_type = 'POST'
@@ -334,10 +340,12 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
 })
 
 
-router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+router.post("/create_legacy_demo", async (req, res, next) => {
 
     var post_type = 'POST'
     var update_demo_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/updateOne'
+
+    tenantSettings = req.body.tenant_settings
 
     update_demo_deployment_data =
     {
@@ -423,6 +431,7 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
     tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    req.body.tenant_settings = tenantSettings;
 
     url = 'https://portal.auth0.cloud/api/tenants'
     demo_url = 'https://portal.auth0.cloud/api/demos'
@@ -532,11 +541,11 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
 })
 
-router.post("/get_legacy_tenants", tr.resolveTenant(), async (req, res, next) => {
+router.post("/get_legacy_tenants", async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
 
-    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.body.tenant_settings
 
     url = 'https://portal.auth0.cloud/api/tenants'
     type = 'GET'
@@ -597,15 +606,14 @@ router.post("/get_legacy_tenants", tr.resolveTenant(), async (req, res, next) =>
         });
 })
 
+//
 router.post("/get_legacy_tenants", async (req, res, next) => {
 
     var url, data, type, accessToken;
-
-
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    tenantSettings = req.body.tenant_settings
 
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
@@ -772,7 +780,7 @@ router.post("/mailtrap", async (req, res, next) => {
     accessToken = req.userContext.at
 
     data = {
-        "mailtrap_api_key": req.body.key
+        "mailtrap_api_key": key
     }
 
     handleRequests(url, data, type, accessToken)
