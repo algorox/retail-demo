@@ -48,17 +48,23 @@ router.post("/migrate_config", async (req, res, next) => {
 })
 
 
-router.post("/migrate_config", async (req, res, next) => {
+router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
+
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
+
     get_demo_deployment_data =
     {
-        collection: "deployments",
+        collection: "tenants",
         database: "platform",
         dataSource: "Cluster-Prod",
-        filter: { "demoName": req.body.migrationDemoName }
+        filter: { "domain": domain_trailing_slash }
     }
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
 
@@ -66,9 +72,8 @@ router.post("/migrate_config", async (req, res, next) => {
 
             if ((output.document.demoOkta === "creation") || (output.document.demoOkta === "migration")) {
                 res.status(200)
-                res.send({ "Note": "This associated demo.okta CIC tenant has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
+                res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
             }
-
         }
 
         else {

@@ -73,10 +73,15 @@ router.post("/create_legacy_demo", async (req, res, next) => {
         })
 })
 
-router.post("/create_legacy_demo", async (req, res, next) => {
+router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
 
     get_demo_deployment_data =
     {
@@ -93,7 +98,7 @@ router.post("/create_legacy_demo", async (req, res, next) => {
                 res.status(200)
                 res.send({
                     "demoOkta": "migration",
-                    "Note": "This demo.okta CIC tenant has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there."
+                    "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a new demo in another tenant"
                 })
             }
 
@@ -110,25 +115,31 @@ router.post("/create_legacy_demo", async (req, res, next) => {
 })
 
 
-router.post("/create_legacy_demo", async (req, res, next) => {
+router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
+
     get_demo_deployment_data =
     {
-        collection: "deployments",
+        collection: "tenants",
         database: "platform",
         dataSource: "Cluster-Prod",
-        filter: { "demoName": req.body.migrationDemoName }
+        filter: { "domain": domain_trailing_slash }
     }
+
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
 
         if (output.document.hasOwnProperty('demoOkta')) {
 
             if ((output.document.demoOkta === "migration")) {
                 res.status(200)
-                res.send({ "Note": "This demo.okta CIC tenant has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
+                res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a new demo in another tenant" })
             }
 
         }
@@ -594,12 +605,17 @@ router.post("/get_legacy_tenants", async (req, res, next) => {
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
 
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
+
     get_demo_deployment_data =
     {
-        collection: "deployments",
+        collection: "tenants",
         database: "platform",
         dataSource: "Cluster-Prod",
-        filter: { "demoName": req.body.linked_demo_name }
+        filter: { "domain": domain_trailing_slash }
     }
 
     url = 'https://portal.auth0.cloud/api/demos'
@@ -617,7 +633,7 @@ router.post("/get_legacy_tenants", async (req, res, next) => {
                 res.status(200)
                 res.send({
                     "demoOkta": "migration",
-                    "Clear": "This demo.okta CIC tenant has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a new demo in another tenant"
+                    "Clear": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a new demo in another tenant"
                 })
             }
 
