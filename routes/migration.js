@@ -35,15 +35,15 @@ router.post("/migrate_config", async (req, res, next) => {
             res.status(200)
             res.send({ "Note": "No demo found with the name: " + req.body.migrationDemoName })
         }).catch((error) => {
-            console.log(error)            
+            console.log(error)
 
-            if(error.error = 409) {
-              next()
+            if (error.error = 409) {
+                next()
             }
             else {
-            res.status(400)
-            res.send({ error: error })
-           }
+                res.status(400)
+                res.send({ error: error })
+            }
         })
 })
 
@@ -172,8 +172,11 @@ router.post("/migrate_config", async (req, res, next) => {
 })
 
 router.post("/migrate_config", async (req, res, next) => {
-   
-    var tenantSettings = req.body.tenant_settings
+
+    tenantSettings = req.body.tenant_settings
+
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
     var data
     var get_type = 'GET'
     var accessToken = req.userContext.at
@@ -224,41 +227,6 @@ router.post("/migrate_config", async (req, res, next) => {
 
     var client_data = req.body.clients;
 
-    // var client_data = [
-    //     [
-    //         "multitenant-app",
-    //         "eq2CwYaYyZjifoiDhJ1C28xNtBs0eBQM"
-    //     ],
-    //     [
-    //         "Service0",
-    //         "gRLewtR0iYg9aj0HRhyIlqUm8uAXejlz"
-    //     ],
-    //     [
-    //         "Travel0 Consumer Website",
-    //         "frEaJH0PKWZLZsyTox3sHjmKMsMaYTjT"
-    //     ],
-    //     [
-    //         "Travel0 Corporate Website",
-    //         "pyqwlq53tleb5nhoRNeGOPAbuP6CS7it"
-    //     ],
-    //     [
-    //         "Travel0 Cruise Website",
-    //         "c9fv7eiKUXRaXSzEq6dBezVp1zWLmRwC"
-    //     ],
-    //     [
-    //         "Travel0 M2M Client",
-    //         "U8boE3ATDmfWYb2O1q8XodW4jvGZsFTB"
-    //     ],
-    //     [
-    //         "demo-platform-deployer",
-    //         "X4Qi5U3M8K0FzReBKRT92llANvmFNt2H"
-    //     ],
-    //     [
-    //         "All Applications",
-    //         "ZvU78Ls2774NEUQyrzcAcpd31WFkIBst"
-    //     ]
-    // ]
-
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
     var update_demo_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/updateOne'
@@ -274,7 +242,6 @@ router.post("/migrate_config", async (req, res, next) => {
 
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type)
         .then((output) => {
-
 
             if (output.document.demoConfiguration.templateId === 'travel0') {
 
@@ -310,6 +277,8 @@ router.post("/migrate_config", async (req, res, next) => {
             delete output.document._id
             output.document.demoOkta = "migration"
 
+            req.body.tenant_configuration = output.document;
+
             update_demo_deployment_data =
             {
                 collection: "deployments",
@@ -326,7 +295,7 @@ router.post("/migrate_config", async (req, res, next) => {
             req.body.migration_tenant_id = output.document.tenantId
 
             handleMongoRequests(update_demo_url, update_demo_deployment_data, post_type).then((output) => {
-
+      
                 update_demo_data =
                 {
                     collection: "demos",
@@ -342,7 +311,6 @@ router.post("/migrate_config", async (req, res, next) => {
                         }
                     }
                 }
-
 
                 handleMongoRequests(update_demo_url, update_demo_data, post_type).then((output) => {
 
@@ -370,8 +338,41 @@ router.post("/migrate_config", async (req, res, next) => {
 
                     handleMongoRequests(update_demo_url, update_tenant_data, post_type).then((output) => {
 
-                        res.status(200)
-                        res.send({ "Migrations": "All migrated to demo.okta!" })
+                        var template = req.body.tenant_configuration.demoConfiguration.templateType
+
+                        if (template === 'property0') {
+
+                            update_property0_deployment_data =
+                            {
+                                collection: "demos",
+                                database: "property",
+                                dataSource: "Cluster-Prod",
+                                filter: { "name": req.body.migrationDemoName },
+                                upsert: "true",
+                                update: {
+                                    $set:
+                                        req.body.tenant_configuration
+                                }
+                            }
+
+                            handleMongoRequests(update_demo_url, update_property0_deployment_data, post_type).then((output) => {
+
+                                res.status(200)
+                                res.send({ "Migrations": "Property0 (" + req.body.tenant_configuration.demoName + ") migrated to the demo.okta tenant " + domain })
+
+                            })
+                                .catch((error) => {
+                                    console.log(error)
+                                    res.status(400)
+                                    res.send({ error: error })
+                                })
+                        }
+
+                        else {
+
+                            res.status(200)
+                            res.send({ "Migrations": "Travel0 (" + req.body.tenant_configuration.demoName + ") migrated to the demo.okta tenant " + domain })
+                        }
 
                     })
                         .catch((error) => {
