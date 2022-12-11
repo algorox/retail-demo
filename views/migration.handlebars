@@ -1,14 +1,29 @@
 <style>
     #migration_logs {
         width: 100%;
+        height: 200px;
         padding: 50px 0;
         text-align: left;
         background-color: rgba(232, 232, 232, 0.489);
         margin-top: 20px;
-        display: none;
+        display: block;
         overflow: scroll;
         white-space: pre-wrap;
     }
+
+        .column {
+        float: left;
+        width: 50%;
+        padding: 10px;
+        height: 300px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
 </style>
 
 <div>
@@ -17,18 +32,24 @@
 </div>
 <hr>
 
-<ul>Before you begin, you need to create an M2M application in the tenant you migrating from <b>AND</b> the tenant you
-    are migrating to.</ul>
+
+<hr>
+
+<body>
+
+        <div class="row">
+        <div class="column">
+
+            <ul>Before you begin, please create an M2M application in the tenant you migrating FROM</ul>
 <ul>Use <a href="https://auth0.com/docs/deploy-monitor/deploy-cli-tool/create-and-configure-the-deploy-cli-application"
         target="_blank">this</a> doc to guide you through the process. Make a note of the client ids and secrets as you
     will need them below!</ul>
 <ul>The intent of this solution is to accelerate migration of demos to PoCs, PoCs to development environments and the
     use of unsupported legacy demo applications</ul>
-<hr>
 
-<body>
     <form action="/migration/migrate_config" id="migrate_form" method="POST">
-        <p><b>From</b></p>
+
+        <p><b>Tenant you want to migrate From</b></p>
 
         <input type="text" name="from_domain" id="from_domain"
             placeholder="Add the domain of the the tenant you want to migrate FROM. Example: tenantname.demo-platform.auth0app.com" />
@@ -36,33 +57,29 @@
 
         <input type="text" name="from_client" id="from_client"
             placeholder="Add the client_id of the the tenant you want to migrate FROM" />
-        <label for="from_client">Client of the tenant to migrate FROM</label>
+        <label for="from_client">Client ID of the tenant to migrate FROM</label>
 
         <input type="text" name="from_secret" id="from_secret"
             placeholder="Add the client_secret of the the tenant you want to migrate FROM" />
-        <label for="from_secret">Secret of the tenant to migrate FROM</label>
-        {{!-- <br>
-        <p><b>To</b></p>
+        <label for="from_secret">CLient Secret of the tenant to migrate FROM</label>
 
-        <input type="text" name="to_domain" id="to_domain"
-            placeholder="Add the domain of the the tenant you want to migrate TO. Example: tenantname.cic-demo-platform.auth0app.com" />
-        <label for="to_domain">Domain of the tenant to migrate TO</label>
+        </div>
+        <div class="column">
 
-        <input type="text" name="to_client" id="to_client"
-            placeholder="Add the client_id of the the tenant you want to migrate TO" />
-        <label for="to_client">Client of the tenant to migrate TO</label>
+            <ul>We STRONGLY recommend backing up your tenant config BEFORE migration. This follows any good migration practice!</ul>
 
-        <input type="text" name="to_secret" id="to_secret"
-            placeholder="Add the client_secret of the the tenant you want to migrate TO" />
-        <label for="to_secret">Secret of the tenant to migrate TO</label>
-        <br>
-        <br> --}}
-        <p>This solution must NEVER be used for the migration of or migration to Production environments</p>
+
+        <input type="submit" class="btn-small branded" id="download_config" value="Download Config"
+        onclick="return confirm('Download started. You file will be availabe shortly. Please store it safely'); " />
+
+        <ul>This solution must NEVER be used for the migration of or migration to Production environments</ul>
         <input type="submit" class="btn-small branded" value="Migrate!"
             onclick="show_logs(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed'); " />
     </form>
     <hr>
     <pre id="migration_logs"> > Migration started!..</pre>
+    </div>
+    </div>
 </body>
 
 <br>
@@ -70,10 +87,29 @@
 
 <script>
 
-    function show_logs() {
-        var x = document.getElementById("migration_logs");
-        x.style.display = "block";
-    }
+    $("#download_config").click(function (e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var actionUrl = '/migration/migrate_config';
+
+        var data = {
+            "download": "true"
+        }
+
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: data,
+            success: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            },
+            error: function (data) {
+                $('#migration_logs').text(JSON.stringify(data, null, 2));
+            }
+        });
+
+    });
 
     $("#migrate_form").submit(function (e) {
 

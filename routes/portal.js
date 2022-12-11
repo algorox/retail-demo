@@ -229,6 +229,8 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
 
 router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
+    console.log('hit')
+
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
     tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
@@ -244,8 +246,6 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
     handleRequests(url, data, type, accessToken)
         .then((output) => {
 
-
-
             for (let i = 0; i < output.results.length; i++) {
                 let obj = output.results[i];
 
@@ -260,6 +260,8 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
                 }
             }
+
+            console.log(output)
 
             if (tenant_response) {
 
