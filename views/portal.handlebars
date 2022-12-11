@@ -104,6 +104,16 @@
                 <li>{{tenant}}</li>
             </ul>
 
+
+            <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
+            <br>
+
+            <label class="switch">
+                <input type="checkbox" id="migrated_demo">
+                <span></span>
+
+            </label>
+
             <p><b>Your Legacy Users</b></p>
 
             <ul id="user-container"></ul>
@@ -133,7 +143,7 @@
                 <label for="mailtrap">Must be Mailtrap API v1</label>
 
                 <br>
-                <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
+                <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" required/>
 
                 <br>
 
@@ -154,7 +164,7 @@
 
                 <br>
                 <label for="demo">Demo Name</label>
-                <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" />
+                <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name" value="legacy-demo-test" required/>
 
                 <br>
                 <br>
@@ -211,21 +221,9 @@
         });
     }
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function create() {
-
-
-
-    }
-
     $(document).ready(function() {
 
-            var demo_url, api_type, api_data
-
-        //await delay(5000)
+        var demo_url, api_type, api_data
 
         demo_url = '/portal/get_legacy_demo'
         api_type = 'POST'
@@ -233,7 +231,19 @@
 
         getPostPromise(demo_url, api_type, api_data).then((output) => {
 
-        console.log(output.Demo.raw)
+
+
+            if(output.Demo.raw.hasOwnProperty('demoOkta')) {
+            
+            if(output.Demo.raw.demoOkta === "migration"){
+                document.getElementById("migrated_demo").checked = true;
+            }
+
+            else {
+                document.getElementById("migrated_demo").checked = false;
+            }
+            
+            }
         
             if (output.Demo === "No demo added yet") {
                 list = document.createElement("LI");
@@ -256,6 +266,7 @@
 
             }
 
+            document.getElementById('migration_status').innerHTML('test');
             var azureADflag = output.Demo.raw.flags[0].enabled;
             var auth0Loginflag = output.Demo.raw.flags[1].enabled
 
@@ -406,9 +417,20 @@
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
+            if(
+
+                output.clear != "Cleared"
+            )
+            {
+                $('#notifications').text(JSON.stringify(output, null, 2));
+            }
+
+            else {
+
             window.localStorage.clear()
             $('#notifications').text("Demo Clear requested successfully!\nPlease wait a few moments before continuing as it can take a while for deletion to complete");
             //$('#notifications').text(JSON.stringify(output, null, 2));
+            }
 
         })
             .catch((err) => {
@@ -431,6 +453,14 @@
 
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 
+            if(output.demoOkta === "migration") {
+                
+                $('#notifications').text(JSON.stringify(output, null, 2));
+
+            }
+
+            else {
+
             window.localStorage.clear()
             window.localStorage.setItem('tenant_id', output.demo_creation.results[0].tenantId);
             window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
@@ -446,12 +476,13 @@
 
             getPostPromise(logs_url, api_type, log_data).then((output) => {
 
-                $('#notifications').text(output);
+                $('#notifications').text('output');
 
             })
                 .catch((err) => {
                     $('#notifications').text(JSON.stringify(err, null, 2));
                 })
+            }
 
         })
             .catch((err) => {
@@ -470,8 +501,6 @@
         var api_data = JSON.stringify({
             key: document.getElementById("mailtrap_input").value
         })
-
-        console.log('hit')
 
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 

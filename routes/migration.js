@@ -35,7 +35,6 @@ router.post("/migrate_config", async (req, res, next) => {
             res.status(200)
             res.send({ "Note": "No demo found with the name: " + req.body.migrationDemoName })
         }).catch((error) => {
-\
             console.log(error)            
 
             if(error.error = 409) {
@@ -220,40 +219,40 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     var client_data = req.body.clients;
 
-    var client_data = [
-        [
-            "multitenant-app",
-            "eq2CwYaYyZjifoiDhJ1C28xNtBs0eBQM"
-        ],
-        [
-            "Service0",
-            "gRLewtR0iYg9aj0HRhyIlqUm8uAXejlz"
-        ],
-        [
-            "Travel0 Consumer Website",
-            "frEaJH0PKWZLZsyTox3sHjmKMsMaYTjT"
-        ],
-        [
-            "Travel0 Corporate Website",
-            "pyqwlq53tleb5nhoRNeGOPAbuP6CS7it"
-        ],
-        [
-            "Travel0 Cruise Website",
-            "c9fv7eiKUXRaXSzEq6dBezVp1zWLmRwC"
-        ],
-        [
-            "Travel0 M2M Client",
-            "U8boE3ATDmfWYb2O1q8XodW4jvGZsFTB"
-        ],
-        [
-            "demo-platform-deployer",
-            "X4Qi5U3M8K0FzReBKRT92llANvmFNt2H"
-        ],
-        [
-            "All Applications",
-            "ZvU78Ls2774NEUQyrzcAcpd31WFkIBst"
-        ]
-    ]
+    // var client_data = [
+    //     [
+    //         "multitenant-app",
+    //         "eq2CwYaYyZjifoiDhJ1C28xNtBs0eBQM"
+    //     ],
+    //     [
+    //         "Service0",
+    //         "gRLewtR0iYg9aj0HRhyIlqUm8uAXejlz"
+    //     ],
+    //     [
+    //         "Travel0 Consumer Website",
+    //         "frEaJH0PKWZLZsyTox3sHjmKMsMaYTjT"
+    //     ],
+    //     [
+    //         "Travel0 Corporate Website",
+    //         "pyqwlq53tleb5nhoRNeGOPAbuP6CS7it"
+    //     ],
+    //     [
+    //         "Travel0 Cruise Website",
+    //         "c9fv7eiKUXRaXSzEq6dBezVp1zWLmRwC"
+    //     ],
+    //     [
+    //         "Travel0 M2M Client",
+    //         "U8boE3ATDmfWYb2O1q8XodW4jvGZsFTB"
+    //     ],
+    //     [
+    //         "demo-platform-deployer",
+    //         "X4Qi5U3M8K0FzReBKRT92llANvmFNt2H"
+    //     ],
+    //     [
+    //         "All Applications",
+    //         "ZvU78Ls2774NEUQyrzcAcpd31WFkIBst"
+    //     ]
+    // ]
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'

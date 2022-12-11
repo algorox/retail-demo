@@ -47,11 +47,13 @@
 <ul>The intent of this solution is to accelerate migration of demos to PoCs, PoCs to development environments and the
     use of unsupported legacy demo applications</ul>
 
+    <ul><b>NOTE: If you have already migrated or created a demo to this CIC tenant, you will be unable to migrate another tenant: this reduces conflicts and issues. Instead, simply create a new tenant and create/migrate into that</b></ul>
+
     <form action="/migration/migrate_config" id="migrate_form" method="POST">
 
         <p><b>Tenant you want to migrate From</b></p>
 
-        <input type="text" name="migrationDemoName" id="migrationDemoName" value="legacy-demo-test"
+        <input type="text" name="migrationDemoName" id="migrationDemoName" value="legacy-demo-test" required
             placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
         <label for="migrationDemoName">Name of the Demo you want to migrate</label>
 

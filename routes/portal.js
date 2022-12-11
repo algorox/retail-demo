@@ -4,6 +4,7 @@ const router = express.Router();
 const tenantResolver = require('../tenantResolver')
 var logger = require('../logger');
 const handleRequests = require('../utils/requests').handleRequests;
+const handleMongoRequests = require('../utils/requests').handleMongoRequests;
 
 const tr = new tenantResolver();
 
@@ -23,7 +24,7 @@ function parseJWT(token) {
 }
 
 router.get("/", tr.resolveTenant(), async (req, res, next) => {
-    
+
 
     logger.verbose("/ requested")
 
@@ -46,6 +47,103 @@ router.get("/", tr.resolveTenant(), async (req, res, next) => {
         tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
     });
 });
+
+
+router.post("/create_legacy_demo", async (req, res, next) => {
+
+    var check_url = 'https://portal.auth0.cloud/api/demos/' + req.body.demo_name + '/is-valid';
+    var check_data;
+    var get_type = 'GET'
+    var accessToken = req.userContext.at
+
+    handleRequests(check_url, check_data, get_type, accessToken)
+        .then((output) => {
+            res.status(200)
+            res.send({ "Note": "No demo found with the name: " + req.body.demo_name })
+        }).catch((error) => {
+            console.log(error)
+
+            if (error.error = 409) {
+                next()
+            }
+            else {
+                res.status(400)
+                res.send({ error: error })
+            }
+        })
+})
+
+router.post("/create_legacy_demo", async (req, res, next) => {
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+
+    get_demo_deployment_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.demo_name }
+    }
+    handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
+
+        if (output.document.hasOwnProperty('demoOkta')) {
+
+            if (output.document.demoOkta === "migration") {
+                res.status(200)
+                res.send({
+                    "demoOkta": "migration",
+                    "Note": "This demo.okta CIC tenant has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there."
+                })
+            }
+
+        }
+        else {
+            next()
+        }
+    })
+        .catch((error) => {
+            console.log(error)
+            res.status(400)
+            res.send({ error: error })
+        })
+})
+
+
+router.post("/create_legacy_demo", async (req, res, next) => {
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+
+    get_demo_deployment_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.migrationDemoName }
+    }
+    handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
+
+        if (output.document.hasOwnProperty('demoOkta')) {
+
+            if ((output.document.demoOkta === "migration")) {
+                res.status(200)
+                res.send({ "Note": "This demo.okta CIC tenant has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there." })
+            }
+
+        }
+
+        else {
+            next()
+        }
+
+    })
+        .catch((error) => {
+            console.log(error)
+            res.status(400)
+            res.send({ error: error })
+        })
+})
 
 router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
@@ -179,10 +277,7 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
                                     handleRequests(demo_url, demo_data, post_type, accessToken)
                                         .then((output) => {
 
-                                            res.status(200)
-                                            res.send({
-                                                "demo_creation": output
-                                            });
+                                            next()
 
                                         }).catch((err) => {
                                             console.log(err);
@@ -227,9 +322,92 @@ router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) =>
 
 })
 
-router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
-    console.log('hit')
+router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
+
+    var post_type = 'POST'
+    var update_demo_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/updateOne'
+
+    update_demo_deployment_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.demo_name },
+        upsert: "true",
+        update: {
+            $set: {
+                "demoOkta": "creation"
+            }
+        }
+    }
+
+    req.body.migration_tenant_id = output.document.tenantId
+
+    handleMongoRequests(update_demo_url, update_demo_deployment_data, post_type).then((output) => {
+
+        update_demo_data =
+        {
+            collection: "demos",
+            database: "demo0api",
+            dataSource: "Cluster-Prod",
+            filter: { "name": req.body.demo_name },
+            upsert: "true",
+            update: {
+                $set:
+                {
+                    "demoOkta": "creation"
+                }
+            }
+        }
+
+
+        handleMongoRequests(update_demo_url, update_demo_data, post_type).then((output) => {
+
+            update_tenant_data =
+            {
+                collection: "tenants",
+                database: "platform",
+                dataSource: "Cluster-Prod",
+                filter: { "_id": { "$oid": req.body.demo_name } },
+                upsert: "true",
+                update: {
+                    $set:
+                    {
+                        "demoOkta": "creation"
+                    }
+                }
+            }
+
+            handleMongoRequests(update_demo_url, update_tenant_data, post_type).then((output) => {
+
+                res.status(200)
+                res.send({ "Demo_Created": req.body.demo_name })
+
+            })
+                .catch((error) => {
+                    console.log(error)
+                    res.status(400)
+                    res.send({ error: error })
+                })
+
+        })
+            .catch((error) => {
+                console.log(error)
+                res.status(400)
+                res.send({ error: error })
+            })
+
+    })
+        .catch((error) => {
+            console.log(error)
+            res.status(400)
+            res.send({ error: error })
+        })
+})
+
+
+router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash, tenant_response, demo_response;
 
@@ -277,7 +455,7 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
                             }
                         }
 
-                        if(!demo_response){
+                        if (!demo_response) {
 
                             res.status(200)
                             res.send({
@@ -300,11 +478,11 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
                             for (let i = 0; i < demo_response.applications.length; i++) {
                                 let obj = demo_response.applications[i];
-    
+
                                 if (obj.url) {
 
                                     applications.push(obj.url);
-    
+
                                 }
                             }
                             res.status(200)
@@ -320,10 +498,6 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
                             "Demo": err
                         });
                     })
-
-
-
-
             }
 
             else {
@@ -347,7 +521,7 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
 
 })
 
-router.post("/get_legacy_tenants",tr.resolveTenant(), async (req, res, next) => {
+router.post("/get_legacy_tenants", tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
 
@@ -416,64 +590,103 @@ router.post("/get_legacy_tenants", async (req, res, next) => {
 
     var url, data, type, accessToken;
 
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+
+    get_demo_deployment_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.linked_demo_name }
+    }
+
     url = 'https://portal.auth0.cloud/api/demos'
     type = 'GET'
     clear_type = 'DELETE'
     accessToken = req.userContext.at
     var clear_demo_url, clear_tenant_url;
 
-    handleRequests(url, data, type, accessToken)
-        .then((output) => {
 
-            for (let i = 0; i < output.results.length; i++) {
-                let obj = output.results[i];
+    handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
 
-                if (obj.tenantId === req.body.tenant_id) {
+        console.log(output)
 
-                    clear_demo_url = 'https://portal.auth0.cloud/api/demos/' + output.results[i].id
-                    clear_tenant_url = 'https://portal.auth0.cloud/api/tenants/' + req.body.tenant_id
+        if (output.document.hasOwnProperty('demoOkta')) {
 
-                }
-
+            if (output.document.demoOkta === "migration") {
+                res.status(200)
+                res.send({
+                    "demoOkta": "migration",
+                    "Clear": "This demo.okta CIC tenant has already been used to migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a new demo in another tenant"
+                })
             }
 
-            if (clear_demo_url) {
+        }
+        else {
 
-                handleRequests(clear_demo_url, data, clear_type, accessToken)
-                    .then((output) => {
+            handleRequests(url, data, type, accessToken)
+                .then((output) => {
+
+                    for (let i = 0; i < output.results.length; i++) {
+                        let obj = output.results[i];
+
+                        if (obj.tenantId === req.body.tenant_id) {
+
+                            clear_demo_url = 'https://portal.auth0.cloud/api/demos/' + output.results[i].id
+                            clear_tenant_url = 'https://portal.auth0.cloud/api/tenants/' + req.body.tenant_id
+
+                        }
+
+                    }
+
+                    if (clear_demo_url) {
+
+                        handleRequests(clear_demo_url, data, clear_type, accessToken)
+                            .then((output) => {
+
+                                res.status(200)
+                                res.send({
+                                    "Clear": "Cleared"
+                                });
+
+                            }).catch((err) => {
+                                console.log(err);
+                                res.status(err.error)
+                                res.send({
+                                    "Demo": err
+                                });
+                            });
+
+                    }
+
+                    else {
 
                         res.status(200)
                         res.send({
-                            "Demo": "Cleared"
+                            "Clear": "Demo Not Found"
                         });
+                    }
 
-                    }).catch((err) => {
-                        console.log(err);
-                        res.status(err.error)
-                        res.send({
-                            "Demo": err
-                        });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(err.error)
+                    res.send({
+                        "Clear": err
                     });
-
-            }
-
-            else {
-
-                res.status(200)
-                res.send({
-                    "Demo": "Demo Not Found"
                 });
-            }
 
-        })
+        }
+    })
         .catch((err) => {
             console.log(err);
             res.status(err.error)
             res.send({
-                "Demo": err
+                "Clear": err
             });
         });
-
 })
 
 router.post("/get_legacy_logs", async (req, res, next) => {
@@ -545,7 +758,7 @@ router.post("/mailtrap", async (req, res, next) => {
     accessToken = req.userContext.at
 
     data = {
-        "mailtrap_api_key": req.body.key 
+        "mailtrap_api_key": req.body.key
     }
 
     handleRequests(url, data, type, accessToken)
@@ -575,26 +788,24 @@ router.post("/update_demo_flags", async (req, res, next) => {
     type = 'PATCH'
     accessToken = req.userContext.at
 
-    if (req.body.flag_cic_value != null)
-    {
+    if (req.body.flag_cic_value != null) {
         data = {
-            "flags":[{
+            "flags": [{
                 "name": "USE_AUTH0_UNIVERSAL_LOGIN",
                 "enabled": req.body.flag_cic_value
             }]
         }
-    
+
     }
 
-    if (req.body.flag_azure_ad_value != null)
-    {
+    if (req.body.flag_azure_ad_value != null) {
         data = {
-            "flags":[{
+            "flags": [{
                 "name": "USE_AZURE_AD_CONNECTION",
                 "enabled": req.body.flag_azure_ad_value
             }]
         }
-    
+
     }
 
     handleRequests(url, data, type, accessToken)
