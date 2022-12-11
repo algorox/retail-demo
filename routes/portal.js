@@ -261,8 +261,6 @@ router.post("/get_legacy_demo",tr.resolveTenant(), async (req, res, next) => {
                 }
             }
 
-            console.log(output)
-
             if (tenant_response) {
 
                 handleRequests(demo_url, data, type, accessToken)
