@@ -611,8 +611,6 @@ router.post("/get_legacy_tenants", async (req, res, next) => {
 
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
 
-        console.log(output)
-
         if (output.document.hasOwnProperty('demoOkta')) {
 
             if (output.document.demoOkta === "migration") {
