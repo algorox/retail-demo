@@ -130,7 +130,8 @@
             success: function (data) {
 
                 if (data.hasOwnProperty("url")) {
-                    window.open(data.url, '_blank')
+                    var redirect = window.open(data.url, '_blank')
+                    redirect.location;
                 }
 
                 else {

@@ -84,7 +84,7 @@ const router = express.Router();
 app.use("/", auth)
 app.use("/portal", ensureAuthenticated(), portal)
 app.use("/migration", ensureAuthenticated(), migration)
-app.use("/deploy_yaml", ensureAuthenticated(), express.static(path.join(__dirname, '/migration_yaml')))
+app.use("/migration_yaml", ensureAuthenticated(), express.static(path.join(__dirname, '/migration_yaml')))
 
 //these webhooks consume events from the demo API
 router.post("/hooks/request", async (req, res, next) => {
