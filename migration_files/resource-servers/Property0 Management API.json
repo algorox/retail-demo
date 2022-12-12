@@ -1,0 +1,44 @@
+{
+  "name": "Property0 Management API",
+  "identifier": "https://property0-julian-demo.property0.cloud/api",
+  "allow_offline_access": true,
+  "skip_consent_for_verifiable_first_party_clients": true,
+  "token_lifetime": 86400,
+  "token_lifetime_for_web": 7200,
+  "signing_alg": "RS256",
+  "scopes": [
+    {
+      "value": "create:property",
+      "description": "Create property"
+    },
+    {
+      "value": "update:property",
+      "description": "Update property"
+    },
+    {
+      "value": "delete:property",
+      "description": "Delete property"
+    },
+    {
+      "value": "read:property",
+      "description": "Read properties"
+    },
+    {
+      "value": "invite:user",
+      "description": "Invite a user"
+    },
+    {
+      "value": "update:roles",
+      "description": "Update user roles"
+    },
+    {
+      "value": "manage:subscription",
+      "description": "Update user roles"
+    },
+    {
+      "value": "manage:branding",
+      "description": "Manage organization branding"
+    }
+  ],
+  "enforce_policies": true
+}

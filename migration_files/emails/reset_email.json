@@ -1,9 +1,0 @@
-{
-  "template": "reset_email",
-  "from": "Travel0 Accounts <accounts@travel0.net>",
-  "subject": "",
-  "syntax": "liquid",
-  "body": "./reset_email.html",
-  "urlLifetimeInSeconds": 432000,
-  "enabled": true
-}

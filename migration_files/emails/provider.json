@@ -1,1 +1,11 @@
-{}
+{
+  "name": "smtp",
+  "credentials": {
+    "smtp_host": "smtp.mailtrap.io",
+    "smtp_port": 25,
+    "smtp_user": "4f8df227b826b1",
+    "smtp_pass": "##SMTP_PASS##"
+  },
+  "default_from_address": "no-reply@auth0user.net",
+  "enabled": true
+}

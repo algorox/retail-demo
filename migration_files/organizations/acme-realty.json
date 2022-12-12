@@ -1,0 +1,10 @@
+{
+  "name": "acme-realty",
+  "display_name": "acme-realty",
+  "connections": [
+    {
+      "name": "org-acme-realty",
+      "assign_membership_on_login": true
+    }
+  ]
+}

@@ -511,7 +511,7 @@
             },
             error: function (err) {
                 spinner.setAttribute('hidden', '');
-                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\n" + JSON.stringify(err, null, 2));
+                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\nWe have also noticed the Marketplace Actions do not play nice with the deploy-cli, so make sure DELETE them before miration\n\n" + JSON.stringify(err, null, 2));
             }
         });
 

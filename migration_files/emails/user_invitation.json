@@ -1,0 +1,8 @@
+{
+  "syntax": "liquid",
+  "body": "./user_invitation.html",
+  "from": "Property0 Accounts <accounts@property0.cloud>",
+  "subject": "{% if user.app_metadata.member_type == \"owner\" %}  You've successfully created \\{{ organization.display_name }}'s \\{{ friendly_name }} account {%else%}  You've been invited to join \\{{ organization.display_name }}'s \\{{ friendly_name }} account  {% endif %}",
+  "template": "user_invitation",
+  "enabled": true
+}

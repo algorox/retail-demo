@@ -1,3 +1,4 @@
 {
+  "legacy_custom_claims": true,
   "role_users_offset_pagination_over_thousand": true
 }

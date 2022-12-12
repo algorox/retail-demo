@@ -1,0 +1,18 @@
+{
+  "options": {
+    "mfa": {
+      "active": true,
+      "return_enroll_settings": true
+    },
+    "passwordPolicy": "good",
+    "strategy_version": 2,
+    "brute_force_protection": true
+  },
+  "strategy": "auth0",
+  "name": "org-acme-realty",
+  "is_domain_connection": false,
+  "realms": [
+    "org-acme-realty"
+  ],
+  "enabled_clients": []
+}

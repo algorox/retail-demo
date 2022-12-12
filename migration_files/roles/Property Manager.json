@@ -1,0 +1,22 @@
+{
+  "name": "Property Manager",
+  "description": "Manager role for properties",
+  "permissions": [
+    {
+      "permission_name": "create:property",
+      "resource_server_identifier": "https://property0-julian-demo.property0.cloud/api"
+    },
+    {
+      "permission_name": "delete:property",
+      "resource_server_identifier": "https://property0-julian-demo.property0.cloud/api"
+    },
+    {
+      "permission_name": "read:property",
+      "resource_server_identifier": "https://property0-julian-demo.property0.cloud/api"
+    },
+    {
+      "permission_name": "update:property",
+      "resource_server_identifier": "https://property0-julian-demo.property0.cloud/api"
+    }
+  ]
+}

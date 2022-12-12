@@ -1,7 +1,0 @@
-{
-  "enabled": true,
-  "script": "./Enroll-MFA.js",
-  "name": "Enroll-MFA",
-  "order": 5,
-  "stage": "login_success"
-}

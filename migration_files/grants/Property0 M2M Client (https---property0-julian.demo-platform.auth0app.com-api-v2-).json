@@ -1,0 +1,31 @@
+{
+  "client_id": "Property0 M2M Client",
+  "audience": "https://property0-julian.demo-platform.auth0app.com/api/v2/",
+  "scope": [
+    "read:users",
+    "update:users",
+    "create:users",
+    "delete:users",
+    "read:roles",
+    "update:roles",
+    "read:connections",
+    "create:connections",
+    "read:organizations",
+    "update:organizations",
+    "create:organizations",
+    "delete:organizations",
+    "create:organization_members",
+    "read:organization_members",
+    "delete:organization_members",
+    "create:organization_connections",
+    "read:organization_connections",
+    "update:organization_connections",
+    "delete:organization_connections",
+    "create:organization_member_roles",
+    "read:organization_member_roles",
+    "delete:organization_member_roles",
+    "read:organization_invitations",
+    "create:organization_invitations",
+    "delete:organization_invitations"
+  ]
+}

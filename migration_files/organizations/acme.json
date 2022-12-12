@@ -1,0 +1,10 @@
+{
+  "name": "acme",
+  "display_name": "acme",
+  "connections": [
+    {
+      "name": "org-acme",
+      "assign_membership_on_login": true
+    }
+  ]
+}
