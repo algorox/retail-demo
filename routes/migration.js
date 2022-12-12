@@ -73,8 +73,8 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
-        // if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-        if (output.document.hasOwnProperty('test') && req.body.download != "true") {
+        if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
+        //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
             res.status(200)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
@@ -82,7 +82,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         else {
             next()
         }
-    })        .catch((error) => {
+    }).catch((error) => {
         console.log(error)
         res.status(400)
         res.send({ error: error })
@@ -105,64 +105,64 @@ router.post("/migrate_config", async (req, res, next) => {
 
     handleMongoRequests(get_demos_url, get_demo_tenant_data, post_type).then((output) => {
 
-            //https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
+        //https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
-            //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
+        //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
 
-            var from_config;
-            from_config = {
-                // AUTH0_DOMAIN: output.document.domain,
-                // AUTH0_CLIENT_SECRET: output.document.clientSecret,
-                // AUTH0_CLIENT_ID: output.document.clientId,
-                AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
-                AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
-                AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
-                AUTH0_ALLOW_DELETE: false,
-                INCLUDED_PROPS: {
-                    "clients": ["client_secret", "client_id"]
-                }
+        var from_config;
+        from_config = {
+            AUTH0_DOMAIN: output.document.domain,
+            AUTH0_CLIENT_SECRET: output.document.clientSecret,
+            AUTH0_CLIENT_ID: output.document.clientId,
+            // AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
+            // AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
+            // AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
+            AUTH0_ALLOW_DELETE: false,
+            INCLUDED_PROPS: {
+                "clients": ["client_secret", "client_id"]
             }
+        }
 
-            fs.mkdir('./deploy_yaml', { recursive: true }, (err) => {
-                if (err) throw err;
+        fs.mkdir('./deploy_yaml', { recursive: true }, (err) => {
+            if (err) throw err;
 
-                deployCLI.dump({
-                    output_folder: './migration_files', // temp store for tenant_config.json
-                    config_file: 'tenant_config.json', //name of output file
-                    config: from_config,
-                    //format: "yaml"  // Set-up (as above)   
+            deployCLI.dump({
+                output_folder: './migration_files', // temp store for tenant_config.json
+                config_file: 'tenant_config.json', //name of output file
+                config: from_config,
+                //format: "yaml"  // Set-up (as above)   
+            })
+                .then((output) => {
+
+                    if (req.body.download === 'true') {
+
+                        zip.execSync(`zip -r archive *`, {
+                            cwd: './migration_files'
+                        });
+
+                        res.status(200)
+                        res.send({ url: req.headers.host + '/migration_files/archive.zip' })
+                    }
+
+                    else {
+                        next()
+                    }
+
                 })
-                    .then((output) => {
+                .catch((error) => {
+                    console.log(error)
+                    res.status(400)
+                    res.send({ error: error })
+                })
 
-                        if (req.body.download === 'true') {
+        });
 
-                            zip.execSync(`zip -r archive *`, {
-                                cwd: './migration_files'
-                            });
-
-                            res.status(200)
-                            res.send({ url: req.headers.host + '/migration_files/archive.zip'})
-                        }
-
-                        else {
-                            next()
-                        }
-
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                        res.status(400)
-                        res.send({ error: error })
-                    })
-
-            });
-        
     })
-    .catch((error) => {
-        console.log(error)
-        res.status(400)
-        res.send({ error: error })
-    })
+        .catch((error) => {
+            console.log(error)
+            res.status(400)
+            res.send({ error: error })
+        })
 
 })
 
@@ -373,23 +373,54 @@ router.post("/migrate_config", async (req, res, next) => {
 
                         if (template === 'property0') {
 
-                            update_property0_deployment_data =
-                            {
+                            get_property0_data = {
                                 collection: "demos",
                                 database: "property",
                                 dataSource: "Cluster-Prod",
-                                filter: { "name": req.body.migrationDemoName },
-                                upsert: "true",
-                                update: {
-                                    $set:
-                                        req.body.tenant_configuration
-                                }
+                                filter: { "name": req.body.migrationDemoName }
                             }
 
-                            handleMongoRequests(update_demo_url, update_property0_deployment_data, post_type).then((output) => {
+                            handleMongoRequests(get_demos_url, get_property0_data, post_type).then((output) => {
 
-                                res.status(200)
-                                res.send({ "Migrations": req.body.tenant_configuration.demoName + " migrated to the demo.okta tenant " + domain })
+                                for (let i = 0; i < client_data.length; i++) {
+
+                                    for (let n = 0; n < output.document.applications.length; n++) {
+                
+                                        if (output.document.applications[n].name === client_data[i][0]) {
+                                            output.document.applications[n].clientId = client_data[i][1]
+                                            output.document.applications[n].domain = domain_trailing_slash
+                                            output.document.resources[0].identifier = tenantSettings.issuer + 'api/v2'
+                                        }
+                                    }
+                                }
+
+                                delete output.document._id
+                                output.document.demoOkta = "migration"
+
+                                update_property0_deployment_data =
+                                {
+                                    collection: "demos",
+                                    database: "property",
+                                    dataSource: "Cluster-Prod",
+                                    filter: { "name": req.body.migrationDemoName },
+                                    upsert: "true",
+                                    update: {
+                                        $set:
+                                            output.document
+                                    }
+                                }
+
+                                handleMongoRequests(update_demo_url, update_property0_deployment_data, post_type).then((output) => {
+
+                                    res.status(200)
+                                    res.send({ "Migrations": req.body.tenant_configuration.demoName + " migrated to the demo.okta tenant " + domain })
+
+                                })
+                                    .catch((error) => {
+                                        console.log(error)
+                                        res.status(400)
+                                        res.send({ error: error })
+                                    })
 
                             })
                                 .catch((error) => {
@@ -397,6 +428,7 @@ router.post("/migrate_config", async (req, res, next) => {
                                     res.status(400)
                                     res.send({ error: error })
                                 })
+
                         }
 
                         else {

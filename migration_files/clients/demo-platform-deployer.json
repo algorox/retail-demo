@@ -14,7 +14,7 @@
     "idle_token_lifetime": 1296000,
     "rotation_type": "non-rotating"
   },
-  "client_secret": "sLi7ClIH7nIkKKXo7Hs4e-T7hTkEBcHeGAzX7LFvsInIAH5cxdPVgnEHZt8e49Bi",
+  "client_secret": "R0atam-YcQkjQ8nxZxqZMUHejSsfCMGy1dC3L2YGl-OpuZVCQoMalvqT0sDFIh_2",
   "jwt_configuration": {
     "lifetime_in_seconds": 36000,
     "secret_encoded": false

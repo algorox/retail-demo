@@ -3,16 +3,16 @@
   "name": "Property0-spa",
   "allowed_clients": [],
   "allowed_logout_urls": [
-    "https://property0-julian-demo.property0.cloud",
-    "https://*.property0-julian-demo.property0.cloud"
+    "https://orgz-test-do-migration.property0.cloud",
+    "https://*.orgz-test-do-migration.property0.cloud"
   ],
   "callbacks": [
-    "https://property0-julian-demo.property0.cloud",
-    "https://*.property0-julian-demo.property0.cloud",
-    "https://*.property0-julian-demo.property0.cloud/dashboard"
+    "https://orgz-test-do-migration.property0.cloud",
+    "https://*.orgz-test-do-migration.property0.cloud",
+    "https://*.orgz-test-do-migration.property0.cloud/dashboard"
   ],
   "description": "Main SPA for Property0 demo domain",
-  "initiate_login_uri": "https://property0-julian-demo.property0.cloud/login",
+  "initiate_login_uri": "https://orgz-test-do-migration.property0.cloud/login",
   "oidc_conformant": true,
   "organization_usage": "require",
   "organization_require_behavior": "pre_login_prompt",
@@ -33,30 +33,20 @@
     "infinite_idle_token_lifetime": false,
     "rotation_type": "rotating"
   },
-  "native_social_login": {
-    "apple": {
-      "enabled": false
-    },
-    "facebook": {
-      "enabled": false
-    }
-  },
   "allowed_origins": [],
-  "client_secret": "fjr3PV1ekCPxeLzOF32h5LGssa8MG8ujpkj4iuPD2qcX2f1jWLujIcYp8kQoARlD",
+  "client_secret": "wIwyVKryq42IFTUeEPEqLH6thKXGK8Y1pKkFseTwwB8YLQ3kBVEDfqbKsN98aT6K",
   "jwt_configuration": {
     "lifetime_in_seconds": 36000,
     "secret_encoded": false
   },
-  "client_aliases": [],
   "token_endpoint_auth_method": "none",
   "app_type": "spa",
   "grant_types": [
-    "authorization_code",
-    "refresh_token"
+    "authorization_code"
   ],
   "web_origins": [
-    "https://property0-julian-demo.property0.cloud",
-    "https://*.property0-julian-demo.property0.cloud"
+    "https://orgz-test-do-migration.property0.cloud",
+    "https://*.orgz-test-do-migration.property0.cloud"
   ],
   "custom_login_page_on": true
 }
