@@ -73,8 +73,8 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
-        if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-        // if (output.document.hasOwnProperty('test') && req.body.download != "true") {
+        // if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
+        if (output.document.hasOwnProperty('test') && req.body.download != "true") {
             res.status(200)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
@@ -111,12 +111,12 @@ router.post("/migrate_config", async (req, res, next) => {
 
             var from_config;
             from_config = {
-                AUTH0_DOMAIN: output.document.domain,
-                AUTH0_CLIENT_SECRET: output.document.clientSecret,
-                AUTH0_CLIENT_ID: output.document.clientId,
-                // AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
-                // AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
-                // AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
+                // AUTH0_DOMAIN: output.document.domain,
+                // AUTH0_CLIENT_SECRET: output.document.clientSecret,
+                // AUTH0_CLIENT_ID: output.document.clientId,
+                AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
+                AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
+                AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
                 AUTH0_ALLOW_DELETE: false,
                 INCLUDED_PROPS: {
                     "clients": ["client_secret", "client_id"]

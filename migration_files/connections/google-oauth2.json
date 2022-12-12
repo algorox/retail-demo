@@ -41,11 +41,6 @@
   "name": "google-oauth2",
   "is_domain_connection": false,
   "enabled_clients": [
-    "demo-platform-deployer",
-    "Service0",
-    "Travel0 Consumer Website",
-    "Travel0 Corporate Website",
-    "Travel0 Cruise Website",
-    "Travel0 M2M Client"
+    "Generic0 Website"
   ]
 }

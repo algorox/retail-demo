@@ -484,7 +484,7 @@
             },
             error: function (err) {
                 spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(err, null, 2));
+                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\n" + JSON.stringify(err, null, 2));
 
             }
         });
@@ -509,9 +509,9 @@
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(data, null, 2));
             },
-            error: function (data) {
+            error: function (err) {
                 spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(data, null, 2));
+                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\n" + JSON.stringify(err, null, 2));
             }
         });
 

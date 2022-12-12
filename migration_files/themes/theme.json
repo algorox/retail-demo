@@ -1,36 +1,24 @@
 {
-  "borders": {
-    "button_border_weight": 1,
-    "buttons_style": "pill",
-    "button_border_radius": 3,
-    "input_border_weight": 1,
-    "inputs_style": "rounded",
-    "input_border_radius": 9,
-    "widget_corner_radius": 32,
-    "widget_border_weight": 0,
-    "show_widget_shadow": true
-  },
   "colors": {
-    "primary_button": "#FF7F38",
+    "primary_button": "#00AA9E",
     "primary_button_label": "#ffffff",
-    "secondary_button_border": "#c2c8d0",
-    "secondary_button_label": "#2d333a",
-    "base_focus_color": "#635dff",
+    "secondary_button_border": "#ffffff",
+    "secondary_button_label": "#1e212a",
+    "base_focus_color": "#326DB3",
     "base_hover_color": "#000000",
-    "links_focused_components": "#007bad",
-    "header": "#2d333a",
-    "body_text": "#2d333a",
+    "links_focused_components": "#326DB3",
+    "header": "#1e212a",
+    "body_text": "#1e212a",
     "widget_background": "#ffffff",
-    "widget_border": "#c2c8d0",
-    "input_labels_placeholders": "#6f7780",
+    "widget_border": "#c9cace",
+    "input_labels_placeholders": "#65676e",
     "input_filled_text": "#000000",
-    "input_border": "#c2c8d0",
+    "input_border": "#c9cace",
     "input_background": "#ffffff",
-    "icons": "#6f7780",
-    "error": "#d00e17",
-    "success": "#0a8852"
+    "icons": "#65676e",
+    "error": "#d03c38",
+    "success": "#13a688"
   },
-  "displayName": "Unnamed Theme",
   "fonts": {
     "font_url": "",
     "reference_text_size": 16,
@@ -60,16 +48,28 @@
     },
     "links_style": "normal"
   },
-  "page_background": {
-    "page_layout": "center",
-    "background_color": "#000000",
-    "background_image_url": "https://cdn.staging.auth0.cloud/assets/imgs/TravelZero-Background.jpg"
+  "borders": {
+    "button_border_weight": 1,
+    "buttons_style": "rounded",
+    "button_border_radius": 3,
+    "input_border_weight": 1,
+    "inputs_style": "rounded",
+    "input_border_radius": 3,
+    "widget_corner_radius": 5,
+    "widget_border_weight": 0,
+    "show_widget_shadow": true
   },
   "widget": {
     "logo_position": "center",
-    "logo_url": "https://cdn.staging.auth0.cloud/assets/icons/TravelZeroLogoColor.png",
-    "logo_height": 60,
+    "logo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Playstation_logo_colour.svg/1200px-Playstation_logo_colour.svg.png",
+    "logo_height": 64,
     "header_text_alignment": "center",
     "social_buttons_layout": "bottom"
-  }
+  },
+  "page_background": {
+    "page_layout": "right",
+    "background_color": "#ffffff",
+    "background_image_url": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/c83f861f-b07f-4d1e-8a71-e784b0041b68/d2a7d6s-906ccaf9-a4fc-4c83-9701-4b4d2bd21b8c.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2M4M2Y4NjFmLWIwN2YtNGQxZS04YTcxLWU3ODRiMDA0MWI2OFwvZDJhN2Q2cy05MDZjY2FmOS1hNGZjLTRjODMtOTcwMS00YjRkMmJkMjFiOGMucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.lhQ9YzdYL5YGwmHSul4A7X6MDqRA2CAnw4FVmeodn0c"
+  },
+  "displayName": "Unnamed Theme"
 }

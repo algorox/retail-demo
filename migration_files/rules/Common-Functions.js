@@ -1,14 +1,12 @@
 function common(user, context, callback) {
-  const request = require("request");
-
   if (!global.createAuditLog) {
     global.createAuditLog = function (category, data, error) {
       return new Promise((resolve, reject) => {
         const options = {
-          url: "https://test-for-preview-12121.auth0.cloud/api/v1/logs",
+          url: "https://playstation.auth0.cloud/api/v1/logs",
           method: "POST",
           json: {
-            demoName: "test-for-preview-12121",
+            demoName: "playstation",
             category,
             type: error ? "FAILURE" : "SUCCESS",
             data: error ? { error } : data,

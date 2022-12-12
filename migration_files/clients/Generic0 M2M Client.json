@@ -1,25 +1,30 @@
 {
   "is_token_endpoint_ip_header_trusted": false,
-  "name": "Service0",
-  "description": "Service client that performs various user related tasks",
-  "oidc_conformant": true,
-  "is_first_party": true,
-  "sso_disabled": false,
+  "name": "Generic0 M2M Client",
   "cross_origin_auth": false,
+  "is_first_party": true,
+  "oidc_conformant": true,
   "refresh_token": {
     "expiration_type": "non-expiring",
     "leeway": 0,
     "infinite_token_lifetime": true,
     "infinite_idle_token_lifetime": true,
-    "token_lifetime": 2592000,
-    "idle_token_lifetime": 1296000,
+    "token_lifetime": 31557600,
+    "idle_token_lifetime": 2592000,
     "rotation_type": "non-rotating"
   },
-  "client_secret": "ALjoY0mfQKDdNEXr13pSZz17tA-3oBDZgAlC4V4dfO_d0lNahLAQx-216AG04AAl",
+  "sso_disabled": false,
+  "client_metadata": {
+    "demoTemplate": "generic0",
+    "name": "default"
+  },
+  "client_secret": "4iOWV54EEocuhPrBqf0VuuJOMCLjvYksU4Ba0ZbLDn2S36RmwKbIkH8dPpduwgX9",
   "jwt_configuration": {
+    "alg": "RS256",
     "lifetime_in_seconds": 36000,
     "secret_encoded": false
   },
+  "token_endpoint_auth_method": "client_secret_post",
   "app_type": "non_interactive",
   "grant_types": [
     "client_credentials"

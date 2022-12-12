@@ -46,20 +46,20 @@ async function accountLinking(user, context, cb) {
     return callback(null, user, context);
   }
 
-  const request = require("request");
+  const request = require("request@2.56.0");
   const queryString = require("querystring");
   const jwt = require("jsonwebtoken@7.1.9");
 
   const config = {
     endpoints: {
       linking:
-        "https://webtask.demo-platform.auth0app.com/api/run/test-for-preview-12121/4cb95bf92ced903b9b84ebedbf5ebffd",
+        "https://webtask.demo-platform.auth0app.com/api/run/playstation/4cb95bf92ced903b9b84ebedbf5ebffd",
       userApi: `${auth0.baseUrl}/users`,
       usersByEmailApi: `${auth0.baseUrl}/users-by-email`,
     },
     token: {
-      clientId: "dbc6c222208215d475d97ab67df8399044d8bb8203bf69dd5bbe6c7c8e32c36d",
-      clientSecret: "169e9a419e384b5ae5729df2ccbb4b656169bb16a161235eb05caa6a656a44f76e70d5c960a4338adf7278d349b6c8ba2c63801553880ee83152479a6bde087d",
+      clientId: "d8e5609df14f564fc03f9e6afea278dd3d9b866b0e97d628b36d90b2ff9a2a75",
+      clientSecret: "db6bc007d82b8e2128b5eaa5a9cf947548d7e0aeb07806cd8aa5e5fb9989fe9a90a290c6203978be98f2babb176cef75b6579310e644d41031ba53da611a7342",
       issuer: auth0.domain,
     },
   };
@@ -90,7 +90,6 @@ async function accountLinking(user, context, cb) {
   }
 
   function apiCall(options) {
-
     return new Promise((resolve, reject) => {
       const reqOptions = {
         url: options.url,

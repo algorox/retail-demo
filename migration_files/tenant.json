@@ -3,12 +3,18 @@
     "en"
   ],
   "flags": {
-    "new_universal_login_experience_enabled": false,
+    "new_universal_login_experience_enabled": true,
     "universal_login": true,
     "dashboard_ui_next": true,
     "revoke_refresh_token_grant": false,
     "disable_clickjack_protection_headers": false
   },
-  "friendly_name": "TravelZero",
-  "universal_login": {}
+  "friendly_name": "playstation",
+  "picture_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Playstation_logo_colour.svg/1200px-Playstation_logo_colour.svg.png",
+  "universal_login": {
+    "colors": {
+      "page_background": "#ffffff",
+      "primary": "#1976d2"
+    }
+  }
 }
