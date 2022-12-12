@@ -1,0 +1,14 @@
+{
+  "enabled_locales": [
+    "en"
+  ],
+  "flags": {
+    "new_universal_login_experience_enabled": false,
+    "universal_login": true,
+    "dashboard_ui_next": true,
+    "revoke_refresh_token_grant": false,
+    "disable_clickjack_protection_headers": false
+  },
+  "friendly_name": "TravelZero",
+  "universal_login": {}
+}

@@ -96,12 +96,21 @@
         animation: spin 1s infinite linear
     }
 
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
     #notificationbar {
         background-color: rgba(249, 110, 110, 0.251);
         padding: 2px;
         text-align: center;
     }
-
 </style>
 
 <div>
@@ -114,7 +123,9 @@
     <br>
 
     <div id="notificationbar">
-        <ul>This solution integrates <i>existing</i> Travel0, Property0 and Generic0 apps into the demo.okta private cloud and demo.okta builder.<br> It is provided 'as is'.<br>With the deprecation of portal.auth0.cloud on Feb 1st 23, no support will be provided for any migrated applications.</ul>
+        <ul>This solution integrates <i>existing</i> Travel0, Property0 and Generic0 apps into the demo.okta private
+            cloud and demo.okta builder.<br> It is provided 'as is'.<br>With the deprecation of portal.auth0.cloud on
+            Feb 1st 23, no support will be provided for any migrated applications.</ul>
     </div>
 
     <div hidden id="spinner"></div>

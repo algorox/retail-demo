@@ -1,0 +1,10 @@
+{
+  "name": "Travel Approver",
+  "description": "Can approve travel",
+  "permissions": [
+    {
+      "permission_name": "approve:travel",
+      "resource_server_identifier": "https://test-for-preview-12121-travel0.auth0.cloud/api"
+    }
+  ]
+}

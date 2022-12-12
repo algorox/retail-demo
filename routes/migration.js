@@ -74,6 +74,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
+        // if (output.document.hasOwnProperty('test') && req.body.download != "true") {
             res.status(200)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
@@ -113,6 +114,9 @@ router.post("/migrate_config", async (req, res, next) => {
                 AUTH0_DOMAIN: output.document.domain,
                 AUTH0_CLIENT_SECRET: output.document.clientSecret,
                 AUTH0_CLIENT_ID: output.document.clientId,
+                // AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
+                // AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
+                // AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
                 AUTH0_ALLOW_DELETE: false,
                 INCLUDED_PROPS: {
                     "clients": ["client_secret", "client_id"]
@@ -123,21 +127,21 @@ router.post("/migrate_config", async (req, res, next) => {
                 if (err) throw err;
 
                 deployCLI.dump({
-                    output_folder: './migration_yaml', // temp store for tenant_config.json
+                    output_folder: './migration_files', // temp store for tenant_config.json
                     config_file: 'tenant_config.json', //name of output file
                     config: from_config,
-                    format: "yaml"  // Set-up (as above)   
+                    //format: "yaml"  // Set-up (as above)   
                 })
                     .then((output) => {
 
                         if (req.body.download === 'true') {
 
                             zip.execSync(`zip -r archive *`, {
-                                cwd: './migration_yaml'
+                                cwd: './migration_files'
                             });
 
                             res.status(200)
-                            res.send({ url: req.headers.host + '/migration_yaml/archive.zip'})
+                            res.send({ url: req.headers.host + '/migration_files/archive.zip'})
                         }
 
                         else {
@@ -186,10 +190,10 @@ router.post("/migrate_config", async (req, res, next) => {
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
     deployCLI.deploy({
-        input_file: './migration_yaml',
+        input_file: './migration_files',
         config_file: 'tenant_config.json',
         config: to_config,
-        format: 'yaml'
+        //format: 'yaml'
     })
         .then((output) => {
             next()
@@ -270,7 +274,7 @@ router.post("/migrate_config", async (req, res, next) => {
     handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type)
         .then((output) => {
 
-            if (output.document.demoConfiguration.templateId === 'travel0') {
+            if (output.document.demoConfiguration.templateId !== 'property0') {
 
                 for (let i = 0; i < client_data.length; i++) {
 
@@ -385,7 +389,7 @@ router.post("/migrate_config", async (req, res, next) => {
                             handleMongoRequests(update_demo_url, update_property0_deployment_data, post_type).then((output) => {
 
                                 res.status(200)
-                                res.send({ "Migrations": "Property0 (" + req.body.tenant_configuration.demoName + ") migrated to the demo.okta tenant " + domain })
+                                res.send({ "Migrations": req.body.tenant_configuration.demoName + " migrated to the demo.okta tenant " + domain })
 
                             })
                                 .catch((error) => {
@@ -398,7 +402,7 @@ router.post("/migrate_config", async (req, res, next) => {
                         else {
 
                             res.status(200)
-                            res.send({ "Migrations": "Travel0 (" + req.body.tenant_configuration.demoName + ") migrated to the demo.okta tenant " + domain })
+                            res.send({ "Migrations": req.body.tenant_configuration.demoName + " migrated to the demo.okta tenant " + domain })
                         }
 
                     })
