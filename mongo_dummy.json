@@ -1,5 +1,93 @@
 {
   "_id": {
+    "$oid": "635a2882365f43001cc342b4"
+  },
+  "name": "organizations-oktane",
+  "applications": [
+    {
+      "callbacks": [],
+      "clientId": "wugbJyQja59H3FihJWqD8B8bmpmLlhOp",
+      "clientSecret": "uy7K_zZm9cxdP1Ti9pIsouUL9ebCMZzSdIhg5KDe7KNMsJpA7_jLsAExATLOp11H",
+      "name": "portal.auth0.cloud M2M",
+      "type": "M2M",
+      "domain": "organizations-oktane.demo-platform-staging.auth0app.com"
+    },
+    {
+      "callbacks": [],
+      "clientId": "rhzANNOGkCcWOjWABLVl9LrSotiWbKXt",
+      "clientSecret": "IgI2isoFGJVaSJxDK0cMTcRnnvFVcsFkNvDK4H1n4LwzRmWNKOFlu6rDf9DnI9Wk",
+      "name": "Property0 M2M Client",
+      "type": "M2M",
+      "domain": "organizations-oktane.demo-platform-staging.auth0app.com",
+      "metadata": {
+        "demoTemplate": "property0",
+        "name": "default"
+      }
+    },
+    {
+      "callbacks": [
+        "https://organizations-oktane.property0.cloud",
+        "https://*.organizations-oktane.property0.cloud",
+        "https://*.organizations-oktane.property0.cloud/dashboard"
+      ],
+      "clientId": "YKJV7lMmaoH1XVl2SDW1tHNIHxPxjtRU",
+      "clientSecret": "MKQodkvq8hoVrmMuUPYS7SBAm1W2j6S8KX5oeqDYK-iV4xG3PQ_n-Xw-rASDuMnW",
+      "name": "Property0-spa",
+      "type": "SPA",
+      "domain": "organizations-oktane.demo-platform-staging.auth0app.com",
+      "metadata": {
+        "demoTemplate": "property0",
+        "name": "default"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "identifier": "https://organizations-oktane.demo-platform-staging.auth0app.com/api/v2/",
+      "name": "Auth0 Management API",
+      "resourceId": "635a27bfd20620b0011d43d1"
+    },
+    {
+      "identifier": "https://organizations-oktane.property0.cloud/api",
+      "name": "Property0 Management API",
+      "resourceId": "635a287f6083998f7cd3fe9f"
+    }
+  ],
+  "roles": [
+    {
+      "id": "rol_Dha1XkalT547tG0u",
+      "name": "Owner",
+      "description": "Owner of an organization"
+    },
+    {
+      "id": "rol_ZXmJLr2jijyxdoG2",
+      "name": "Property Administrator",
+      "description": "Administrator role for a property"
+    },
+    {
+      "id": "rol_WmaObSUDrP9jPoaJ",
+      "name": "Property Manager",
+      "description": "Manager role for properties"
+    }
+  ],
+  "ownerEmail": "julian.lywood@okta.com",
+  "createdAt": {
+    "$date": {
+      "$numberLong": "1666852994837"
+    }
+  },
+  "updatedAt": {
+    "$date": {
+      "$numberLong": "1666852994837"
+    }
+  },
+  "__v": {
+    "$numberInt": "0"
+  }
+}
+
+{
+  "_id": {
     "$oid": "62717955365f43001cc2ceb2"
   },
   "name": "property0-julian-demo",
