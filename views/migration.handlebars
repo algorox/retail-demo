@@ -88,7 +88,7 @@
                     practice!</b></ul>
 
             <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                onclick="return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
+                onclick="loaddata(); return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
             <hr>
             <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
                     offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
@@ -99,7 +99,7 @@
             </ul>
             <hr>
             <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
+                onclick="loaddata(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
             </form>
             <hr>
             <pre id="migration_logs"> > Migration started!..</pre>
@@ -111,6 +111,18 @@
 <hr>
 
 <script>
+
+    const spinner = document.getElementById("spinner");
+
+    function loadData(state) {
+        spinner.removeAttribute('hidden');
+        fetch('https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms')
+            .then(response => response.json())
+            .then(data => {
+                spinner.setAttribute(state, '');
+                console.log(data)
+            });
+    }
 
     $("#download_config").click(function (e) {
 
@@ -131,7 +143,6 @@
 
                 if (data.hasOwnProperty("url")) {
                     var redirect = window.open(data.url, '_blank')
-                    redirect.location;
                 }
 
                 else {
