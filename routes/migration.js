@@ -20,7 +20,8 @@ router.get("/", async (req, res, next) => {
         accessToken = parseJWT(req.userContext.tokens.access_token)
     }
     res.render("migration", {
-        accessToken: accessToken
+        accessToken: accessToken,
+        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
     });
 });
 
@@ -99,7 +100,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                 if (err) throw err;
 
                 deployCLI.dump({
-                    output_folder: './deploy_yaml', // temp store for tenant_config.json
+                    output_folder: './migration_yaml', // temp store for tenant_config.json
                     config_file: 'tenant_config.json', //name of output file
                     config: from_config,
                     format: "yaml"  // Set-up (as above)   
@@ -109,11 +110,11 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                         if (req.body.download === 'true') {
 
                             zip.execSync(`zip -r archive *`, {
-                                cwd: './deploy_yaml'
+                                cwd: './migration_yaml'
                             });
 
                             res.status(200)
-                            res.send({ url: 'http://storytime-stepup-121122.localhost:3000/deploy_yaml/archive.zip' })
+                            res.send({ url: req.headers.host + '/migration_yaml/archive.zip'})
                         }
 
                         else {
@@ -161,7 +162,7 @@ router.post("/migrate_config", async (req, res, next) => {
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
     deployCLI.deploy({
-        input_file: './deploy_yaml',
+        input_file: './migration_yaml',
         config_file: 'tenant_config.json',
         config: to_config,
         format: 'yaml'

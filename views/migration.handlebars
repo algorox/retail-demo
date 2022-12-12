@@ -88,7 +88,7 @@
                     practice!</b></ul>
 
             <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                onclick="return confirm('Download started. You file will be availabe shortly. Please store it safely'); " />
+                onclick="return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
             <hr>
             <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
                     offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
@@ -99,7 +99,7 @@
             </ul>
             <hr>
             <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant you are migrating will be changed and this change cannot be reversed'); " />
+                onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
             </form>
             <hr>
             <pre id="migration_logs"> > Migration started!..</pre>
@@ -128,7 +128,14 @@
             url: actionUrl,
             data: data,
             success: function (data) {
-               window.open(data.url, '_blank')
+
+                if (data.hasOwnProperty("url")) {
+                    window.open(data.url, '_blank')
+                }
+
+                else {
+                    $('#migration_logs').text(JSON.stringify(data, null, 2));
+                }
             },
             error: function (err) {
                 $('#migration_logs').text(JSON.stringify(err, null, 2));
