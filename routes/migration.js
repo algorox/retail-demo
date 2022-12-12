@@ -63,7 +63,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     var domain = tenantSettings.issuer.replace('https://', '');
     var domain_trailing_slash = domain.replace('/', '');
 
-    get_demo_deployment_data =
+    get_tenant_data =
     {
         collection: "tenants",
         database: "platform",
@@ -71,15 +71,38 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         filter: { "domain": domain_trailing_slash }
     }
 
-    handleMongoRequests(get_demos_url, get_demo_deployment_data, post_type).then((output) => {
+    handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-
             res.status(200)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
 
         else {
+            next()
+        }
+    })        .catch((error) => {
+        console.log(error)
+        res.status(400)
+        res.send({ error: error })
+    })
+
+})
+
+router.post("/migrate_config", async (req, res, next) => {
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+
+    get_demo_tenant_data =
+    {
+        collection: "tenants",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.migrationDemoName }
+    }
+
+    handleMongoRequests(get_demos_url, get_demo_tenant_data, post_type).then((output) => {
 
             //https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
@@ -87,9 +110,9 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
             var from_config;
             from_config = {
-                AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
-                AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
-                AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
+                AUTH0_DOMAIN: output.document.domain,
+                AUTH0_CLIENT_SECRET: output.document.clientSecret,
+                AUTH0_CLIENT_ID: output.document.clientId,
                 AUTH0_ALLOW_DELETE: false,
                 INCLUDED_PROPS: {
                     "clients": ["client_secret", "client_id"]
@@ -129,13 +152,14 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
                     })
 
             });
-        }
+        
     })
-        .catch((error) => {
-            console.log(error)
-            res.status(400)
-            res.send({ error: error })
-        })
+    .catch((error) => {
+        console.log(error)
+        res.status(400)
+        res.send({ error: error })
+    })
+
 })
 
 
