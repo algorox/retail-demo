@@ -1,11 +1,9 @@
 <style>
     #migration_logs {
         width: 100%;
-        height: 200px;
-        padding: 50px 0;
+        height: 100px;
         text-align: left;
         background-color: rgba(232, 232, 232, 0.489);
-        margin-top: 20px;
         display: block;
         overflow: scroll;
         white-space: pre-wrap;
@@ -113,16 +111,16 @@
         </div>
         <div class="column">
 
-            <ul><b>We STRONGLY recommend backing up your tenant config BEFORE migration. This follows any good migration
-                    practice!</b></ul>
+            <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from BEFORE migration. This follows any good migration
+                    practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having a copy means that you can manually update values in the tenant you are migrating to based on the backed up config.</ul>
 
             <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                onclick="return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
+                onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
             <hr>
             <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
                     offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
-                    settings and Custom Domains. We saw these features creating many errors that broke the process. You
-                    should be able to manually configure these features after the migration.</b></ul>
+                    settings and Custom Domains. We saw these features creating many errors that broke the process.</b> <br><br>You
+                    should be able to manually configure these features after the migration and this is why we recommend downloading your config.</ul>
 
             <ul><b>This solution must NEVER be used for the migration of or migration to Production environments</b>
             </ul>
