@@ -266,9 +266,8 @@
             for (let i = 0; i < output.Demo.applications.length; i++) {
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
-                list.innerHTML = output.Demo.applications[i];
+                list.innerHTML = "<a href='#'>" + output.Demo.applications[i] + "</a>";
                 document.getElementById('list-container').appendChild(list);
-
             }
 
             var azureADflag = output.Demo.raw.flags[0].enabled;
