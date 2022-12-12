@@ -1,8 +1,7 @@
 <style>
     #notifications {
         width: 100%;
-        height: 150px;
-        padding: 10px;
+        height: 200px;
         text-align: left;
         background-color: rgba(232, 232, 232, 0.785);
         margin-top: 20px;
@@ -95,35 +94,29 @@
         will-change: transform;
         animation: spin 1s infinite linear
     }
-
-    #notificationbar {
-        background-color: rgba(249, 110, 110, 0.251);
-        padding: 2px;
-        text-align: center;
-    }
-
 </style>
 
 <div>
     <a class="btn-small branded" href="/logout">Logout</a>
+    <a class="btn-small branded" href="/migration">Migration</a>
 </div>
 
 
 
 <body>
-    <br>
-
-    <div id="notificationbar">
-        <ul>This solution integrates <i>existing</i> Travel0, Property0 and Generic0 apps into the demo.okta private cloud and demo.okta builder.<br> It is provided 'as is'.<br>With the deprecation of portal.auth0.cloud on Feb 1st 23, no support will be provided for any migrated applications.</ul>
-    </div>
 
     <div hidden id="spinner"></div>
 
+    <br>
     <div class="row">
         <div class="column">
+            <p><b>Welcome</b></p>
+            <ul>This solution is intended to support legacy usage of the portal.auth0.cloud apps Travel0 and Property0
+            </ul>
+            <ul>It provides a 1:1 mapping between the connected tenant and either an instance of Travel0 or Property0:
+                your choice!</ul>
+            <ul>It is supported by the Demo Community at Okta under a Best Efforts model</ul>
 
-            <p><b>Events</b></p>
-            <pre id="notifications">> No events received yet...</pre>
             <p><b>Your Demos</b></p>
 
             <ul id="list-container"></ul>
@@ -139,7 +132,7 @@
             <br>
 
             <label class="switch">
-                <input type="checkbox" id="migrated_demo" onclick="return false;">
+                <input type="checkbox" id="migrated_demo">
                 <span></span>
 
             </label>
@@ -147,6 +140,7 @@
             <p><b>Your Legacy Users</b></p>
 
             <ul id="user-container"></ul>
+            <br>
 
             <label for="demo_type">CIC Login Enabled</label>
             <br>
@@ -167,74 +161,50 @@
 
             </label>
             <br>
-
-            <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
-                <p><b>Mailtrap API Key</b></p>
-                <label for="mailtrap">Must be Mailtrap API v1</label>
-
-                <br>
-                <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
-
-                <br>
-
-                <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
-
-            </form>
         </div>
 
         <div class="column">
-            <p><b>Migrate your demo into demo.okta</b></p>
+            <form action="/portal/create_legacy_demo" id="create_demo" method="POST">
+                <p><b>Create Legacy Demo</b></p>
+                <label for="demo_type">Please select your demo app:</label>
+                <select style="display: block;" name="demo_type" id="demo_type">
+                    <option value="Travel0">Travel0</option>
+                    <option value="Property0">Property0</option>
+                </select>
 
-            <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well as
-                leverage the new demo.okta CIC AWS Private Cloud.</ul>
+                <br>
+                <label for="demo">Demo Name</label>
+                <input type="text" name="demo_name" id="demo_name" placeholder="Enter Your Demo Name"
+                    value="legacy-demo-test" required />
 
-            <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
-                    target="_blank">here</a> to learn how to use the CIC user migration tool.
-                will need them below!</ul>
+                <input class="btn-small branded" type="submit" value="Create Legacy Demo"
+                    onclick="return confirm('Are you sure? By clicking Create, you understand that your CIC tenant will be completely overwritten with a new demo configuration'); " />
 
-            <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable to
-                    migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new tenant
-                    and
-                    create/migrate into that</b></ul>
-            <hr>
+                <input class="btn-small branded" type="button" id="get_logs" value="Logs" />
 
-            <form action="/migration/migrate_config" id="migrate_form" method="POST">
-
-                <p><b>Name of demo to migrate</b></p>
-
-                <input type="text" name="migrationDemoName" id="migrationDemoName" value="demo-okta-community" required
-                    placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
-                <label for="migrationDemoName">Name of the Demo you want to migrate</label>
-
-
-
-                <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from BEFORE
-                        migration. This follows any good migration
-                        practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having a
-                    copy
-                    means that you can manually update values in the tenant you are migrating to based on the backed up
-                    config.</ul>
-
-                <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                    onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
+                <br>
                 <hr>
-                <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
-                        offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
-                        settings and Custom Domains. We saw these features creating many errors that broke the
-                        process.</b>
-                    <br><br>You
-                    should be able to manually configure these features after the migration and this is why we recommend
-                    downloading your config.
-                </ul>
-                <hr>
-                <p><b>Migration Destination Tenant</b></p>
+                <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
+                    <p><b>Mailtrap API Key</b></p>
+                    <label for="mailtrap">Must be Mailtrap API v1</label>
 
-                <ul>
-                    <li>{{tenant}}</li>
-                </ul>
-                <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                    onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
+                    <br>
+                    <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
+
+                    <br>
+
+                    <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
+
+                </form>
+                <hr>
+                <p><b>Delete your demo</b></p>
+                <input class="btn-small branded" type="button" id="clear_demo" value="Delete"
+                    onclick="return confirm('Are you sure? By clicking Delete, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
+
             </form>
+            <hr>
+            <p><b>Events</b></p>
+            <pre id="notifications"></pre>
         </div>
     </div>
 </body>
@@ -373,6 +343,27 @@
 
     });
 
+    $("#get_legacy_db_users").click(function () {
+
+        var api_url, api_type, api_data
+
+        api_url = '/portal/get_legacy_db_users'
+        api_type = 'POST'
+        api_data = JSON.stringify({
+            demo_name: window.localStorage.getItem('demo_name')
+        })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            $('#notifications').text(JSON.stringify(output, null, 2));
+
+        })
+            .catch((err) => {
+                $('#notifications').text(JSON.stringify(err, null, 2));
+            })
+
+    });
+
     $("#azure_ad").click(function () {
 
         var api_url, api_type, api_data
@@ -418,6 +409,98 @@
 
     });
 
+    $("#clear_demo").click(function () {
+
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
+
+        var api_url, api_type, api_data
+
+        api_url = '/portal/get_legacy_tenants'
+        api_type = 'POST'
+        api_data = JSON.stringify({ clear: "true" })
+
+        getPostPromise(api_url, api_type, api_data).then((output) => {
+
+            if (
+
+                output.clear != "Cleared"
+            ) {
+                spinner.setAttribute('hidden', '');
+                $('#notifications').text(JSON.stringify(output, null, 2));
+            }
+
+            else {
+                spinner.setAttribute('hidden', '');
+                window.localStorage.clear()
+                $('#notifications').text("Demo Clear requested successfully!\nPlease wait a few moments before continuing as it can take a while for deletion to complete");
+                //$('#notifications').text(JSON.stringify(output, null, 2));
+            }
+
+        })
+            .catch((err) => {
+                spinner.setAttribute('hidden', '');
+                $('#notifications').text(JSON.stringify(err, null, 2));
+            })
+
+    });
+
+    $("#create_demo").submit(function (e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
+
+        var form = $(this);
+        var actionUrl = form.attr('action');
+        var api_type = 'POST';
+        var api_data = JSON.stringify({
+            demo_name: document.getElementById("demo_name").value,
+            demo_type: document.getElementById("demo_type").value,
+        })
+
+        getPostPromise(actionUrl, api_type, api_data).then((output) => {
+
+            if (output.demoOkta === "migration") {
+                spinner.setAttribute('hidden', '');
+                $('#notifications').text(JSON.stringify(output, null, 2));
+
+            }
+
+            else {
+
+                window.localStorage.clear()
+                window.localStorage.setItem('tenant_id', output.demo_creation.results[0].tenantId);
+                window.localStorage.setItem('demo_id', output.demo_creation.results[0]._id);
+                window.localStorage.setItem('demo_name', output.demo_creation.results[0].name);
+
+                var logs_url, api_type, log_data
+
+                logs_url = '/portal/get_legacy_logs'
+                api_type = 'POST'
+                log_data = JSON.stringify({
+                    demo_name: output.demo_creation.results[0].name
+                })
+
+                getPostPromise(logs_url, api_type, log_data).then((output) => {
+                    spinner.setAttribute('hidden', '');
+                    $('#notifications').text('output');
+
+                })
+                    .catch((err) => {
+                        spinner.setAttribute('hidden', '');
+                        $('#notifications').text(JSON.stringify(err, null, 2));
+                    })
+            }
+
+        })
+            .catch((err) => {
+                spinner.setAttribute('hidden', '');
+                $('#notifications').text(JSON.stringify(err, null, 2));
+            })
+
+    });
+
     $("#mailtrap_form").submit(function (e) {
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
@@ -438,71 +521,6 @@
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
-
-    });
-
-    $("#download_config").click(function (e) {
-
-        var spinner = document.getElementById("spinner");
-        spinner.removeAttribute('hidden');
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-
-        var actionUrl = '/migration/migrate_config';
-
-        var data = {
-            "download": "true",
-            "migrationDemoName": document.getElementById("migrationDemoName").value
-        }
-
-        $.ajax({
-            type: "POST",
-            url: actionUrl,
-            data: data,
-            success: function (data) {
-                spinner.setAttribute('hidden', '');
-
-                if (data.hasOwnProperty("url")) {
-                    var redirect = window.open(data.url, '_blank')
-                }
-
-                else {
-                    spinner.setAttribute('hidden', '');
-                    $('#notifications').text(JSON.stringify(data, null, 2));
-                }
-            },
-            error: function (err) {
-                spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(err, null, 2));
-
-            }
-        });
-
-    });
-
-    $("#migrate_form").submit(function (e) {
-
-        var spinner = document.getElementById("spinner");
-        spinner.removeAttribute('hidden');
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-
-        var form = $(this);
-        var actionUrl = form.attr('action');
-
-        $.ajax({
-            type: "POST",
-            url: actionUrl,
-            data: form.serialize(), // serializes the form's elements.
-            success: function (data) {
-                spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(data, null, 2));
-            },
-            error: function (data) {
-                spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(data, null, 2));
-            }
-        });
 
     });
 
