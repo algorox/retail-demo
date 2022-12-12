@@ -1,0 +1,7 @@
+{
+  "enabled": false,
+  "script": "./Contextual-MFA-Step-UP.js",
+  "name": "Contextual-MFA-Step-UP",
+  "order": 2,
+  "stage": "login_success"
+}

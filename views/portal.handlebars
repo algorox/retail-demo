@@ -129,8 +129,23 @@
     </div>
 
     <div hidden id="spinner"></div>
+                <p><b>Migrate your demo into demo.okta</b></p>
+
+            <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well as
+                leverage the new demo.okta CIC AWS Private Cloud.</ul>
+
+            <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
+                    target="_blank">here</a> to learn how to use the CIC user migration tool.
+                will need them below!</ul>
+
+            <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable to
+                    migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new tenant
+                    and
+                    create/migrate into that</b></ul>
+            <hr>
 
     <div class="row">
+        <hr>
         <div class="column">
 
             <p><b>Events</b></p>
@@ -155,9 +170,11 @@
 
             </label>
 
+        <div id="travel0-only">
             <p><b>Your Legacy Users</b></p>
 
             <ul id="user-container"></ul>
+            <ul>Password: Auth0Dem0</ul>
 
             <label for="demo_type">CIC Login Enabled</label>
             <br>
@@ -178,6 +195,7 @@
 
             </label>
             <br>
+            </div>
 
             <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
                 <p><b>Mailtrap API Key</b></p>
@@ -194,20 +212,7 @@
         </div>
 
         <div class="column">
-            <p><b>Migrate your demo into demo.okta</b></p>
 
-            <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well as
-                leverage the new demo.okta CIC AWS Private Cloud.</ul>
-
-            <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
-                    target="_blank">here</a> to learn how to use the CIC user migration tool.
-                will need them below!</ul>
-
-            <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable to
-                    migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new tenant
-                    and
-                    create/migrate into that</b></ul>
-            <hr>
 
             <form action="/migration/migrate_config" id="migrate_form" method="POST">
 
@@ -302,6 +307,9 @@
                 return;
             }
 
+            window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
+            window.localStorage.setItem('demo_id', output.Demo.demo_id);
+            window.localStorage.setItem('demo_name', output.Demo.raw.name);
 
             for (let i = 0; i < output.Demo.applications.length; i++) {
                 list = document.createElement("LI");
@@ -310,53 +318,58 @@
                 document.getElementById('list-container').appendChild(list);
             }
 
-            var azureADflag = output.Demo.raw.flags[0].enabled;
-            var auth0Loginflag = output.Demo.raw.flags[1].enabled
+            if (output.Demo.raw.templateData.type === 'property0') {
 
-
-            if (auth0Loginflag) {
-                document.getElementById("cic_login").checked = true;
+                    document.getElementById("travel0-only").style.display = 'none';
 
             }
 
             else {
-                document.getElementById("cic_login").checked = false;
-            }
 
-            if (azureADflag) {
-                document.getElementById("azure_ad").checked = true;
-
-            }
-
-            else {
-                document.getElementById("azure_ad").checked = false;
-            }
+                var azureADflag = output.Demo.raw.flags[0].enabled;
+                var auth0Loginflag = output.Demo.raw.flags[1].enabled
 
 
-            window.localStorage.setItem('tenant_id', output.Demo.tenant_id);
-            window.localStorage.setItem('demo_id', output.Demo.demo_id);
-            window.localStorage.setItem('demo_name', output.Demo.raw.name);
-
-            var users_url = '/portal/get_legacy_db_users'
-            var users_data = JSON.stringify({
-                demo_name: output.Demo.raw.name
-            })
-
-
-            getPostPromise(users_url, api_type, users_data).then((output) => {
-
-                for (let i = 0; i < output.Legacy_Users.data.length; i++) {
-                    list = document.createElement("LI");
-                    list.setAttribute("href", "#");
-                    list.innerHTML = output.Legacy_Users.data[i].email;
-                    document.getElementById('user-container').appendChild(list);
+                if (auth0Loginflag) {
+                    document.getElementById("cic_login").checked = true;
 
                 }
 
-            }).catch((err) => {
-                $('#notifications').text(JSON.stringify(err, null, 2));
-            })
+                else {
+                    document.getElementById("cic_login").checked = false;
+                }
 
+                if (azureADflag) {
+                    document.getElementById("azure_ad").checked = true;
+
+                }
+
+                else {
+                    document.getElementById("azure_ad").checked = false;
+                }
+
+
+                var users_url = '/portal/get_legacy_db_users'
+                var users_data = JSON.stringify({
+                    demo_name: output.Demo.raw.name
+                })
+
+                getPostPromise(users_url, api_type, users_data).then((output) => {
+
+                    for (let i = 0; i < output.Legacy_Users.data.length; i++) {
+                        list = document.createElement("LI");
+                        list.setAttribute("href", "#");
+                        list.innerHTML = output.Legacy_Users.data[i].email;
+                        document.getElementById('user-container').appendChild(list);
+
+                    }
+
+                }).catch((err) => {
+                    $('#notifications').text(JSON.stringify(err, null, 2));
+                })
+
+
+            }
         })
             .catch((err) => {
                 $('#notifications').text(JSON.stringify(err, null, 2));
@@ -511,7 +524,7 @@
             },
             error: function (err) {
                 spinner.setAttribute('hidden', '');
-                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\nWe have also noticed the Marketplace Actions do not play nice with the deploy-cli, so make sure DELETE them before miration\n\n" + JSON.stringify(err, null, 2));
+                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\nWe have also noticed the Marketplace Actions do not play nice with the deploy-cli, so make sure DELETE them before migration\n\n" + JSON.stringify(err, null, 2));
             }
         });
 

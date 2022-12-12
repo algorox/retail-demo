@@ -1,0 +1,10 @@
+{
+  "options": {
+    "email": true,
+    "scope": "email"
+  },
+  "strategy": "facebook",
+  "name": "facebook",
+  "is_domain_connection": false,
+  "enabled_clients": []
+}

@@ -1,0 +1,56 @@
+{
+  "is_token_endpoint_ip_header_trusted": false,
+  "name": "Travel0 Consumer Website",
+  "allowed_clients": [],
+  "allowed_logout_urls": [
+    "https://legacy-demo-test.auth0.cloud"
+  ],
+  "callbacks": [
+    "https://legacy-demo-test.auth0.cloud",
+    "https://legacy-demo-test.auth0.cloud/payment"
+  ],
+  "cross_origin_auth": false,
+  "is_first_party": true,
+  "native_social_login": {
+    "apple": {
+      "enabled": false
+    },
+    "facebook": {
+      "enabled": false
+    }
+  },
+  "oidc_conformant": true,
+  "refresh_token": {
+    "expiration_type": "expiring",
+    "leeway": 0,
+    "token_lifetime": 2592000,
+    "idle_token_lifetime": 1296000,
+    "infinite_token_lifetime": false,
+    "infinite_idle_token_lifetime": false,
+    "rotation_type": "rotating"
+  },
+  "sso_disabled": false,
+  "client_metadata": {
+    "demoTemplate": "travel0",
+    "name": "default",
+    "userApp": "true"
+  },
+  "client_secret": "Lreo-c5o8crZc1BD6sRHDYs8Eubr49nPjtyFHgP3Bsc7gE-jOJwrdX2SUeM81f8-",
+  "jwt_configuration": {
+    "alg": "RS256",
+    "lifetime_in_seconds": 36000,
+    "secret_encoded": false
+  },
+  "client_aliases": [],
+  "token_endpoint_auth_method": "none",
+  "app_type": "spa",
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "web_origins": [
+    "https://legacy-demo-test.auth0.cloud",
+    "https://legacy-demo-test.auth0.cloud/payment"
+  ],
+  "custom_login_page_on": true
+}

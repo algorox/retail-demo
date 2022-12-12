@@ -1,0 +1,10 @@
+{
+  "template": "verify_email",
+  "from": "Travel0 Accounts <accounts@travel0.net>",
+  "subject": "",
+  "resultUrl": "https://legacy-demo-test.auth0.cloud",
+  "body": "./verify_email.html",
+  "urlLifetimeInSeconds": 432000,
+  "syntax": "liquid",
+  "enabled": true
+}
