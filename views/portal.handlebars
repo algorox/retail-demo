@@ -198,9 +198,9 @@
 
                 </form>
                 <hr>
-                <p><b>Reset your demo config</b></p>
-                <input class="btn-small branded" type="button" id="clear_demo" value="Reset"
-                    onclick="return confirm('Are you sure? By clicking Reset, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
+                <p><b>Delete your demo</b></p>
+                <input class="btn-small branded" type="button" id="clear_demo" value="Delete"
+                    onclick="return confirm('Are you sure? By clicking Delete, you understand that this will clear all demo applications, meaning they will no longer exist. However, your CIC tenant will remain live and can be reusued'); " />
 
             </form>
             <hr>
@@ -464,7 +464,7 @@
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 
             if (output.demoOkta === "migration") {
-
+                spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(output, null, 2));
 
             }
@@ -486,7 +486,6 @@
 
                 getPostPromise(logs_url, api_type, log_data).then((output) => {
                     spinner.setAttribute('hidden', '');
-
                     $('#notifications').text('output');
 
                 })

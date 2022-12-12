@@ -541,11 +541,12 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
 })
 
-router.post("/get_legacy_tenants", async (req, res, next) => {
+router.post("/get_legacy_tenants", tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings, url, data, type, accessToken, domain, domain_trailing_slash;
 
-    tenantSettings = req.body.tenant_settings
+    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    req.body.tenant_settings = tenantSettings;
 
     url = 'https://portal.auth0.cloud/api/tenants'
     type = 'GET'
