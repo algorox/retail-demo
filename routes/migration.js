@@ -76,7 +76,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
 
             res.status(200)
-            res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to back up your config too" })
+            res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
 
         else {

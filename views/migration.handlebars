@@ -23,6 +23,38 @@
         display: table;
         clear: both;
     }
+
+    #spinner:not([hidden]) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #spinner::after {
+        content: "";
+        width: 80px;
+        height: 80px;
+        border: 2px solid #f3f3f3;
+        border-top: 3px solid #182af4;
+        border-radius: 100%;
+        will-change: transform;
+        animation: spin 1s infinite linear
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <div>
@@ -35,6 +67,8 @@
 <hr>
 
 <body>
+
+    <div hidden id="spinner"></div>
 
     <div class="row">
         <div class="column">
@@ -88,7 +122,7 @@
                     practice!</b></ul>
 
             <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                onclick="loaddata(); return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
+                onclick="return confirm('Download started. Your file will be availabe shortly. Please store it safely'); " />
             <hr>
             <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
                     offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
@@ -98,11 +132,16 @@
             <ul><b>This solution must NEVER be used for the migration of or migration to Production environments</b>
             </ul>
             <hr>
+             <p><b>Migration Destination Tenant</b></p>
+
+            <ul>
+                <li>{{tenant}}</li>
+            </ul>
             <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                onclick="loaddata(); return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
+                onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
             </form>
             <hr>
-            <pre id="migration_logs"> > Migration started!..</pre>
+            <pre id="migration_logs"> > Migration Logs...</pre>
         </div>
     </div>
 </body>
@@ -112,19 +151,12 @@
 
 <script>
 
-    const spinner = document.getElementById("spinner");
 
-    function loadData(state) {
-        spinner.removeAttribute('hidden');
-        fetch('https://www.mocky.io/v2/5185415ba171ea3a00704eed?mocky-delay=5000ms')
-            .then(response => response.json())
-            .then(data => {
-                spinner.setAttribute(state, '');
-                console.log(data)
-            });
-    }
 
     $("#download_config").click(function (e) {
+
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
 
@@ -140,16 +172,19 @@
             url: actionUrl,
             data: data,
             success: function (data) {
+                spinner.setAttribute('hidden', '');
 
                 if (data.hasOwnProperty("url")) {
                     var redirect = window.open(data.url, '_blank')
                 }
 
                 else {
+                    spinner.setAttribute('hidden', '');
                     $('#migration_logs').text(JSON.stringify(data, null, 2));
                 }
             },
             error: function (err) {
+                spinner.setAttribute('hidden', '');
                 $('#migration_logs').text(JSON.stringify(err, null, 2));
 
             }
@@ -158,6 +193,9 @@
     });
 
     $("#migrate_form").submit(function (e) {
+
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
 
@@ -169,9 +207,11 @@
             url: actionUrl,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
+                spinner.setAttribute('hidden', '');
                 $('#migration_logs').text(JSON.stringify(data, null, 2));
             },
             error: function (data) {
+                spinner.setAttribute('hidden', '');
                 $('#migration_logs').text(JSON.stringify(data, null, 2));
             }
         });

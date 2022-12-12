@@ -73,6 +73,28 @@
         -ms-transform: translateX(26px);
         transform: translateX(26px);
     }
+
+    #spinner:not([hidden]) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #spinner::after {
+        content: "";
+        width: 80px;
+        height: 80px;
+        border: 2px solid #f3f3f3;
+        border-top: 3px solid #182af4;
+        border-radius: 100%;
+        will-change: transform;
+        animation: spin 1s infinite linear
+    }
 </style>
 
 <div>
@@ -83,6 +105,8 @@
 
 
 <body>
+
+    <div hidden id="spinner"></div>
 
     <br>
     <div class="row">
@@ -213,8 +237,6 @@
         api_data = JSON.stringify({ demo_name: 'test' })
 
         getPostPromise(demo_url, api_type, api_data).then((output) => {
-
-
 
             if (output.Demo.raw.hasOwnProperty('demoOkta')) {
 
@@ -391,6 +413,9 @@
 
     $("#clear_demo").click(function () {
 
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
+
         var api_url, api_type, api_data
 
         api_url = '/portal/get_legacy_tenants'
@@ -403,11 +428,12 @@
 
                 output.clear != "Cleared"
             ) {
+                spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(output, null, 2));
             }
 
             else {
-
+                spinner.setAttribute('hidden', '');
                 window.localStorage.clear()
                 $('#notifications').text("Demo Clear requested successfully!\nPlease wait a few moments before continuing as it can take a while for deletion to complete");
                 //$('#notifications').text(JSON.stringify(output, null, 2));
@@ -415,6 +441,7 @@
 
         })
             .catch((err) => {
+                spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
@@ -423,6 +450,8 @@
     $("#create_demo").submit(function (e) {
 
         e.preventDefault(); // avoid to execute the actual submit of the form.
+        var spinner = document.getElementById("spinner");
+        spinner.removeAttribute('hidden');
 
         var form = $(this);
         var actionUrl = form.attr('action');
@@ -456,17 +485,20 @@
                 })
 
                 getPostPromise(logs_url, api_type, log_data).then((output) => {
+                    spinner.setAttribute('hidden', '');
 
                     $('#notifications').text('output');
 
                 })
                     .catch((err) => {
+                        spinner.setAttribute('hidden', '');
                         $('#notifications').text(JSON.stringify(err, null, 2));
                     })
             }
 
         })
             .catch((err) => {
+                spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
