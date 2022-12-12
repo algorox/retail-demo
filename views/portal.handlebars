@@ -14,7 +14,7 @@
         float: left;
         width: 50%;
         padding: 10px;
-        height: 300px;
+        height: 100%;
     }
 
     .row:after {
@@ -129,72 +129,85 @@
     </div>
 
     <div hidden id="spinner"></div>
-                <p><b>Migrate your demo into demo.okta</b></p>
 
-            <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well as
-                leverage the new demo.okta CIC AWS Private Cloud.</ul>
-
-            <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
-                    target="_blank">here</a> to learn how to use the CIC user migration tool.
-                will need them below!</ul>
-
-            <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable to
-                    migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new tenant
-                    and
-                    create/migrate into that</b></ul>
-            <hr>
+    <hr>
 
     <div class="row">
-        <hr>
-        <div class="column">
 
-            <p><b>Events</b></p>
-            <pre id="notifications">> No events received yet...</pre>
-            <p><b>Your Demos</b></p>
+        <div id="main">
 
-            <ul id="list-container"></ul>
+            <div>
 
-            <p><b>Your Tenant</b></p>
-
-            <ul>
-                <li>{{tenant}}</li>
-            </ul>
+                <p><b>Migrate your demo into demo.okta</b></p>
 
 
-            <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
-            <br>
+                <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well
+                    as
+                    leverage the new demo.okta CIC AWS Private Cloud.</ul>
 
-            <label class="switch">
-                <input type="checkbox" id="migrated_demo" onclick="return false;">
-                <span></span>
+                <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
+                        target="_blank">here</a> to learn how to use the CIC user migration tool.
+                    will need them below!</ul>
 
-            </label>
+                <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable
+                        to
+                        migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new
+                        tenant
+                        and
+                        create/migrate into that</b></ul>
 
-        <div id="travel0-only">
-            <p><b>Your Legacy Users</b></p>
+                <hr>
 
-            <ul id="user-container"></ul>
-            <ul>Password: Auth0Dem0</ul>
+                <div id="events">
+                    <p><b>Events</b></p>
+                    <pre id="notifications">> No events received yet...</pre>
+                </div>
 
-            <label for="demo_type">CIC Login Enabled</label>
-            <br>
+                <p><b>Your Tenant</b></p>
 
-            <label class="switch">
-                <input type="checkbox" id="cic_login">
-                <span></span>
+                <ul>
+                    <li>{{tenant}}</li>
+                </ul>
+                <p><b>Your Demos</b></p>
 
-            </label>
+                <ul id="list-container"></ul>
 
-            <br>
-            <label for="demo_type">Azure AD SSO</label>
-            <br>
+                <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
+                <br>
 
-            <label class="switch">
-                <input type="checkbox" id="azure_ad">
-                <span></span>
+                <label class="switch">
+                    <input type="checkbox" id="migrated_demo" onclick="return false;">
+                    <span></span>
 
-            </label>
-            <br>
+                </label>
+
+            </div>
+
+            <div id="travel0-only">
+                <p><b>Your Legacy Users</b></p>
+
+                <ul id="user-container"></ul>
+                <ul>Password: Auth0Dem0</ul>
+
+                <label for="demo_type">CIC Login Enabled</label>
+                <br>
+
+                <label class="switch">
+                    <input type="checkbox" id="cic_login">
+                    <span></span>
+
+                </label>
+
+                <br>
+                <label for="demo_type">Azure AD SSO</label>
+                <br>
+
+                <label class="switch">
+                    <input type="checkbox" id="azure_ad">
+                    <span></span>
+
+                </label>
+                <br>
             </div>
 
             <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
@@ -211,8 +224,7 @@
             </form>
         </div>
 
-        <div class="column">
-
+        <div id="migration_tools">
 
             <form action="/migration/migrate_config" id="migrate_form" method="POST">
 
@@ -275,6 +287,12 @@
 
     $(document).ready(function () {
 
+        document.getElementById("main").style.display = 'none';
+        document.getElementById("travel0-only").style.display = 'none';
+        document.getElementById("migration_tools").style.display = 'none';
+        document.getElementById("events").style.display = 'none';
+        spinner.removeAttribute('hidden');
+
         var demo_url, api_type, api_data
 
         demo_url = '/portal/get_legacy_demo'
@@ -296,6 +314,13 @@
             }
 
             if (output.Demo === "No demo added yet") {
+
+                document.getElementById("main").style.display = 'none';
+                document.getElementById("travel0-only").style.display = 'none';
+                document.getElementById("migration_tools").style.display = 'block';
+                document.getElementById("events").style.display = 'show';
+                spinner.setAttribute('hidden', '');
+
                 list = document.createElement("LI");
                 list.setAttribute("href", "#");
                 list.innerHTML = output.Demo;
@@ -320,11 +345,21 @@
 
             if (output.Demo.raw.templateData.type === 'property0') {
 
-                    document.getElementById("travel0-only").style.display = 'none';
+                document.getElementById("main").style.display = 'block';
+                document.getElementById("travel0-only").style.display = 'none';
+                document.getElementById("migration_tools").style.display = 'none';
+                document.getElementById("events").style.display = 'none';
+                spinner.setAttribute('hidden', '');
 
             }
 
             else {
+
+                document.getElementById("main").style.display = 'block';
+                document.getElementById("travel0-only").style.display = 'block';
+                document.getElementById("migration_tools").style.display = 'none';
+                document.getElementById("events").style.display = 'none';
+                spinner.setAttribute('hidden', '');
 
                 var azureADflag = output.Demo.raw.flags[0].enabled;
                 var auth0Loginflag = output.Demo.raw.flags[1].enabled
@@ -355,6 +390,7 @@
                 })
 
                 getPostPromise(users_url, api_type, users_data).then((output) => {
+                     spinner.setAttribute('hidden', '');
 
                     for (let i = 0; i < output.Legacy_Users.data.length; i++) {
                         list = document.createElement("LI");
@@ -365,6 +401,7 @@
                     }
 
                 }).catch((err) => {
+                     spinner.setAttribute('hidden', '');
                     $('#notifications').text(JSON.stringify(err, null, 2));
                 })
 
@@ -372,6 +409,7 @@
             }
         })
             .catch((err) => {
+                 spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
     });
@@ -388,10 +426,12 @@
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
 
+            document.getElementById("events").style.display = 'block';
             $('#notifications').text(JSON.stringify(output, null, 1));
 
         })
             .catch((err) => {
+                document.getElementById("events").style.display = 'block';
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
@@ -455,11 +495,13 @@
 
         getPostPromise(actionUrl, api_type, api_data).then((output) => {
 
+            document.getElementById("events").style.display = 'block';
             $('#notifications').text("Mailtrap API Set");
             //$('#notifications').text(JSON.stringify(output.demo_creation, null, 2));
 
         })
             .catch((err) => {
+                document.getElementById("events").style.display = 'block';
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
@@ -485,17 +527,20 @@
             data: data,
             success: function (data) {
                 spinner.setAttribute('hidden', '');
+                document.getElementById("events").style.display = 'block';
 
                 if (data.hasOwnProperty("url")) {
                     var redirect = window.open(data.url, '_blank')
                 }
 
                 else {
+                    document.getElementById("events").style.display = 'show';
                     spinner.setAttribute('hidden', '');
                     $('#notifications').text(JSON.stringify(data, null, 2));
                 }
             },
             error: function (err) {
+                document.getElementById("events").style.display = 'show';
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\n" + JSON.stringify(err, null, 2));
 
@@ -519,10 +564,12 @@
             url: actionUrl,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
+                document.getElementById("events").style.display = 'show';
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(data, null, 2));
             },
             error: function (err) {
+                document.getElementById("events").style.display = 'show';
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\nWe have also noticed the Marketplace Actions do not play nice with the deploy-cli, so make sure DELETE them before migration\n\n" + JSON.stringify(err, null, 2));
             }

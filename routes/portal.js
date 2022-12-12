@@ -67,7 +67,6 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     handleRequests(url, data, type, accessToken)
         .then((output) => {
-
             for (let i = 0; i < output.results.length; i++) {
                 let obj = output.results[i];
 
