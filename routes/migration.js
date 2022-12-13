@@ -45,7 +45,7 @@ router.post("/migrate_config", async (req, res, next) => {
 router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     var post_type = 'POST'
-    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+    var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
 
     var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
 
@@ -85,7 +85,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 router.post("/migrate_config", async (req, res, next) => {
 
     var post_type = 'POST'
-    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+    var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
     var jsonBin_url = 'https://api.jsonbin.io/v3/b'
 
     get_tenant_data =
@@ -177,7 +177,7 @@ router.post("/migrate_config", async (req, res, next) => {
 router.post("/migrate_config", async (req, res, next) => {
 
     var post_type = 'POST'
-    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+    var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
 
     get_demo_tenant_data =
     {
@@ -344,8 +344,8 @@ router.post("/migrate_config", async (req, res, next) => {
     var client_data = req.body.clients;
 
     var post_type = 'POST'
-    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
-    var update_demo_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/updateOne'
+    var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
+    var update_demo_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/updateOne'
 
 
     get_demo_deployment_data =

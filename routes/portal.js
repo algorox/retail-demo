@@ -4,7 +4,6 @@ const router = express.Router();
 const tenantResolver = require('../tenantResolver')
 var logger = require('../logger');
 const handleRequests = require('../utils/requests').handleRequests;
-const handleMongoRequests = require('../utils/requests').handleMongoRequests;
 
 const tr = new tenantResolver();
 
