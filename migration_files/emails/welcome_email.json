@@ -1,8 +1,0 @@
-{
-  "template": "welcome_email",
-  "from": "Travel0 Accounts <accounts@travel0.net>",
-  "subject": "Welcome to Travel0",
-  "body": "./welcome_email.html",
-  "syntax": "liquid",
-  "enabled": true
-}

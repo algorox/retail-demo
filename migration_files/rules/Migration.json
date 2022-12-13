@@ -1,7 +1,0 @@
-{
-  "enabled": true,
-  "script": "./Migration.js",
-  "name": "Migration",
-  "order": 10,
-  "stage": "login_success"
-}

@@ -1,7 +1,0 @@
-{
-  "enabled": true,
-  "script": "./Common-Functions.js",
-  "name": "Common-Functions",
-  "order": 0,
-  "stage": "login_success"
-}

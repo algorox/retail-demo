@@ -1,7 +1,0 @@
-{
-  "enabled": false,
-  "script": "./Enrich-Profile-from-Clearbit.js",
-  "name": "Enrich-Profile-from-Clearbit",
-  "order": 21,
-  "stage": "login_success"
-}
