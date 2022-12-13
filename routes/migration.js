@@ -9,22 +9,12 @@ const os = require('os');
 const tenantResolver = require('../tenantResolver')
 const handleRequests = require('../utils/requests').handleRequests;
 const handleMongoRequests = require('../utils/requests').handleMongoRequests;
-const zip = require('child_process')
+const handleJSONBinRequests = require('../utils/requests').handleJSONBinRequests;
+const zip = require('child_process');
 
 const tr = new tenantResolver();
 
-router.get("/", async (req, res, next) => {
-    logger.verbose("/ requested")
-    var accessToken
-    if (req.userContext && req.userContext.tokens && req.userContext.tokens.access_token) {
-        accessToken = parseJWT(req.userContext.tokens.access_token)
-    }
-    res.render("migration", {
-        accessToken: accessToken,
-        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
-    });
-});
-
+//check if demo exists
 router.post("/migrate_config", async (req, res, next) => {
 
     var check_url = 'https://portal.auth0.cloud/api/demos/' + req.body.migrationDemoName + '/is-valid';
@@ -51,6 +41,7 @@ router.post("/migrate_config", async (req, res, next) => {
 })
 
 
+///check if tenant has already been migrated to
 router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     var post_type = 'POST'
@@ -74,7 +65,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-        //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
+            //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
             res.status(200)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
@@ -90,6 +81,99 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
 })
 
+///backup the mongo db configs in JSONBin.io
+router.post("/migrate_config", async (req, res, next) => {
+
+    var post_type = 'POST'
+    var get_demos_url = 'https://data.mongodb-api.com/app/data-laqlc/endpoint/data/v1/action/findOne'
+    var jsonBin_url = 'https://api.jsonbin.io/v3/b'
+
+    get_tenant_data =
+    {
+        collection: "tenants",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.migrationDemoName }
+    }
+
+    get_deployment_data =
+    {
+        collection: "deployments",
+        database: "platform",
+        dataSource: "Cluster-Prod",
+        filter: { "demoName": req.body.migrationDemoName }
+    }
+
+    get_demo_data =
+    {
+        collection: "demos",
+        database: "demo0api",
+        dataSource: "Cluster-Prod",
+        filter: { "name": req.body.migrationDemoName }
+    }
+
+    get_property0_data =
+    {
+        collection: "demos",
+        database: "property",
+        dataSource: "Cluster-Prod",
+        filter: { "name": req.body.migrationDemoName }
+    }
+
+    raw_mongo_output = {}
+
+    handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
+
+        raw_mongo_output.tenant = output.document
+
+        handleMongoRequests(get_demos_url, get_deployment_data, post_type).then((output) => {
+
+            raw_mongo_output.deployment = output.document
+
+            handleMongoRequests(get_demos_url, get_demo_data, post_type).then((output) => {
+
+                raw_mongo_output.demo = output.document
+
+                handleMongoRequests(get_demos_url, get_property0_data, post_type).then((output) => {
+
+                    raw_mongo_output.property0 = output.document
+
+                    handleJSONBinRequests(jsonBin_url, raw_mongo_output, post_type, req.body.migrationDemoName).then((output) => {
+                        next()
+                    })
+                        .catch((error) => {
+                            console.log(error)
+                            res.status(400)
+                            res.send({ error: error })
+                        })
+                })
+                    .catch((error) => {
+                        console.log(error)
+                        res.status(400)
+                        res.send({ error: error })
+                    })
+            })
+                .catch((error) => {
+                    console.log(error)
+                    res.status(400)
+                    res.send({ error: error })
+                })
+        })
+            .catch((error) => {
+                console.log(error)
+                res.status(400)
+                res.send({ error: error })
+            })
+
+    }).catch((error) => {
+        console.log(error)
+        res.status(400)
+        res.send({ error: error })
+    })
+
+})
+
+///export the tenant config from the tenant
 router.post("/migrate_config", async (req, res, next) => {
 
     var post_type = 'POST'
@@ -113,7 +197,7 @@ router.post("/migrate_config", async (req, res, next) => {
         from_config = {
             AUTH0_DOMAIN: output.document.domain,
             AUTH0_CLIENT_SECRET: output.document.clientSecret,
-            AUTH0_CLIENT_ID: output.document.clientId,   
+            AUTH0_CLIENT_ID: output.document.clientId,
             // AUTH0_DOMAIN: process.env.MIGRATION_DOMAIN,
             // AUTH0_CLIENT_SECRET: process.env.MIGRATION_SECRET,
             // AUTH0_CLIENT_ID: process.env.MIGRATION_CLIENT,
@@ -166,7 +250,7 @@ router.post("/migrate_config", async (req, res, next) => {
 
 })
 
-
+///import the tenant config to the tenant
 router.post("/migrate_config", async (req, res, next) => {
 
     var to_config;
@@ -248,6 +332,7 @@ router.post("/migrate_config", async (req, res, next) => {
 
 })
 
+///update the mongo db with the new tenant and demo info
 router.post("/migrate_config", async (req, res, next) => {
 
     tenantSettings = req.body.tenant_settings
@@ -385,7 +470,7 @@ router.post("/migrate_config", async (req, res, next) => {
                                 for (let i = 0; i < client_data.length; i++) {
 
                                     for (let n = 0; n < output.document.applications.length; n++) {
-                
+
                                         if (output.document.applications[n].name === client_data[i][0]) {
                                             output.document.applications[n].clientId = client_data[i][1]
                                             output.document.applications[n].domain = domain_trailing_slash

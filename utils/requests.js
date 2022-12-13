@@ -44,7 +44,7 @@ const handleRequests = (url, body, type, accessToken) => {
     });
 }
 
-const handleMongoRequests = (url, body, type, accessToken) => {
+const handleMongoRequests = (url, body, type) => {
 
     return new Promise((resolve, reject) => {
 
@@ -86,7 +86,51 @@ const handleMongoRequests = (url, body, type, accessToken) => {
     });
 }
 
+const handleJSONBinRequests = (url, body, type, demoName) => {
+
+    return new Promise((resolve, reject) => {
+
+        const options = {
+            url: url,
+            json: true,
+            method: type,
+            body: body,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-key': process.env.JSON_BIN_KEY,
+                'X-Bin-Name': demoName
+            }
+        };
+        request(options, function (error, response, body) {
+
+            if (error) {
+                customError = {
+                    error: 500,
+                    error_description: error
+                }
+                reject(customError);
+            }
+
+            if (response) {
+
+                if (arrayOfHTTPErrors.includes(response.statusCode)) {
+
+                    customError = {
+                        error: response.statusCode || 500,
+                        error_description: response.body || 'No Description Provided'
+                    }
+
+                    reject(customError)
+                }
+                resolve(body);
+            }
+
+        })
+    });
+}
+
 module.exports = {
     handleRequests,
-    handleMongoRequests
+    handleMongoRequests,
+    handleJSONBinRequests
 }
