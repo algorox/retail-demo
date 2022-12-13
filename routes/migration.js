@@ -25,7 +25,7 @@ router.post("/migrate_config", async (req, res, next) => {
     handleRequests(check_url, check_data, get_type, accessToken)
         .then((output) => {
             console.log('no demo found')
-            res.status(200)
+            res.status(400)
             res.send({ "Note": "No demo found with the name: " + req.body.migrationDemoName })
         }).catch((error) => {
             console.log(error)
@@ -66,7 +66,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
             //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
-            res.status(200)
+            res.status(400)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
 

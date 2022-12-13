@@ -117,8 +117,6 @@
     <a class="btn-small branded" href="/logout">Logout</a>
 </div>
 
-
-
 <body>
     <br>
 
@@ -135,8 +133,6 @@
     <div class="row">
 
         <p><b>Migrate your demo into demo.okta</b></p>
-
-
         <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well
             as
             leverage the new demo.okta CIC AWS Private Cloud.</ul>
@@ -153,95 +149,85 @@
                 create/migrate into that</b></ul>
 
         <hr>
-                    <div id="migration_tools_left">
+        <div id="migration_tools_left">
 
-                <form action="/migration/migrate_config" id="migrate_form" method="POST">
+            <form action="/migration/migrate_config" id="migrate_form" method="POST">
 
-                    <p><b>Name of demo to migrate</b></p>
+                <p><b>Name of demo to migrate</b></p>
 
-                    <input type="text" name="migrationDemoName" id="migrationDemoName" value="demo-okta-community"
-                        required
-                        placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
-                    <label for="migrationDemoName">Name of the Demo you want to migrate</label>
-
+                <input type="text" name="migrationDemoName" id="migrationDemoName" value="demo-okta-community" required
+                    placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
+                <label for="migrationDemoName">Name of the Demo you want to migrate</label>
 
 
-                    <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from
-                            BEFORE
-                            migration. This follows any good migration
-                            practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having
-                        a
-                        copy
-                        means that you can manually update values in the tenant you are migrating to based on the backed
-                        up
-                        config.</ul>
 
-                    <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                        onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
-                    <hr>
-                    <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the
-                            process
-                            offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General
-                            Tenant
-                            settings and Custom Domains. We saw these features creating many errors that broke the
-                            process.</b>
-                        <br><br>You
-                        should be able to manually configure these features after the migration and this is why we
-                        recommend
-                        downloading your config.
-                    </ul>
-                    <hr>
-                    <p><b>Migration Destination Tenant</b></p>
+                <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from
+                        BEFORE
+                        migration. This follows any good migration
+                        practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having
+                    a
+                    copy
+                    means that you can manually update values in the tenant you are migrating to based on the backed
+                    up
+                    config.</ul>
 
-                    <ul>
-                        <li>{{tenant}}</li>
-                    </ul>
-                    <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                        onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
-                </form>
+                <input type="button" class="btn-small branded" id="download_config" value="Download Config"
+                    onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
+                <hr>
+                <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the
+                        process
+                        offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General
+                        Tenant
+                        settings and Custom Domains. We saw these features creating many errors that broke the
+                        process.</b>
+                    <br><br>You
+                    should be able to manually configure these features after the migration and this is why we
+                    recommend
+                    downloading your config.
+                </ul>
+                <hr>
+                <p><b>Migration Destination Tenant</b></p>
+
+                <ul>
+                    <li>{{tenant}}</li>
+                </ul>
+                <input type="submit" class="btn-small branded" value="Migrate my demo!"
+                    onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
+            </form>
+
+
+        </div>
+
+                    <div id="events">
+                <p><b>Events</b></p>
+                <pre id="notifications">> No events received yet...</pre>
             </div>
         <div class="column">
 
 
             <div id="main_left">
-
                 <div>
-
-
-
-                    <div id="events">
-                        <p><b>Events</b></p>
-                        <pre id="notifications">> No events received yet...</pre>
-                    </div>
-
                     <p><b>Your Tenant</b></p>
 
                     <ul>
-                        <li>{{tenant}}</li>
+                        <li id="your_tenant"></li>
                     </ul>
                     <p><b>Your Demos</b></p>
-
                     <ul id="list-container"></ul>
-
                     <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
                     <br>
-
                     <label class="switch">
                         <input type="checkbox" id="migrated_demo" onclick="return false;">
                         <span></span>
-
                     </label>
-
                 </div>
-
-
             </div>
 
         </div>
 
         <div class="column">
 
-<div id="main_right">
+            <div id="main_right">
 
                 <div id="travel0-only">
                     <p><b>Your Legacy Users</b></p>
@@ -273,38 +259,17 @@
                 <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
                     <p><b>Mailtrap API Key</b></p>
                     <label for="mailtrap">Must be Mailtrap API v1</label>
-
                     <br>
                     <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
-
                     <br>
-
                     <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
-
                 </form>
+            </div>
 
 
-
-</div>
-
-
-<div id="migration_tools_right">
-
-
-
-
-
-
-
-</div>
-
-
+            <div id="migration_tools_right">
+            </div>
         </div>
-
-
-
-
-
     </div>
 </body>
 
@@ -358,19 +323,23 @@
 
             if (output.Demo === "No demo added yet") {
 
+                document.getElementById('your_tenant').innerHTML = "<a href='" + '{{tenant}}' + "'>" + '{{tenant}}' + " </a>";
+                document.querySelectorAll("a").forEach(a => {
+                    a.setAttribute("rel", "noopener");
+                    a.setAttribute("target", "_blank");
+                });
+
                 document.getElementById("main_left").style.display = 'none';
                 document.getElementById("main_right").style.display = 'none';
                 document.getElementById("travel0-only").style.display = 'none';
                 document.getElementById("migration_tools_left").style.display = 'block';
                 document.getElementById("migration_tools_right").style.display = 'block';
-                document.getElementById("events").style.display = 'show';
+                document.getElementById("events").style.display = 'block';
                 spinner.setAttribute('hidden', '');
 
                 list = document.createElement("LI");
-                list.setAttribute("href", "#");
                 list.innerHTML = output.Demo;
                 list2 = document.createElement("LI");
-                list2.setAttribute("href", "#");
                 list2.innerHTML = output.Demo;
                 document.getElementById('list-container').appendChild(list);
                 document.getElementById('user-container').appendChild(list2);
@@ -383,12 +352,18 @@
 
             for (let i = 0; i < output.Demo.applications.length; i++) {
                 list = document.createElement("LI");
-                list.setAttribute("href", "#");
-                list.innerHTML = "<a href='#'>" + output.Demo.applications[i] + "</a>";
+                list.innerHTML = "<a href='" + output.Demo.applications[i] + "'>" + output.Demo.applications[i] + " </a>";
+
                 document.getElementById('list-container').appendChild(list);
             }
 
             if (output.Demo.raw.templateData.type === 'property0') {
+                 
+                document.getElementById('your_tenant').innerHTML = "<a href='" + '{{tenant}}' + "'>" + '{{tenant}}' + " </a>";
+                document.querySelectorAll("a").forEach(a => {
+                    a.setAttribute("rel", "noopener");
+                    a.setAttribute("target", "_blank");
+                });
 
                 document.getElementById("main_left").style.display = 'block';
                 document.getElementById("main_right").style.display = 'block';
@@ -402,12 +377,18 @@
 
             else {
 
+                document.getElementById('your_tenant').innerHTML = "<a href='" + '{{tenant}}' + "'>" + '{{tenant}}' + " </a>";
+                document.querySelectorAll("a").forEach(a => {
+                    a.setAttribute("rel", "noopener");
+                    a.setAttribute("target", "_blank");
+                });
+
                 document.getElementById("main_left").style.display = 'block';
                 document.getElementById("main_right").style.display = 'block';
                 document.getElementById("travel0-only").style.display = 'block';
-                document.getElementById("migration_tools_left").style.display = 'block';
+                document.getElementById("migration_tools_left").style.display = 'none';
                 document.getElementById("migration_tools_right").style.display = 'none';
-                document.getElementById("events").style.display = 'show';
+                document.getElementById("events").style.display = 'none';
                 spinner.setAttribute('hidden', '');
 
                 var azureADflag = output.Demo.raw.flags[0].enabled;
@@ -443,7 +424,6 @@
 
                     for (let i = 0; i < output.Legacy_Users.data.length; i++) {
                         list = document.createElement("LI");
-                        list.setAttribute("href", "#");
                         list.innerHTML = output.Legacy_Users.data[i].email;
                         document.getElementById('user-container').appendChild(list);
 
@@ -499,11 +479,12 @@
         })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
-
+            document.getElementById("events").style.display = 'block';
             $('#notifications').text(JSON.stringify(output, null, 2));
 
         })
             .catch((err) => {
+                document.getElementById("events").style.display = 'block';
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
@@ -521,11 +502,12 @@
         })
 
         getPostPromise(api_url, api_type, api_data).then((output) => {
-
+            document.getElementById("events").style.display = 'block';
             $('#notifications').text(JSON.stringify(output, null, 2));
 
         })
             .catch((err) => {
+                document.getElementById("events").style.display = 'block';
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
 
@@ -583,13 +565,13 @@
                 }
 
                 else {
-                    document.getElementById("events").style.display = 'show';
+                    document.getElementById("events").style.display = 'block';
                     spinner.setAttribute('hidden', '');
                     $('#notifications').text(JSON.stringify(data, null, 2));
                 }
             },
             error: function (err) {
-                document.getElementById("events").style.display = 'show';
+                document.getElementById("events").style.display = 'block';
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\n" + JSON.stringify(err, null, 2));
 
@@ -616,9 +598,9 @@
                 location.reload();
             },
             error: function (err) {
-                document.getElementById("events").style.display = 'show';
+                document.getElementById("events").style.display = 'block';
                 spinner.setAttribute('hidden', '');
-                $('#notifications').text("Sometimes errors occur as there is A LOT of data flying around. Often, retrying the request evenutally works\n\nWe have also noticed the Marketplace Actions do not play nice with the deploy-cli, so make sure DELETE them before migration\n\n" + JSON.stringify(err, null, 2));
+                $('#notifications').text(JSON.stringify(err, null, 2));
             }
         });
 
