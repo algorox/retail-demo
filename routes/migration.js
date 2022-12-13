@@ -204,7 +204,7 @@ router.post("/migrate_config", async (req, res, next) => {
             AUTH0_ALLOW_DELETE: false,
             INCLUDED_PROPS: {
                 "clients": ["client_secret", "client_id"]
-            }
+            },
         }
 
         fs.mkdir('./migration_files', { recursive: true }, (err) => {
@@ -269,8 +269,15 @@ router.post("/migrate_config", async (req, res, next) => {
         AUTH0_EXCLUDED: ['tenant', 'clientGrants', 'actions', 'customDomains', 'migrations'],
         INCLUDED_PROPS: {
             "clients": ["client_secret", "client_id"]
+        },
+        AUTH0_KEYWORD_REPLACE_MAPPINGS: {
+            CLEARBIT_API_KEY: process.env.CLEARBIT_API_KEY,
+            AZURE_AD_DOMAIN: process.env.AZURE_DIRECTORY_DOMAIN,
+            AZURE_CLIENT_ID: process.env.AZURE_CLIENT_ID,
+            AZURE_CLIENT_SECRET: process.env.AZURE_CLIENT_SECRET
         }
     }
+
     // https://github.com/auth0/auth0-deploy-cli/blob/master/docs/excluding-from-management.md
 
     deployCLI.deploy({
