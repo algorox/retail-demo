@@ -134,136 +134,177 @@
 
     <div class="row">
 
-        <div id="main">
-
-            <div>
-
-                <p><b>Migrate your demo into demo.okta</b></p>
+        <p><b>Migrate your demo into demo.okta</b></p>
 
 
-                <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well
-                    as
-                    leverage the new demo.okta CIC AWS Private Cloud.</ul>
+        <ul>Using this solution you can integrate any existing demo in portal.auth0.cloud into demo.okta as well
+            as
+            leverage the new demo.okta CIC AWS Private Cloud.</ul>
 
-                <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
-                        target="_blank">here</a> to learn how to use the CIC user migration tool.
-                    will need them below!</ul>
+        <ul>If you need to migrate your users, head <a href="https://auth0.com/docs/manage-users/user-migration"
+                target="_blank">here</a> to learn how to use the CIC user migration tool.
+            will need them below!</ul>
 
-                <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable
-                        to
-                        migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new
-                        tenant
-                        and
-                        create/migrate into that</b></ul>
+        <ul><b>NOTE: If you have already migrated or created a demo to the {{tenant}} tenant, you will be unable
+                to
+                migrate another demo into it: this reduces conflicts and issues. Instead, simply create a new
+                tenant
+                and
+                create/migrate into that</b></ul>
 
-                <hr>
+        <hr>
+                    <div id="migration_tools_left">
 
-                <div id="events">
-                    <p><b>Events</b></p>
-                    <pre id="notifications">> No events received yet...</pre>
+                <form action="/migration/migrate_config" id="migrate_form" method="POST">
+
+                    <p><b>Name of demo to migrate</b></p>
+
+                    <input type="text" name="migrationDemoName" id="migrationDemoName" value="demo-okta-community"
+                        required
+                        placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
+                    <label for="migrationDemoName">Name of the Demo you want to migrate</label>
+
+
+
+                    <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from
+                            BEFORE
+                            migration. This follows any good migration
+                            practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having
+                        a
+                        copy
+                        means that you can manually update values in the tenant you are migrating to based on the backed
+                        up
+                        config.</ul>
+
+                    <input type="button" class="btn-small branded" id="download_config" value="Download Config"
+                        onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
+                    <hr>
+                    <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the
+                            process
+                            offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General
+                            Tenant
+                            settings and Custom Domains. We saw these features creating many errors that broke the
+                            process.</b>
+                        <br><br>You
+                        should be able to manually configure these features after the migration and this is why we
+                        recommend
+                        downloading your config.
+                    </ul>
+                    <hr>
+                    <p><b>Migration Destination Tenant</b></p>
+
+                    <ul>
+                        <li>{{tenant}}</li>
+                    </ul>
+                    <input type="submit" class="btn-small branded" value="Migrate my demo!"
+                        onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
+                </form>
+            </div>
+        <div class="column">
+
+
+            <div id="main_left">
+
+                <div>
+
+
+
+                    <div id="events">
+                        <p><b>Events</b></p>
+                        <pre id="notifications">> No events received yet...</pre>
+                    </div>
+
+                    <p><b>Your Tenant</b></p>
+
+                    <ul>
+                        <li>{{tenant}}</li>
+                    </ul>
+                    <p><b>Your Demos</b></p>
+
+                    <ul id="list-container"></ul>
+
+                    <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
+                    <br>
+
+                    <label class="switch">
+                        <input type="checkbox" id="migrated_demo" onclick="return false;">
+                        <span></span>
+
+                    </label>
+
                 </div>
 
-                <p><b>Your Tenant</b></p>
-
-                <ul>
-                    <li>{{tenant}}</li>
-                </ul>
-                <p><b>Your Demos</b></p>
-
-                <ul id="list-container"></ul>
-
-                <label for="migrated_demo">Migrated from portal.auth0.cloud</label>
-                <br>
-
-                <label class="switch">
-                    <input type="checkbox" id="migrated_demo" onclick="return false;">
-                    <span></span>
-
-                </label>
 
             </div>
 
-            <div id="travel0-only">
-                <p><b>Your Legacy Users</b></p>
-
-                <ul id="user-container"></ul>
-                <ul>Password: Auth0Dem0</ul>
-
-                <label for="demo_type">CIC Login Enabled</label>
-                <br>
-
-                <label class="switch">
-                    <input type="checkbox" id="cic_login">
-                    <span></span>
-
-                </label>
-
-                <br>
-                <label for="demo_type">Azure AD SSO</label>
-                <br>
-
-                <label class="switch">
-                    <input type="checkbox" id="azure_ad">
-                    <span></span>
-
-                </label>
-                <br>
-            </div>
-
-            <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
-                <p><b>Mailtrap API Key</b></p>
-                <label for="mailtrap">Must be Mailtrap API v1</label>
-
-                <br>
-                <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
-
-                <br>
-
-                <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
-
-            </form>
         </div>
 
-        <div id="migration_tools">
+        <div class="column">
 
-            <form action="/migration/migrate_config" id="migrate_form" method="POST">
+<div id="main_right">
 
-                <p><b>Name of demo to migrate</b></p>
+                <div id="travel0-only">
+                    <p><b>Your Legacy Users</b></p>
 
-                <input type="text" name="migrationDemoName" id="migrationDemoName" value="demo-okta-community" required
-                    placeholder="Add the name of the demo you want to migrate. The subdomain of your Travel0 or Property0 tells you what this is" />
-                <label for="migrationDemoName">Name of the Demo you want to migrate</label>
+                    <ul id="user-container"></ul>
+                    <ul>Password: Auth0Dem0</ul>
+
+                    <label for="demo_type">CIC Login Enabled</label>
+                    <br>
+
+                    <label class="switch">
+                        <input type="checkbox" id="cic_login">
+                        <span></span>
+
+                    </label>
+
+                    <br>
+                    <label for="demo_type">Azure AD SSO</label>
+                    <br>
+
+                    <label class="switch">
+                        <input type="checkbox" id="azure_ad">
+                        <span></span>
+
+                    </label>
+                    <br>
+                </div>
+
+                <form action="/portal/mailtrap" id="mailtrap_form" method="POST">
+                    <p><b>Mailtrap API Key</b></p>
+                    <label for="mailtrap">Must be Mailtrap API v1</label>
+
+                    <br>
+                    <input type="text" name="mailtrap" id="mailtrap_input" placeholder="Mailtrap API Key" />
+
+                    <br>
+
+                    <input class="btn-small branded" type="submit" id="mailtrap_form" value="Add Key" />
+
+                </form>
 
 
 
-                <ul><b>We STRONGLY recommend backing up the tenant config of the tenant you are migrating from BEFORE
-                        migration. This follows any good migration
-                        practice!</b> <br><br>Note that while exporting the configuration is non-destructive, having a
-                    copy
-                    means that you can manually update values in the tenant you are migrating to based on the backed up
-                    config.</ul>
+</div>
 
-                <input type="button" class="btn-small branded" id="download_config" value="Download Config"
-                    onclick="return confirm('Download started. Your file will be available shortly. Please store it safely'); " />
-                <hr>
-                <ul><b>While every effort has been made to migrate <i>everything</i>, in order to optimise the process
-                        offered here, we do not migrate Actions, Client Grants, back-end Feature Flags, General Tenant
-                        settings and Custom Domains. We saw these features creating many errors that broke the
-                        process.</b>
-                    <br><br>You
-                    should be able to manually configure these features after the migration and this is why we recommend
-                    downloading your config.
-                </ul>
-                <hr>
-                <p><b>Migration Destination Tenant</b></p>
 
-                <ul>
-                    <li>{{tenant}}</li>
-                </ul>
-                <input type="submit" class="btn-small branded" value="Migrate my demo!"
-                    onclick="return confirm('Are you sure? By clicking Migrate, you understand that the tenant ' + '{{tenant}}' + ' will be changed and this change cannot be reversed'); " />
-            </form>
+<div id="migration_tools_right">
+
+
+
+
+
+
+
+</div>
+
+
         </div>
+
+
+
+
+
     </div>
 </body>
 
@@ -287,9 +328,11 @@
 
     $(document).ready(function () {
 
-        document.getElementById("main").style.display = 'none';
+        document.getElementById("main_left").style.display = 'none';
+        document.getElementById("main_right").style.display = 'none';
         document.getElementById("travel0-only").style.display = 'none';
-        document.getElementById("migration_tools").style.display = 'none';
+        document.getElementById("migration_tools_left").style.display = 'none';
+        document.getElementById("migration_tools_right").style.display = 'none';
         document.getElementById("events").style.display = 'none';
         spinner.removeAttribute('hidden');
 
@@ -315,9 +358,11 @@
 
             if (output.Demo === "No demo added yet") {
 
-                document.getElementById("main").style.display = 'none';
+                document.getElementById("main_left").style.display = 'none';
+                document.getElementById("main_right").style.display = 'none';
                 document.getElementById("travel0-only").style.display = 'none';
-                document.getElementById("migration_tools").style.display = 'block';
+                document.getElementById("migration_tools_left").style.display = 'block';
+                document.getElementById("migration_tools_right").style.display = 'block';
                 document.getElementById("events").style.display = 'show';
                 spinner.setAttribute('hidden', '');
 
@@ -345,9 +390,11 @@
 
             if (output.Demo.raw.templateData.type === 'property0') {
 
-                document.getElementById("main").style.display = 'block';
+                document.getElementById("main_left").style.display = 'block';
+                document.getElementById("main_right").style.display = 'block';
                 document.getElementById("travel0-only").style.display = 'none';
-                document.getElementById("migration_tools").style.display = 'none';
+                document.getElementById("migration_tools_left").style.display = 'none';
+                document.getElementById("migration_tools_right").style.display = 'none';
                 document.getElementById("events").style.display = 'none';
                 spinner.setAttribute('hidden', '');
 
@@ -355,9 +402,11 @@
 
             else {
 
-                document.getElementById("main").style.display = 'block';
+                document.getElementById("main_left").style.display = 'block';
+                document.getElementById("main_right").style.display = 'block';
                 document.getElementById("travel0-only").style.display = 'block';
-                document.getElementById("migration_tools").style.display = 'none';
+                document.getElementById("migration_tools_left").style.display = 'none';
+                document.getElementById("migration_tools_right").style.display = 'none';
                 document.getElementById("events").style.display = 'none';
                 spinner.setAttribute('hidden', '');
 
@@ -390,7 +439,7 @@
                 })
 
                 getPostPromise(users_url, api_type, users_data).then((output) => {
-                     spinner.setAttribute('hidden', '');
+                    spinner.setAttribute('hidden', '');
 
                     for (let i = 0; i < output.Legacy_Users.data.length; i++) {
                         list = document.createElement("LI");
@@ -401,7 +450,7 @@
                     }
 
                 }).catch((err) => {
-                     spinner.setAttribute('hidden', '');
+                    spinner.setAttribute('hidden', '');
                     $('#notifications').text(JSON.stringify(err, null, 2));
                 })
 
@@ -409,7 +458,7 @@
             }
         })
             .catch((err) => {
-                 spinner.setAttribute('hidden', '');
+                spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(err, null, 2));
             })
     });
@@ -564,9 +613,7 @@
             url: actionUrl,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
-                document.getElementById("events").style.display = 'show';
-                spinner.setAttribute('hidden', '');
-                $('#notifications').text(JSON.stringify(data, null, 2));
+                location.reload();
             },
             error: function (err) {
                 document.getElementById("events").style.display = 'show';
