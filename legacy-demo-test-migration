@@ -1,0 +1,35 @@
+{
+    "_id": {
+        "$oid": "6398342d1411b186d34cabb2"
+    },
+    "name": "legacy-demo-test-migration",
+    "templateData": {
+        "id": "61e3d56571224f67caf205e1",
+        "title": "TravelZero",
+        "type": "travel0"
+    },
+    "flags": [
+        {
+            "name": "USE_AZURE_AD_CONNECTION",
+            "label": "Azure AD SSO",
+            "description": "If enabled, users will be redirected to Azure AD directly without being presented with Auth0 login prompt",
+            "enabled": false
+        },
+        {
+            "name": "USE_AUTH0_UNIVERSAL_LOGIN",
+            "label": "Auth0 Login",
+            "description": "If enabled, users will be redirected to Auth0 Universal Login for authentication",
+            "enabled": true
+        }
+    ],
+    "tenantId": "639254de786f677fcd69abbb",
+    "userId": "oidc|Okta|00u1jbg5gpd9mnjb91d8",
+    "userEmail": "julian.lywood@okta.com",
+    "createdAt": "2022-12-10T12:58:12.445Z",
+    "updatedAt": "2022-12-12T12:06:55.85Z",
+    "__v": {
+        "$numberInt": "0"
+    },
+    "deploymentId": "63948264786f67447669d7b0",
+    "demoOkta": "migration"
+}

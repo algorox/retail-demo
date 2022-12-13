@@ -23,33 +23,6 @@ function parseJWT(token) {
     }
 }
 
-router.get("/", tr.resolveTenant(), async (req, res, next) => {
-
-
-    logger.verbose("/ requested")
-
-    var accessToken, profile
-    if (req.userContext.at) {
-        accessToken = parseJWT(req.userContext.at)
-    }
-    if (req.userContext.profile) {
-        profile = req.userContext.profile
-    }
-
-    var domain, domain_trailing_slash, tenantSettings
-
-    tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
-    
-    domain = tenantSettings.issuer.replace('https://', '');
-    domain_trailing_slash = domain.replace('/', '');
-    domain_cic_domain = domain_trailing_slash.replace('.cic-demo-platform.auth0app.com', '');
-
-    res.render("portal", {
-        tenant: 'https://manage.cic-demo-platform.auth0app.com/dashboard/pi/' + domain_cic_domain
-    });
-});
-
-
 router.post("/create_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
     var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
