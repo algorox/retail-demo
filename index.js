@@ -85,6 +85,7 @@ app.use("/", auth)
 app.use("/portal", ensureAuthenticated(), portal)
 app.use("/migration", ensureAuthenticated(), migration)
 app.use("/migration_files", ensureAuthenticated(), express.static(path.join(__dirname, '/migration_files')))
+app.use("/public", express.static(path.join(__dirname, '/public')))
 
 //these webhooks consume events from the demo API
 router.post("/hooks/request", async (req, res, next) => {
