@@ -493,7 +493,7 @@
                 location.reload();
             },
             error: function (err) {
-                document.getElementById("events").style.display = 'block';
+                alert("There is so much data flying around that sometimes errors can occur. Go ahead and retry. We recommend taking note of the error below too as this can be indicator of where the issue sits.\n" + err);
                 spinner.setAttribute('hidden', '');
                 $('#notifications').text(JSON.stringify(err, null, 2));
             }

@@ -1,0 +1,32 @@
+{
+  "client_id": "Service0",
+  "audience": "https://julian-new.demo-platform.auth0app.com/api/v2/",
+  "scope": [
+    "read:users",
+    "update:users",
+    "create:users",
+    "delete:users",
+    "read:roles",
+    "update:roles",
+    "read:connections",
+    "read:rules",
+    "create:rules",
+    "update:rules",
+    "delete:rules",
+    "read:clients",
+    "delete:clients",
+    "read:resource_servers",
+    "update:resource_servers ",
+    "delete:resource_servers",
+    "read:guardian_enrollments",
+    "read:guardian_factors",
+    "read:logs",
+    "read:device_credentials",
+    "update:device_credentials",
+    "delete:device_credentials",
+    "delete:guardian_enrollments",
+    "create:clients",
+    "read:client_keys",
+    "update:clients"
+  ]
+}

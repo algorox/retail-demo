@@ -1,0 +1,20 @@
+{
+  "enabled_locales": [
+    "en"
+  ],
+  "flags": {
+    "new_universal_login_experience_enabled": false,
+    "universal_login": true,
+    "dashboard_ui_next": true,
+    "revoke_refresh_token_grant": false,
+    "disable_clickjack_protection_headers": false
+  },
+  "friendly_name": "TravelZero",
+  "picture_url": "https://cdn.staging.auth0.cloud/assets/icons/TravelZero-avatar.png",
+  "universal_login": {
+    "colors": {
+      "page_background": "#FF7F38",
+      "primary": "#FF7F38"
+    }
+  }
+}
