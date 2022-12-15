@@ -85,8 +85,7 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
 
                 handleRequests(demo_url, data, type, accessToken)
                     .then((output) => {
-
-
+                        
                         for (let i = 0; i < output.results.length; i++) {
                             let obj = output.results[i];
 
@@ -115,7 +114,8 @@ router.post("/get_legacy_demo", tr.resolveTenant(), async (req, res, next) => {
                                 "raw": demo_response,
                                 "demo_id": demo_response.id,
                                 "tenant_id": demo_response.tenantId,
-                                applications
+                                "templates": demo_response.templateData,
+                                applications,
                             }
 
                             for (let i = 0; i < demo_response.applications.length; i++) {

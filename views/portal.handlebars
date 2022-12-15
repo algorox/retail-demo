@@ -117,6 +117,10 @@
                     <br>
                     <input class="btn-small branded" type="button" id="get_logs" value="Logs" />
                 </div>
+                <div id="generic0">
+                    <p><b>Generic0 Settings</b></p>
+                    <pre id="generic0json"></pre>
+                </div>
             </div>
         </div>
 
@@ -193,6 +197,7 @@
         document.getElementById("travel0-only").style.display = 'none';
         document.getElementById("migration_tools_left").style.display = 'none';
         document.getElementById("migration_tools_right").style.display = 'none';
+        document.getElementById("generic0").style.display = 'none';
         document.getElementById("events").style.display = 'none';
         spinner.removeAttribute('hidden');
 
@@ -288,6 +293,13 @@
 
                 var azureADflag = output.Demo.raw.flags[0].enabled;
                 var auth0Loginflag = output.Demo.raw.flags[1].enabled
+
+                if (output.Demo.raw.templateData.type !== 'generic0') {
+
+                    document.getElementById("generic0").style.display = 'block';
+                    $('#generic0').text(JSON.stringify(output.Demo.raw.templateData.demoMetadata, null, 2));
+
+                }
 
 
                 if (auth0Loginflag) {
