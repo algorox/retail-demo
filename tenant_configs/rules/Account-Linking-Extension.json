@@ -1,7 +1,0 @@
-{
-  "enabled": false,
-  "script": "./Account-Linking-Extension.js",
-  "name": "Account-Linking-Extension",
-  "order": 20,
-  "stage": "login_success"
-}

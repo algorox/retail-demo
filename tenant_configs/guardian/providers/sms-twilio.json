@@ -1,8 +1,0 @@
-{
-  "name": "sms",
-  "provider": "twilio",
-  "auth_token": "d69a9130ec4020e32237d3a893b04f91",
-  "sid": "AC96e5ba5cdd4afe918cff24fe32c369af",
-  "from": null,
-  "messaging_service_sid": "MGbcbefbf8e5c2ff1aa3760a08a1962d42"
-}
