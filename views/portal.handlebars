@@ -281,7 +281,7 @@
                 document.getElementById("main_left").style.display = 'block';
                 document.getElementById("main_right").style.display = 'block';
                 document.getElementById("travel0-only").style.display = 'block';
-                document.getElementById("migration_tools_left").style.display = 'none';
+                document.getElementById("migration_tools_left").style.display = 'block';
                 document.getElementById("migration_tools_right").style.display = 'none';
                 document.getElementById("events").style.display = 'none';
                 spinner.setAttribute('hidden', '');
@@ -493,8 +493,9 @@
                 location.reload();
             },
             error: function (err) {
-                alert("There is so much data flying around that sometimes errors can occur. Go ahead and retry. We recommend taking note of the error below too as this can be indicator of where the issue sits.\n" + err);
+                //alert("There is so much data flying around that sometimes errors can occur. Go ahead and retry. We recommend taking note of the error below too as this can be indicator of where the issue sits.\n";
                 spinner.setAttribute('hidden', '');
+                document.getElementById("events").style.display = 'block';
                 $('#notifications').text(JSON.stringify(err, null, 2));
             }
         });

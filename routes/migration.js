@@ -10,7 +10,8 @@ const tenantResolver = require('../tenantResolver')
 const handleRequests = require('../utils/requests').handleRequests;
 const handleMongoRequests = require('../utils/requests').handleMongoRequests;
 const handleJSONBinRequests = require('../utils/requests').handleJSONBinRequests;
-const zip = require('child_process');
+const handleAzureRequests = require('../utils/requests').handleAzureRequests;
+const qs = require('qs')
 
 const tr = new tenantResolver();
 
@@ -65,7 +66,7 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
     handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
 
         if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-       // if (output.document.hasOwnProperty('test') && req.body.download != "true") {
+            //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
             res.status(400)
             res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
         }
@@ -83,6 +84,8 @@ router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
 ///backup the mongo db configs in JSONBin.io
 router.post("/migrate_config", async (req, res, next) => {
+
+    raw_mongo_output = {}
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
@@ -173,7 +176,7 @@ router.post("/migrate_config", async (req, res, next) => {
 
 })
 
-///export the tenant config from the tenant
+// ///export the tenant config from the tenant
 router.post("/migrate_config", async (req, res, next) => {
 
     var post_type = 'POST'
@@ -208,7 +211,7 @@ router.post("/migrate_config", async (req, res, next) => {
                     },
                 }
 
-            //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
+                //fs.mkdtemp(path.join(os.tmpdir(), 'tenant-config-'), (err, folder) => {
                 fs.mkdir('./migration_files', { recursive: true }, (err) => {
                     if (err) throw err;
 
@@ -246,7 +249,7 @@ router.post("/migrate_config", async (req, res, next) => {
             }
 
             else {
-            next()
+                next()
             }
 
         })
@@ -490,9 +493,7 @@ router.post("/migrate_config", async (req, res, next) => {
                     }
 
                     handleMongoRequests(update_demo_url, update_property0_deployment_data, post_type).then((output) => {
-
-                        res.status(200)
-                        res.send({ "Migrations": raw_mongo_output.deployment.demoName + " migrated to the demo.okta tenant " + domain })
+                        next()
 
                     })
                         .catch((error) => {
@@ -504,9 +505,7 @@ router.post("/migrate_config", async (req, res, next) => {
                 }
 
                 else {
-
-                    res.status(200)
-                    res.send({ "Migrations": raw_mongo_output.deployment.demoName + " migrated to the demo.okta tenant " + domain })
+                    next()
                 }
 
             })
@@ -529,6 +528,52 @@ router.post("/migrate_config", async (req, res, next) => {
             res.status(400)
             res.send({ error: error })
         })
+})
+
+///update Azure AD with callback URI
+router.post("/migrate_config", async (req, res, next) => {
+
+    var post_type = 'POST'
+    var patch_type = 'PATCH'
+    var get_azure_token_url = 'https://login.microsoftonline.com/' + process.env.AZURE_TENANT + '/oauth2/token'
+    var get_azure_token_data = {
+        grant_type: 'client_credentials',
+        client_id: process.env.AZURE_CLIENT_ID,
+        client_secret: process.env.AZURE_CLIENT_SECRET,
+        resource: 'https://graph.microsoft.com'
+    }
+    var tenantSettings = req.body.tenant_settings
+
+    form_data = qs.stringify(get_azure_token_data)
+
+    handleAzureRequests(get_azure_token_url, form_data, post_type).then((output) => {
+
+
+        var update_client_url = 'https://graph.microsoft.com/v1.0/applications/' + raw_mongo_output.deployment.azureClient.appId
+        var update_client_data = {
+            web: { redirectUris: [tenantSettings.issuer + "login/callback"] }
+        }
+
+        handleRequests(update_client_url, update_client_data, patch_type, output.access_token).then((output) => {
+
+            var domain = tenantSettings.issuer.replace('https://', '');
+
+            res.status(200)
+            res.send({ "Migrations": raw_mongo_output.deployment.demoName + " migrated to the demo.okta tenant " + domain })
+
+        })
+            .catch((error) => {
+                console.log(error)
+                res.status(400)
+                res.send({ error: error })
+            })
+    })
+        .catch((error) => {
+            console.log(error)
+            res.status(400)
+            res.send({ error: error })
+        })
+
 })
 
 module.exports = router;

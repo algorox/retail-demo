@@ -44,6 +44,48 @@ const handleRequests = (url, body, type, accessToken) => {
     });
 }
 
+const handleAzureRequests = (url, body, type, accessToken) => {
+
+    return new Promise((resolve, reject) => {
+
+        const options = {
+            url: url,
+            json: true,
+            method: type,
+            body: body,
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        request(options, function (error, response, body) {
+
+            if (error) {
+                customError = {
+                    error: 500,
+                    error_description: error
+                }
+                reject(customError);
+            }
+
+            if (response) {
+
+                if (arrayOfHTTPErrors.includes(response.statusCode)) {
+
+                    customError = {
+                        error: response.statusCode || 500,
+                        error_description: response.body || 'No Description Provided'
+                    }
+
+                    reject(customError)
+                }
+                resolve(body);
+            }
+
+        })
+    });
+}
+
 const handleMongoRequests = (url, body, type) => {
 
     return new Promise((resolve, reject) => {
@@ -132,5 +174,6 @@ const handleJSONBinRequests = (url, body, type, demoName) => {
 module.exports = {
     handleRequests,
     handleMongoRequests,
-    handleJSONBinRequests
+    handleJSONBinRequests,
+    handleAzureRequests
 }
