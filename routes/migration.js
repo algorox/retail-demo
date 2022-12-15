@@ -41,55 +41,20 @@ router.post("/migrate_config", async (req, res, next) => {
         })
 })
 
-
-///check if tenant has already been migrated to
-router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
-
-    var post_type = 'POST'
-    var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
-
-    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
-
-    req.body.tenant_settings = tenantSettings
-
-    var domain = tenantSettings.issuer.replace('https://', '');
-    var domain_trailing_slash = domain.replace('/', '');
-
-    get_tenant_data =
-    {
-        collection: "tenants",
-        database: "platform",
-        dataSource: "Cluster-Prod",
-        filter: { "domain": domain_trailing_slash }
-    }
-
-    handleMongoRequests(get_demos_url, get_tenant_data, post_type).then((output) => {
-
-        if (output.document.hasOwnProperty('demoOkta') && req.body.download != "true") {
-            //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
-            res.status(400)
-            res.send({ "Note": "The associated demo.okta CIC tenant (" + domain_trailing_slash + ") has already been used to create/migrate a Travel0 or Property0 demo. To reduce conflicts / issues, please spin up a fresh demo.okta tenant and go from there. You are still able to download your config" })
-        }
-
-        else {
-            next()
-        }
-    }).catch((error) => {
-        console.log(error)
-        res.status(400)
-        res.send({ error: error })
-    })
-
-})
-
 ///backup the mongo db configs in JSONBin.io
-router.post("/migrate_config", async (req, res, next) => {
+router.post("/migrate_config", tr.resolveTenant(), async (req, res, next) => {
 
     raw_mongo_output = {}
 
     var post_type = 'POST'
     var get_demos_url = 'https://data.mongodb-api.com/app/' + process.env.MONGO_URL_PATH + '/endpoint/data/v1/action/findOne'
     var jsonBin_url = 'https://api.jsonbin.io/v3/b'
+
+    var tenantSettings = tr.getSettings(tr.getTenant(req.headers.host))
+    var domain = tenantSettings.issuer.replace('https://', '');
+    var domain_trailing_slash = domain.replace('/', '');
+
+    req.body.tenant_settings = tenantSettings
 
     get_tenant_data =
     {
@@ -141,14 +106,24 @@ router.post("/migrate_config", async (req, res, next) => {
 
                     raw_mongo_output.property0 = output.document
 
-                    handleJSONBinRequests(jsonBin_url, raw_mongo_output, post_type, req.body.migrationDemoName).then((output) => {
-                        next()
-                    })
-                        .catch((error) => {
-                            console.log(error)
-                            res.status(400)
-                            res.send({ error: error })
+                    if (((raw_mongo_output.tenant.hasOwnProperty('demoOkta')) ||
+                        ((raw_mongo_output.deployment.hasOwnProperty('demoOkta')) && ((raw_mongo_output.tenant.hasOwnProperty('demoOkta')))))
+                        && req.body.download != "true") {
+                        //if (output.document.hasOwnProperty('test') && req.body.download != "true") {
+                        res.status(400)
+                        res.send({ "Note": "You have already migrated this demo to demo.okta. It's attached to " + raw_mongo_output.tenant.dashboardLink })
+                    }
+
+                    else {
+                        handleJSONBinRequests(jsonBin_url, raw_mongo_output, post_type, req.body.migrationDemoName).then((output) => {
+                            next()
                         })
+                            .catch((error) => {
+                                console.log(error)
+                                res.status(400)
+                                res.send({ error: error })
+                            })
+                    }
                 })
                     .catch((error) => {
                         console.log(error)
@@ -311,6 +286,7 @@ router.post("/migrate_config", async (req, res, next) => {
         })
 })
 
+// get the client info from the destination tenant so that they can be added to the database
 router.post("/migrate_config", async (req, res, next) => {
 
     tenantSettings = req.body.tenant_settings
